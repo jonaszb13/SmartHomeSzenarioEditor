@@ -21,19 +21,35 @@ public class dummy {
                     """);
 
             stmt.execute("""
-                        CREATE TABLE IF NOT EXISTS Geraete (
+                        CREATE TABLE IF NOT EXISTS Geraeteart
+                        (
                         id INT AUTO_INCREMENT PRIMARY KEY,
-                        name VARCHAR(255) NOT NULL);
+                        name VARCHAR(255) NOT NULL
+                        );
+                    """);
+            stmt.execute("""
+                        CREATE TABLE IF NOT EXISTS Geraete
+                        (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(255) NOT NULL,
+                        Art INT REFERENCES Geraeteart(id)
+                        );
                     """);
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS Szenarien (
                         id INT AUTO_INCREMENT PRIMARY KEY,
-                        name VARCHAR(255) NOT NULL);
+                        name VARCHAR(255) NOT NULL,
+                        Rythmus VARCHAR(255) NOT NULL,
+                        Status VARCHAR(255) NOT NULL
+                        );
                     """);
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS Szenarien_Inhalt (
                         id INT AUTO_INCREMENT PRIMARY KEY,
-                        name VARCHAR(255) NOT NULL);
+                        aktion VARCHAR(255) NOT NULL,
+                        Szenario INT REFERENCES Szenarien(id),
+                        Geraet INT REFERENCES Geraete(id)
+                        );
                     """);
         } catch (SQLException e) {
             throw new RuntimeException(e);
