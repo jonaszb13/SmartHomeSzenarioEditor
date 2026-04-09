@@ -1,20 +1,13 @@
 package data;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataAccess {
-    private final String url;
-    private final String user;
-    private final String password;
-    private Connection conn;
+    private final Connection conn;
 
     public DataAccess(String url, String user, String password) throws SQLException {
-        this.url = url;
-        this.user = user;
-        this.password = password;
         this.conn = DriverManager.getConnection(url, user, password);
     }
 
@@ -22,6 +15,9 @@ public class DataAccess {
         String url = "jdbc:h2:file:./data/mydb;AUTO_SERVER=TRUE";
         String user = "sa";
         String password = "";
+        List<Raum> raumList = new ArrayList<>();
+        List<Geraet> GeraetList = new ArrayList<>();
+        List<Szenario> SzenarioList = new ArrayList<>();
         try {
             DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
@@ -39,18 +35,14 @@ public class DataAccess {
                     name VARCHAR(255) NOT NULL);
                 """);
         stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS Geraeteart
-                    (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(255) NOT NULL
-                    );
-                """);
-        stmt.execute("""
                     CREATE TABLE IF NOT EXISTS Geraete
                     (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
-                    Art INT REFERENCES Geraeteart(id)
+                    Raum INT REFERENCES RAEUME(id),
+                    Art VARCHAR(255),
+                    Attribut VARCHAR(255),
+                    Wert VARCHAR(255)
                     );
                 """);
         stmt.execute("""
@@ -66,9 +58,50 @@ public class DataAccess {
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     aktion VARCHAR(255) NOT NULL,
                     Szenario INT REFERENCES Szenarien(id),
-                    Geraet INT REFERENCES Geraete(id)
+                    Geraet INT REFERENCES Geraete(id),
+                    Attribut VARCHAR(255) NOT NULL,
+                    Wert VARCHAR(255)
                     );
                 """);
+    }
+
+    public void getAllData(List<Raum> raumList, List<Geraet> geraetList, List<Szenario> szenarioList) throws SQLException {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String name = rs.getString("name");
+            raumList.add(new Raum(id, name));
+        }
+        rs = stmt.executeQuery("""
+                SELECT GERAETE.ID, GERAETE.NAME, GERAETE.RAUM, Geraete.ID, Geraete.NAME, Geraete.ART
+                FROM Geraete
+                ORDER BY Geraete.ART,Geraete.ID
+                """);
+        int lastId = -1;
+        String lastArt = "";
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            if (id == lastId) {
+                //TODO Mapping gleiches Objekt
+                break;
+            }
+            String art = rs.getString("art");
+            if (!lastArt.equals(art)) {
+                //TODO Mapping andere Geräteart
+            }
+            //TODO neues Gerät anlegen
+        }
+        rs = stmt.executeQuery("""
+                SELECT * 
+                FROM SZENARIEN
+                JOIN SZENARIEN_INHALT
+                ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
+                ORDER BY SZENARIEN.ID
+                """);
+        while (rs.next()) {
+
+        }
     }
 
 }
