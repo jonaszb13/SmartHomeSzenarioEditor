@@ -28,7 +28,6 @@ public class DataAccess {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public void setupDatabase() throws SQLException {
