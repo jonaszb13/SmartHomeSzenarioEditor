@@ -1,16 +1,30 @@
-
+package data;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class dummy {
+public class DataAccess {
+    private final String url;
+    private final String user;
+    private final String password;
+
+    public DataAccess(String url, String user, String password) {
+        this.url = url;
+        this.user = user;
+        this.password = password;
+    }
+
     public static void main(String[] args) {
         String url = "jdbc:h2:file:./data/mydb;AUTO_SERVER=TRUE";
         String user = "sa";
         String password = "";
+        DataAccess dataAccess = new DataAccess(url, user, password);
+        dataAccess.setupDatabase();
+    }
 
+    public void setupDatabase() {
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
             System.out.println("Datenbank verbunden und ggf. neu angelegt.");
             Statement stmt = conn.createStatement();
@@ -55,4 +69,5 @@ public class dummy {
             throw new RuntimeException(e);
         }
     }
+
 }
