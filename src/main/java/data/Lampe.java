@@ -13,6 +13,10 @@ public class Lampe extends Geraet {
         this.farbe = farbe;
         this.eingeschaltet = eingeschaltet;
     }
+    public Lampe(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public double getHaelligkeit() {
         return haelligkeit;

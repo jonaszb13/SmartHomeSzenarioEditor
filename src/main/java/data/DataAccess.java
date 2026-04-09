@@ -80,20 +80,28 @@ public class DataAccess {
                 """);
         int lastId = -1;
         String lastArt = "";
+        Geraet aktuellesGeraet = null;
         while (rs.next()) {
             int id = rs.getInt("id");
-            if (id == lastId) {
-                //TODO Mapping gleiches Objekt
-                break;
+            if (!(id == lastId)) {
+                String art = rs.getString("art");
+                String name = rs.getString("name");
+                switch (art) {
+                    case "Lampe":
+                        aktuellesGeraet = new Lampe(id, name);
+                        break;
+                    case " ":
+                        //TODO andere Geräte
+                        break;
+                }
+                geraetList.add(aktuellesGeraet);
             }
-            String art = rs.getString("art");
-            if (!lastArt.equals(art)) {
-                //TODO Mapping andere Geräteart
-            }
-            //TODO neues Gerät anlegen
+            lastId = id;
+            String attribut = rs.getString("attribut");
+            //TODO Ausbau Atribute zuweisen
         }
         rs = stmt.executeQuery("""
-                SELECT * 
+                SELECT *
                 FROM SZENARIEN
                 JOIN SZENARIEN_INHALT
                 ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
@@ -103,5 +111,4 @@ public class DataAccess {
 
         }
     }
-
 }
