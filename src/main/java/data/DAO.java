@@ -2,7 +2,7 @@ package data;
 
 public class DAO {
     int id;
-    private String name;
+    String name;
 
 
     public int getId() {
