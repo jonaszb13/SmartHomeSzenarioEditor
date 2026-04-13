@@ -29,6 +29,7 @@ public class DataAccess {
     public void setupDatabase() throws SQLException {
         System.out.println("Datenbank verbunden und ggf. neu angelegt.");
         Statement stmt = conn.createStatement();
+        //Allgemeine Tabellen
         stmt.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS Raeume (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -39,10 +40,7 @@ public class DataAccess {
                     (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
-                    Raum INT REFERENCES RAEUME(id),
-                    Art VARCHAR(255),
-                    Attribut VARCHAR(255),
-                    Wert VARCHAR(255)
+                    Raum INT REFERENCES RAEUME(id)
                     );
                 """);
         stmt.execute("""
@@ -63,6 +61,50 @@ public class DataAccess {
                     Wert VARCHAR(255)
                     );
                 """);
+        //Gerätetypen
+        stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS Lampen (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    gID INT REFERENCES Geraete(id),
+                    eingeschaltet boolean
+                    )
+                """);
+        stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS Rollladen (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    gID INT REFERENCES Geraete(id),
+                    eingeschaltet boolean
+                    )
+                """);
+        stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS Heizungen (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    gID INT REFERENCES Geraete(id),
+                    eingeschaltet boolean
+                    )
+                """);
+        stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS Luefter (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    gID INT REFERENCES Geraete(id),
+                    eingeschaltet boolean
+                    )
+                """);
+        stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS Sensoren (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    gID INT REFERENCES Geraete(id),
+                    eingeschaltet boolean
+                    )
+                """);
+        stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS Steckdosen (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    gID INT REFERENCES Geraete(id),
+                    eingeschaltet boolean
+                    )
+                """);
+
     }
 
     public void getAllData(List<Raum> raumList, List<Geraet> geraetList, List<Szenario> szenarioList) throws SQLException {
