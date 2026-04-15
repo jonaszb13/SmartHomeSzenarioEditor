@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DataAccess {
@@ -30,8 +29,8 @@ public class DataAccess {
         try {
             DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
-            dataAccess.getAllData(raumList, GeraetList, SzenarioList);
             List<Class> geraeteKlassen = dataAccess.getGeraeteKlassen();
+            dataAccess.getAllData(raumList, GeraetList, SzenarioList, geraeteKlassen);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -82,66 +81,26 @@ public class DataAccess {
                     Wert VARCHAR(255)
                     )
                 """);
-        //Gerätetypen
-        /*
-        stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS Lampen (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    gID INT REFERENCES Geraete(id),
-                    eingeschaltet boolean
-                    )
-                """);
-        stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS Rollladen (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    gID INT REFERENCES Geraete(id),
-                    eingeschaltet boolean
-                    )
-                """);
-        stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS Heizungen (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    gID INT REFERENCES Geraete(id),
-                    eingeschaltet boolean
-                    )
-                """);
-        stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS Luefter (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    gID INT REFERENCES Geraete(id),
-                    eingeschaltet boolean
-                    )
-                """);
-        stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS Sensoren (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    gID INT REFERENCES Geraete(id),
-                    eingeschaltet boolean
-                    )
-                """);
-        stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS Steckdosen (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    gID INT REFERENCES Geraete(id),
-                    eingeschaltet boolean
-                    )
-                """);
-         */
-
     }
 
-    public void getAllData(List<Raum> raumList, List<Geraet> geraetList, List<Szenario> szenarioList) throws SQLException {
+    public void getAllData(List<Raum> raumList, List<Geraet> geraetList, List<Szenario> szenarioList, List<Class> geraeteKlasen) throws SQLException {
         Statement stmt = conn.createStatement();
+        //Laden der Räume
         ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
         while (rs.next()) {
             int id = rs.getInt("id");
             String name = rs.getString("name");
             raumList.add(new Raum(id, name));
         }
+        //Laden der Geräte
+        for (int i = 0; i < geraeteKlasen.size(); i++) {
+            geraeteKlasen.get(i).getName();
+        }
         rs = stmt.executeQuery("""
-                SELECT GERAETE.ID, GERAETE.NAME, GERAETE.RAUM, Geraete.ID, Geraete.NAME, Geraete.ART
+                SELECT GERAETE.ID, GERAETE.NAME, GERAETE.RAUM, Geraete.ART, SCHLUESSEL, WERT
                 FROM Geraete
-                ORDER BY Geraete.ART,Geraete.ID
+                JOIN GERAETE_WERTE ON Geraete.ID = GERAETE_WERTE.Geraet
+                ORDER BY Geraete.ART, Geraete.ID
                 """);
         int lastId = -1;
         String lastArt = "";
@@ -167,6 +126,7 @@ public class DataAccess {
             System.out.println("");
             //TODO Ausbau Atribute zuweisen
         }
+        //Laden der Szenarien
         rs = stmt.executeQuery("""
                 SELECT *
                 FROM SZENARIEN
@@ -179,7 +139,7 @@ public class DataAccess {
         }
     }
 
-    private  List<Class> getGeraeteKlassen() {
+    private List<Class> getGeraeteKlassen() {
         String paket = "data.daos.geraete";
         InputStream stream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(paket.replaceAll("[.]", "/"));
@@ -192,7 +152,6 @@ public class DataAccess {
 
     private Class getClass(String className, String packageName) {
         try {
-
             return Class.forName(packageName + "."
                     + className.substring(0, className.lastIndexOf('.')));
         } catch (ClassNotFoundException e) {
