@@ -1,6 +1,7 @@
 package data.daos.geraete;
 
 import data.daos.Geraet;
+import data.daos.Raum;
 
 import java.awt.*;
 
@@ -9,15 +10,14 @@ public class Lampe extends Geraet {
     private Color farbe;
     private boolean eingeschaltet;
 
-    public Lampe(int id, double haelligkeit, Color farbe, boolean eingeschaltet) {
-        this.id = id;
+    public Lampe(int id, String name, Raum raum, double haelligkeit, Color farbe, boolean eingeschaltet) {
+        super(id, name, raum);
         this.haelligkeit = haelligkeit;
         this.farbe = farbe;
         this.eingeschaltet = eingeschaltet;
     }
-    public Lampe(int id, String name) {
-        this.id = id;
-        this.name = name;
+    public Lampe(int id, String name, Raum raum) {
+        super(id, name, raum);
     }
 
     public double getHaelligkeit() {

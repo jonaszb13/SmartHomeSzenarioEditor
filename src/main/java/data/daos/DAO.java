@@ -1,8 +1,13 @@
 package data.daos;
 
 public class DAO {
-    int id;
+    private int id;
     String name;
+
+    public DAO(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
 
     public int getId() {
