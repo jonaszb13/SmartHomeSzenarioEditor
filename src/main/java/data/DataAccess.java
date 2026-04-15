@@ -1,8 +1,17 @@
 package data;
 
+import data.daos.Geraet;
+import data.daos.Raum;
+import data.daos.Szenario;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DataAccess {
     private final Connection conn;
@@ -21,6 +30,8 @@ public class DataAccess {
         try {
             DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
+            dataAccess.getAllData(raumList, GeraetList, SzenarioList);
+            List<Class> geraeteKlassen = dataAccess.getGeraeteKlassen();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -40,15 +51,17 @@ public class DataAccess {
                     (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
-                    Raum INT REFERENCES RAEUME(id)
+                    Raum INT REFERENCES RAEUME(id),
+                    Art varchar(63) NOT NULL
                     );
                 """);
         stmt.execute("""
                     CREATE TABLE IF NOT EXISTS Szenarien (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
-                    Rythmus VARCHAR(255) NOT NULL,
-                    Status VARCHAR(255) NOT NULL
+                    Rythmus VARCHAR(255),
+                    Status VARCHAR(255),
+                    Beschreibung VARCHAR(255)
                     );
                 """);
         stmt.execute("""
@@ -61,7 +74,16 @@ public class DataAccess {
                     Wert VARCHAR(255)
                     );
                 """);
+        stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS Geraete_Werte (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    Geraet INT REFERENCES Geraete(id),
+                    schluessel VARCHAR(255) NOT NULL,
+                    Wert VARCHAR(255)
+                    )
+                """);
         //Gerätetypen
+        /*
         stmt.execute("""
                     CREATE TABLE IF NOT EXISTS Lampen (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -104,6 +126,7 @@ public class DataAccess {
                     eingeschaltet boolean
                     )
                 """);
+         */
 
     }
 
@@ -130,7 +153,7 @@ public class DataAccess {
                 String name = rs.getString("name");
                 switch (art) {
                     case "Lampe":
-                        aktuellesGeraet = new Lampe(id, name);
+                        //aktuellesGeraet = new Lampe(id, name);
                         break;
                     case " ":
                         //TODO andere Geräte
@@ -139,7 +162,9 @@ public class DataAccess {
                 geraetList.add(aktuellesGeraet);
             }
             lastId = id;
-            String attribut = rs.getString("attribut");
+            //String attribut = rs.getString("attribut");
+            //Field[] a= aktuellesGeraet;
+            System.out.println("");
             //TODO Ausbau Atribute zuweisen
         }
         rs = stmt.executeQuery("""
@@ -153,4 +178,29 @@ public class DataAccess {
 
         }
     }
+
+    private  List<Class> getGeraeteKlassen() {
+        String paket = "data.daos.geraete";
+        InputStream stream = ClassLoader.getSystemClassLoader()
+                .getResourceAsStream(paket.replaceAll("[.]", "/"));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        return reader.lines()
+                .filter(line -> line.endsWith(".class"))
+                .map(line -> getClass(line, paket))
+                .collect(Collectors.toList());
+    }
+
+    private Class getClass(String className, String packageName) {
+        try {
+
+            return Class.forName(packageName + "."
+                    + className.substring(0, className.lastIndexOf('.')));
+        } catch (ClassNotFoundException e) {
+            // handle the exception
+            //TODO Logging
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
