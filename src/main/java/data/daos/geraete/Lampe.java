@@ -1,4 +1,6 @@
-package data;
+package data.daos.geraete;
+
+import data.daos.Geraet;
 
 import java.awt.*;
 

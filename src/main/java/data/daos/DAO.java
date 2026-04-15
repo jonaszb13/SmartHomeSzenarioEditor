@@ -1,4 +1,4 @@
-package data;
+package data.daos;
 
 public class DAO {
     int id;
