@@ -4,6 +4,7 @@ import data.daos.Geraet;
 import data.daos.Raum;
 
 import java.awt.*;
+import java.util.HashMap;
 
 public class Lampe extends Geraet {
     private double haelligkeit;
@@ -18,6 +19,16 @@ public class Lampe extends Geraet {
     }
     public Lampe(int id, String name, Raum raum) {
         super(id, name, raum);
+    }
+
+    @Override
+    public void setValues(HashMap<String, String> hashMap) throws IllegalArgumentException {
+        String haelligkeit = hashMap.get("haelligkeit");
+        String farbe = hashMap.get("farbe");
+        String eingeschaltet = hashMap.get("eingeschaltet");
+        if (haelligkeit != null) this.haelligkeit = Double.parseDouble(haelligkeit);
+        if (farbe != null) this.farbe = Color.decode(farbe);
+        if (eingeschaltet != null) this.eingeschaltet = Boolean.parseBoolean(eingeschaltet);
     }
 
     public double getHaelligkeit() {
