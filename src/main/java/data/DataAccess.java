@@ -7,6 +7,7 @@ import data.daos.Szenario;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -109,34 +110,30 @@ public class DataAccess {
                 """);
         HashMap<String, String> hashMap = new HashMap<>();
         HashMap<String, List<Geraet>> geraetMap = new HashMap<>();
-
         int lastId = -1;
-        String lastArt = "";
         Geraet aktuellesGeraet = null;
+        boolean erstesMal = true;
         while (rs.next()) {
             int id = rs.getInt("id");
             String art = rs.getString("art");
-            if (!(id == lastId)) {
-                aktuellesGeraet.setValues(hashMap);
-                aktuellesGeraet = (Geraet) klassenListe.get(art).getDeclaredConstructor().newInstance();
-                String art = rs.getString("art");
-                String name = rs.getString("name");
-                switch (art) {
-                    case "Lampe":
-                        //aktuellesGeraet = new Lampe(id, name);
-                        break;
-                    case " ":
-                        //TODO andere Geräte
-                        break;
-                }
+            String name = rs.getString("name");
+            String schluessel = rs.getString("schluessel");
+            String wert = rs.getString("wert");
+            if (id != lastId) {
+                if (erstesMal) erstesMal = false;
+                else aktuellesGeraet.setValues(hashMap);
+                //TODO Raum richtig setzen
+                aktuellesGeraet = (Geraet) klassenListe.get("data.daos.geraete." + art)
+                        .getDeclaredConstructor(int.class, String.class, Raum.class)
+                        .newInstance(id, name, new Raum(1, "a"));
+                hashMap.put(schluessel, wert);
                 geraetList.add(aktuellesGeraet);
+                lastId = id;
+            } else {
+                hashMap.put(schluessel, wert);
             }
-            lastId = id;
-            //String attribut = rs.getString("attribut");
-            //Field[] a= aktuellesGeraet;
-            System.out.println("");
-            //TODO Ausbau Atribute zuweisen
         }
+        aktuellesGeraet.setValues(hashMap);
         //Laden der Szenarien
         rs = stmt.executeQuery("""
                 SELECT *
