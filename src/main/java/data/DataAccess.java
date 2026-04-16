@@ -7,8 +7,10 @@ import data.daos.Szenario;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,8 @@ public class DataAccess {
             dataAccess.setupDatabase();
             List<Class> geraeteKlassen = dataAccess.getGeraeteKlassen();
             dataAccess.getAllData(raumList, GeraetList, SzenarioList, geraeteKlassen);
-        } catch (SQLException e) {
+        } catch (SQLException | NoSuchMethodException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -83,7 +86,7 @@ public class DataAccess {
                 """);
     }
 
-    public void getAllData(List<Raum> raumList, List<Geraet> geraetList, List<Szenario> szenarioList, List<Class> geraeteKlasen) throws SQLException {
+    public void getAllData(List<Raum> raumList, List<Geraet> geraetList, List<Szenario> szenarioList, List<Class> geraeteKlasen) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Statement stmt = conn.createStatement();
         //Laden der Räume
         ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
@@ -92,22 +95,30 @@ public class DataAccess {
             String name = rs.getString("name");
             raumList.add(new Raum(id, name));
         }
-        //Laden der Geräte
-        for (int i = 0; i < geraeteKlasen.size(); i++) {
-            geraeteKlasen.get(i).getName();
+        //Laden der Geräteklassen
+        HashMap<String, Class> klassenListe = new HashMap<>();
+        for (Class aClass : geraeteKlasen) {
+            klassenListe.put(aClass.getName(), aClass);
         }
+        //Landen der Geräte
         rs = stmt.executeQuery("""
                 SELECT GERAETE.ID, GERAETE.NAME, GERAETE.RAUM, Geraete.ART, SCHLUESSEL, WERT
                 FROM Geraete
                 JOIN GERAETE_WERTE ON Geraete.ID = GERAETE_WERTE.Geraet
                 ORDER BY Geraete.ART, Geraete.ID
                 """);
+        HashMap<String, String> hashMap = new HashMap<>();
+        HashMap<String, List<Geraet>> geraetMap = new HashMap<>();
+
         int lastId = -1;
         String lastArt = "";
         Geraet aktuellesGeraet = null;
         while (rs.next()) {
             int id = rs.getInt("id");
+            String art = rs.getString("art");
             if (!(id == lastId)) {
+                aktuellesGeraet.setValues(hashMap);
+                aktuellesGeraet = (Geraet) klassenListe.get(art).getDeclaredConstructor().newInstance();
                 String art = rs.getString("art");
                 String name = rs.getString("name");
                 switch (art) {
@@ -161,5 +172,4 @@ public class DataAccess {
         }
         return null;
     }
-
 }
