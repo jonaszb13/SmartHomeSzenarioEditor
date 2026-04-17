@@ -26,7 +26,7 @@ public class DataAccess {
         String user = "sa";
         String password = "";
         HashMap<Integer, Raum> raumList = new HashMap<>();
-        List<Geraet> GeraetList = new ArrayList<>();
+        HashMap<Integer, Geraet> GeraetList = new HashMap<>();
         List<Szenario> SzenarioList = new ArrayList<>();
         try {
             DataAccess dataAccess = new DataAccess(url, user, password);
@@ -86,7 +86,7 @@ public class DataAccess {
                 """);
     }
 
-    public void getAllData(HashMap<Integer, Raum> raumList, List<Geraet> geraetList, List<Szenario> szenarioList, List<Class> geraeteKlasen) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void getAllData(HashMap<Integer, Raum> raumList, HashMap<Integer, Geraet> geraetList, List<Szenario> szenarioList, List<Class> geraeteKlasen) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Statement stmt = conn.createStatement();
         //Laden der Räume
         ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
@@ -125,7 +125,7 @@ public class DataAccess {
                         .getDeclaredConstructor(int.class, String.class, Raum.class)
                         .newInstance(id, name, raumList.get(raum));
                 atributeHashMap.put(schluessel, wert);
-                geraetList.add(aktuellesGeraet);
+                geraetList.put(id, aktuellesGeraet);
                 raumList.get(raum).getGeraete().add(aktuellesGeraet);
                 lastId = id;
             } else {
@@ -135,14 +135,23 @@ public class DataAccess {
         if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
         //Laden der Szenarien
         rs = stmt.executeQuery("""
-                SELECT *
+                SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, ATTRIBUT, WERT
                 FROM SZENARIEN
                 JOIN SZENARIEN_INHALT
                 ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
-                ORDER BY SZENARIEN.ID
+                ORDER BY SZENARIEN.ID, GERAET
                 """);
+        lastId = -1;
+        Szenario aktuellesSzenario = null;
         while (rs.next()) {
-
+            int id = rs.getInt("id");
+            if (id != lastId) {
+                String name = rs.getString("name");
+                aktuellesSzenario = new Szenario(id, name);
+                aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
+                szenarioList.add(aktuellesSzenario);
+            }
+            aktuellesSzenario.getAenderungen().add(new Szenario.aenderungen(geraetList.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")));
         }
     }
 

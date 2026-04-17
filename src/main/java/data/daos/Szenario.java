@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Szenario extends DAO {
+    String beschreibung;
     Timestamp naesteAusfuerung;
     String rythmus;
     List<aenderungen> aenderungen;
@@ -30,6 +31,18 @@ public class Szenario extends DAO {
         this.naesteAusfuerung = naesteAusfuerung;
     }
 
-    private record aenderungen(Geraet geraet, String attribut, String value) {
+    public List<aenderungen> getAenderungen() {
+        return aenderungen;
+    }
+
+    public String getBeschreibung() {
+        return beschreibung;
+    }
+
+    public void setBeschreibung(String beschreibung) {
+        this.beschreibung = beschreibung;
+    }
+
+    public record aenderungen(Geraet geraet, String attribut, String value) {
     }
 }
