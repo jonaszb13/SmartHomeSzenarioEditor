@@ -26,7 +26,7 @@ public class DataAccess {
         String url = "jdbc:h2:file:./data/mydb;AUTO_SERVER=TRUE";
         String user = "sa";
         String password = "";
-        List<Raum> raumList = new ArrayList<>();
+        HashMap<Integer, Raum> raumList = new HashMap<>();
         List<Geraet> GeraetList = new ArrayList<>();
         List<Szenario> SzenarioList = new ArrayList<>();
         try {
@@ -87,14 +87,14 @@ public class DataAccess {
                 """);
     }
 
-    public void getAllData(List<Raum> raumList, List<Geraet> geraetList, List<Szenario> szenarioList, List<Class> geraeteKlasen) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void getAllData(HashMap<Integer, Raum> raumList, List<Geraet> geraetList, List<Szenario> szenarioList, List<Class> geraeteKlasen) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Statement stmt = conn.createStatement();
         //Laden der Räume
         ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
         while (rs.next()) {
             int id = rs.getInt("id");
             String name = rs.getString("name");
-            raumList.add(new Raum(id, name));
+            raumList.put(id, new Raum(id, name));
         }
         //Laden der Geräteklassen
         HashMap<String, Class> klassenListe = new HashMap<>();
@@ -115,6 +115,7 @@ public class DataAccess {
         boolean erstesMal = true;
         while (rs.next()) {
             int id = rs.getInt("id");
+            int raum = rs.getInt("raum");
             String art = rs.getString("art");
             String name = rs.getString("name");
             String schluessel = rs.getString("schluessel");
@@ -122,12 +123,12 @@ public class DataAccess {
             if (id != lastId) {
                 if (erstesMal) erstesMal = false;
                 else aktuellesGeraet.setValues(hashMap);
-                //TODO Raum richtig setzen
                 aktuellesGeraet = (Geraet) klassenListe.get("data.daos.geraete." + art)
                         .getDeclaredConstructor(int.class, String.class, Raum.class)
-                        .newInstance(id, name, new Raum(1, "a"));
+                        .newInstance(id, name, raumList.get(raum));
                 hashMap.put(schluessel, wert);
                 geraetList.add(aktuellesGeraet);
+                raumList.get(raum).getGeraete().add(aktuellesGeraet);
                 lastId = id;
             } else {
                 hashMap.put(schluessel, wert);
