@@ -7,7 +7,6 @@ import data.daos.Szenario;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -108,33 +107,32 @@ public class DataAccess {
                 JOIN GERAETE_WERTE ON Geraete.ID = GERAETE_WERTE.Geraet
                 ORDER BY Geraete.ART, Geraete.ID
                 """);
-        HashMap<String, String> hashMap = new HashMap<>();
-        HashMap<String, List<Geraet>> geraetMap = new HashMap<>();
+        HashMap<String, String> atributeHashMap = new HashMap<>();
         int lastId = -1;
         Geraet aktuellesGeraet = null;
         boolean erstesMal = true;
         while (rs.next()) {
             int id = rs.getInt("id");
-            int raum = rs.getInt("raum");
-            String art = rs.getString("art");
-            String name = rs.getString("name");
             String schluessel = rs.getString("schluessel");
             String wert = rs.getString("wert");
             if (id != lastId) {
                 if (erstesMal) erstesMal = false;
-                else aktuellesGeraet.setValues(hashMap);
+                else aktuellesGeraet.setValues(atributeHashMap);
+                String name = rs.getString("name");
+                String art = rs.getString("art");
+                int raum = rs.getInt("raum");
                 aktuellesGeraet = (Geraet) klassenListe.get("data.daos.geraete." + art)
                         .getDeclaredConstructor(int.class, String.class, Raum.class)
                         .newInstance(id, name, raumList.get(raum));
-                hashMap.put(schluessel, wert);
+                atributeHashMap.put(schluessel, wert);
                 geraetList.add(aktuellesGeraet);
                 raumList.get(raum).getGeraete().add(aktuellesGeraet);
                 lastId = id;
             } else {
-                hashMap.put(schluessel, wert);
+                atributeHashMap.put(schluessel, wert);
             }
         }
-        aktuellesGeraet.setValues(hashMap);
+        if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
         //Laden der Szenarien
         rs = stmt.executeQuery("""
                 SELECT *
