@@ -9,9 +9,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DataAccess {
@@ -25,9 +25,9 @@ public class DataAccess {
         String url = "jdbc:h2:file:./data/mydb;AUTO_SERVER=TRUE";
         String user = "sa";
         String password = "";
-        HashMap<Integer, Raum> raumList = new HashMap<>();
-        HashMap<Integer, Geraet> GeraetList = new HashMap<>();
-        List<Szenario> SzenarioList = new ArrayList<>();
+        Map<Integer, Raum> raumList = new HashMap<>();
+        Map<Integer, Geraet> GeraetList = new HashMap<>();
+        Map<Integer,Szenario> SzenarioList = new HashMap<>();
         try {
             DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
@@ -86,7 +86,7 @@ public class DataAccess {
                 """);
     }
 
-    public void getAllData(HashMap<Integer, Raum> raumList, HashMap<Integer, Geraet> geraetList, List<Szenario> szenarioList, List<Class> geraeteKlasen) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void getAllData(Map<Integer, Raum> raumList, Map<Integer, Geraet> geraetList, Map<Integer, Szenario> szenarioList, List<Class> geraeteKlasen) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Statement stmt = conn.createStatement();
         //Laden der Räume
         ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
@@ -149,7 +149,7 @@ public class DataAccess {
                 String name = rs.getString("name");
                 aktuellesSzenario = new Szenario(id, name);
                 aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
-                szenarioList.add(aktuellesSzenario);
+                szenarioList.put(id, aktuellesSzenario);
             }
             aktuellesSzenario.getAenderungen().add(new Szenario.aenderungen(geraetList.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")));
         }
