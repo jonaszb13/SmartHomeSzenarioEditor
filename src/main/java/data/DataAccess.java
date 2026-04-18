@@ -3,6 +3,7 @@ package data;
 import data.daos.Geraet;
 import data.daos.Raum;
 import data.daos.Szenario;
+import util.Errorlog;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -27,7 +28,7 @@ public class DataAccess {
         String password = "";
         Map<Integer, Raum> raumList = new HashMap<>();
         Map<Integer, Geraet> GeraetList = new HashMap<>();
-        Map<Integer,Szenario> SzenarioList = new HashMap<>();
+        Map<Integer, Szenario> SzenarioList = new HashMap<>();
         try {
             DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
@@ -36,6 +37,8 @@ public class DataAccess {
         } catch (SQLException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException e) {
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -121,13 +124,17 @@ public class DataAccess {
                 String name = rs.getString("name");
                 String art = rs.getString("art");
                 int raum = rs.getInt("raum");
-                aktuellesGeraet = (Geraet) klassenListe.get("data.daos.geraete." + art)
-                        .getDeclaredConstructor(int.class, String.class, Raum.class)
-                        .newInstance(id, name, raumList.get(raum));
-                atributeHashMap.put(schluessel, wert);
-                geraetList.put(id, aktuellesGeraet);
-                raumList.get(raum).getGeraete().add(aktuellesGeraet);
-                lastId = id;
+                try {
+                    aktuellesGeraet = (Geraet) klassenListe.get("data.daos.geraete." + art)
+                            .getDeclaredConstructor(int.class, String.class, Raum.class)
+                            .newInstance(id, name, raumList.get(raum));
+                    atributeHashMap.put(schluessel, wert);
+                    geraetList.put(id, aktuellesGeraet);
+                    raumList.get(raum).getGeraete().add(aktuellesGeraet);
+                    lastId = id;
+                } catch (Exception e) {
+                    Errorlog.addError(e);
+                }
             } else {
                 atributeHashMap.put(schluessel, wert);
             }
@@ -151,14 +158,17 @@ public class DataAccess {
                 aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
                 szenarioList.put(id, aktuellesSzenario);
             }
-            aktuellesSzenario.getAenderungen().add(new Szenario.aenderungen(geraetList.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")));
+            aktuellesSzenario.getAenderungen().add(new Szenario.aenderungen(
+                    geraetList.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")
+            ));
         }
     }
 
-    private List<Class> getGeraeteKlassen() {
+    private List<Class> getGeraeteKlassen() throws Exception {
         String paket = "data.daos.geraete";
         InputStream stream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(paket.replaceAll("[.]", "/"));
+        if (stream == null) throw new Exception();
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         return reader.lines()
                 .filter(line -> line.endsWith(".class"))
@@ -168,13 +178,10 @@ public class DataAccess {
 
     private Class getClass(String className, String packageName) {
         try {
-            return Class.forName(packageName + "."
-                    + className.substring(0, className.lastIndexOf('.')));
-        } catch (ClassNotFoundException e) {
-            // handle the exception
-            //TODO Logging
-            e.printStackTrace();
+            return Class.forName(packageName + "." + className.substring(0, className.lastIndexOf('.')));
+        } catch (ClassNotFoundException eCNF) {
+            Errorlog.addError(eCNF);
+            return null;
         }
-        return null;
     }
 }
