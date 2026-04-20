@@ -1,7 +1,7 @@
 package data.daos;
 
 public class DAO {
-    private int id;
+    private final int id;
     String name;
 
     public DAO(int id, String name) {
