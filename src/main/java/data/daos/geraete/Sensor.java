@@ -3,7 +3,7 @@ package data.daos.geraete;
 import data.daos.Geraet;
 import data.daos.Raum;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class Sensor extends Geraet {
     public Sensor(int id, String name, Raum raum) {
@@ -11,7 +11,6 @@ public class Sensor extends Geraet {
     }
 
     @Override
-    public void setValues (HashMap<String, String > hashMap) {
-
+    public void setValues(Map<String, String> map) {
     }
 }

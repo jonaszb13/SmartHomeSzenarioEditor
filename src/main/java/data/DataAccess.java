@@ -4,6 +4,7 @@ import data.daos.Geraet;
 import data.daos.Raum;
 import data.daos.Szenario;
 import util.Errorlog;
+import util.customExceptions.NoGeraetProvidedException;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -23,28 +24,32 @@ public class DataAccess {
     }
 
     public static void main(String[] args) {
-        String url = "jdbc:h2:file:./data/mydb;AUTO_SERVER=TRUE";
-        String user = "sa";
-        String password = "";
+        final String url = "jdbc:h2:file:./data/mydb;AUTO_SERVER=TRUE";
+        final String user = "sa";
+        final String password = "";
         Map<Integer, Raum> raumList = new HashMap<>();
-        Map<Integer, Geraet> GeraetList = new HashMap<>();
-        Map<Integer, Szenario> SzenarioList = new HashMap<>();
+        Map<Integer, Geraet> geraetList = new HashMap<>();
+        Map<Integer, Szenario> szenarioList = new HashMap<>();
         try {
-            DataAccess dataAccess = new DataAccess(url, user, password);
+            final DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
-            List<Class> geraeteKlassen = dataAccess.getGeraeteKlassen();
-            dataAccess.getAllData(raumList, GeraetList, SzenarioList, geraeteKlassen);
+            List<Class> geraeteKlassen = dataAccess.getGeraeteKlassen("data.daos.geraete");
+            dataAccess.getAllData(raumList, geraetList, szenarioList, geraeteKlassen);
         } catch (SQLException | NoSuchMethodException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            e.printStackTrace();
+                 IllegalAccessException | NoGeraetProvidedException e) {
+            Errorlog.addError(e);
         }
     }
 
+    /**
+     * Methode, die die Datenbank zur persistenten speicherung der Zustände anlegt
+     * @author Ben Knirsch
+     * @throws SQLException wenn Fehler mit er Datenbankverbindung auftritt
+     */
+
     public void setupDatabase() throws SQLException {
         System.out.println("Datenbank verbunden und ggf. neu angelegt.");
-        Statement stmt = conn.createStatement();
+        final Statement stmt = conn.createStatement();
         //Allgemeine Tabellen
         stmt.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS Raeume (
@@ -87,19 +92,20 @@ public class DataAccess {
                     Wert VARCHAR(255)
                     )
                 """);
+        stmt.close();
     }
 
     public void getAllData(Map<Integer, Raum> raumList, Map<Integer, Geraet> geraetList, Map<Integer, Szenario> szenarioList, List<Class> geraeteKlasen) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Statement stmt = conn.createStatement();
+        final Statement stmt = conn.createStatement();
         //Laden der Räume
         ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
         while (rs.next()) {
-            int id = rs.getInt("id");
-            String name = rs.getString("name");
+            final int id = rs.getInt("id");
+            final String name = rs.getString("name");
             raumList.put(id, new Raum(id, name));
         }
         //Laden der Geräteklassen
-        HashMap<String, Class> klassenListe = new HashMap<>();
+        Map<String, Class> klassenListe = new HashMap<>();
         for (Class aClass : geraeteKlasen) {
             klassenListe.put(aClass.getName(), aClass);
         }
@@ -110,33 +116,30 @@ public class DataAccess {
                 JOIN GERAETE_WERTE ON Geraete.ID = GERAETE_WERTE.Geraet
                 ORDER BY Geraete.ART, Geraete.ID
                 """);
-        HashMap<String, String> atributeHashMap = new HashMap<>();
+        stmt.close();
+        Map<String, String> atributeHashMap = new HashMap<>();
         int lastId = -1;
         Geraet aktuellesGeraet = null;
         boolean erstesMal = true;
         while (rs.next()) {
-            int id = rs.getInt("id");
-            String schluessel = rs.getString("schluessel");
-            String wert = rs.getString("wert");
-            if (id != lastId) {
+            final int id = rs.getInt("id");
+            final String schluessel = rs.getString("schluessel");
+            final String wert = rs.getString("wert");
+            if (id == lastId) {
+                atributeHashMap.put(schluessel, wert);
+            } else {
                 if (erstesMal) erstesMal = false;
                 else aktuellesGeraet.setValues(atributeHashMap);
-                String name = rs.getString("name");
-                String art = rs.getString("art");
-                int raum = rs.getInt("raum");
-                try {
-                    aktuellesGeraet = (Geraet) klassenListe.get("data.daos.geraete." + art)
-                            .getDeclaredConstructor(int.class, String.class, Raum.class)
-                            .newInstance(id, name, raumList.get(raum));
-                    atributeHashMap.put(schluessel, wert);
-                    geraetList.put(id, aktuellesGeraet);
-                    raumList.get(raum).getGeraete().add(aktuellesGeraet);
-                    lastId = id;
-                } catch (Exception e) {
-                    Errorlog.addError(e);
-                }
-            } else {
+                final String name = rs.getString("name");
+                final String art = rs.getString("art");
+                final int raum = rs.getInt("raum");
+                aktuellesGeraet = (Geraet) klassenListe.get("data.daos.geraete." + art)
+                        .getDeclaredConstructor(int.class, String.class, Raum.class)
+                        .newInstance(id, name, raumList.get(raum));
                 atributeHashMap.put(schluessel, wert);
+                geraetList.put(id, aktuellesGeraet);
+                raumList.get(raum).getGeraete().add(aktuellesGeraet);
+                lastId = id;
             }
         }
         if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
@@ -151,9 +154,9 @@ public class DataAccess {
         lastId = -1;
         Szenario aktuellesSzenario = null;
         while (rs.next()) {
-            int id = rs.getInt("id");
+            final int id = rs.getInt("id");
             if (id != lastId) {
-                String name = rs.getString("name");
+                final String name = rs.getString("name");
                 aktuellesSzenario = new Szenario(id, name);
                 aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
                 szenarioList.put(id, aktuellesSzenario);
@@ -164,12 +167,11 @@ public class DataAccess {
         }
     }
 
-    private List<Class> getGeraeteKlassen() throws Exception {
-        String paket = "data.daos.geraete";
-        InputStream stream = ClassLoader.getSystemClassLoader()
+    private List<Class> getGeraeteKlassen(String paket) throws NoGeraetProvidedException {
+        final InputStream stream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(paket.replaceAll("[.]", "/"));
-        if (stream == null) throw new Exception();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        if (stream == null) throw new NoGeraetProvidedException("Es wurde keine Geräte Klasse gefunden");
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         return reader.lines()
                 .filter(line -> line.endsWith(".class"))
                 .map(line -> getClass(line, paket))
@@ -177,11 +179,12 @@ public class DataAccess {
     }
 
     private Class getClass(String className, String packageName) {
+        Class clazz = null;
         try {
-            return Class.forName(packageName + "." + className.substring(0, className.lastIndexOf('.')));
+            clazz = Class.forName(packageName + "." + className.substring(0, className.lastIndexOf('.')));
         } catch (ClassNotFoundException eCNF) {
             Errorlog.addError(eCNF);
-            return null;
         }
+        return clazz;
     }
 }

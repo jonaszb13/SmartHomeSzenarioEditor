@@ -1,6 +1,6 @@
 package data.daos;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Geraet extends DAO {
     public Geraet(int id, String name, Raum raum) {
@@ -18,6 +18,6 @@ public abstract class Geraet extends DAO {
         this.raum = raum;
     }
 
-    public abstract void setValues (HashMap<String, String> hashMap) throws IllegalArgumentException;
+    public abstract void setValues (Map<String, String> map) throws IllegalArgumentException;
 
 }

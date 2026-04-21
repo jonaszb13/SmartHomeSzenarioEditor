@@ -3,7 +3,7 @@ package data.daos.geraete;
 import data.daos.Geraet;
 import data.daos.Raum;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class Heizung extends Geraet {
     private float zielTemp;
@@ -18,8 +18,8 @@ public class Heizung extends Geraet {
     }
 
     @Override
-    public void setValues(HashMap<String, String> hashMap) throws IllegalArgumentException {
-        String zielTempString = hashMap.get("zielTemp");
+    public void setValues(Map<String, String> map) throws IllegalArgumentException {
+        String zielTempString = map.get("zielTemp");
         if (zielTempString == null) throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
         else this.zielTemp = Float.parseFloat(zielTempString);
     }

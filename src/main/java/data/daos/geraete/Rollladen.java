@@ -3,7 +3,7 @@ package data.daos.geraete;
 import data.daos.Geraet;
 import data.daos.Raum;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class Rollladen extends Geraet {
     public Rollladen(int id, String name, Raum raum) {
@@ -11,8 +11,7 @@ public class Rollladen extends Geraet {
     }
 
     @Override
-    public void setValues(HashMap<String, String> hashMap) throws IllegalArgumentException {
-
+    public void setValues(Map<String, String> map) throws IllegalArgumentException {
     }
 
 }

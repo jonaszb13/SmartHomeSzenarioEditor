@@ -3,7 +3,7 @@ package data.daos.geraete;
 import data.daos.Geraet;
 import data.daos.Raum;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class Steckdose extends Geraet {
     private boolean strom;
@@ -26,8 +26,8 @@ public class Steckdose extends Geraet {
     }
 
     @Override
-    public void setValues (HashMap<String, String > hashMap) throws IllegalArgumentException {
-        String strom = hashMap.get("Strom");
+    public void setValues (Map<String, String > map) throws IllegalArgumentException {
+        String strom = map.get("Strom");
         if (strom == null) throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
         else this.strom = Boolean.parseBoolean(strom);
     }
