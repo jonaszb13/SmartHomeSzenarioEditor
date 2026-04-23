@@ -1,5 +1,6 @@
 package util;
 
+import jakarta.inject.Singleton;
 import service.FileHandler;
 import ui.Message;
 import ui.UserInterface;
@@ -7,37 +8,45 @@ import org.apache.commons.lang3.SystemUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
+@Singleton
+public final class Errorlog {
 
-public class Errorlog {
-    private static StringBuilder ErrorlogBuilder;
+    private static Errorlog INSTANCE;
 
-    public static void addError(String error) {
-        if (ErrorlogBuilder == null) {
-            ErrorlogBuilder = new StringBuilder();
-        }
-        ErrorlogBuilder.append(LocalDateTime.now()).append(" ").append(error).append("\n");
+    private List<Meldung> ErrorlogEintraege;
+
+    private Errorlog() {
     }
 
-    public static void addError(Exception e) {
-        if (ErrorlogBuilder == null) {
-            ErrorlogBuilder = new StringBuilder();
+    public static Errorlog getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Errorlog();
         }
-        ErrorlogBuilder.append(LocalDateTime.now()).append(" ")
-                .append(e.getMessage()).append(" ")
-                .append(Arrays.toString(e.getStackTrace())).append("\n");
+        return INSTANCE;
+    }
+
+    public List<Meldung> getErrorlogEintraege() {
+        return ErrorlogEintraege;
+    }
+
+    public static void addError(String error) {
+        getInstance().getErrorlogEintraege().add(new Meldung(Meldungstyp.FEHLER, error));
+    }
+
+    public static void addError(Exception exception) {
+        getInstance().getErrorlogEintraege().add(new Meldung(Meldungstyp.FEHLER, exception.getMessage(), exception));
     }
 
     public static boolean hasError() {
-        return ErrorlogBuilder != null && !ErrorlogBuilder.isEmpty();
+        return getInstance().getErrorlogEintraege().stream().anyMatch(Meldung::isError);
     }
 
     public static void endProgramm() {
         if (hasError()) {
             boolean fehler = false;
-            String errorLog = ErrorlogBuilder.toString();
             String os = System.getProperty("os.name");
             String filePath = "";
             if (os.toLowerCase().contains("windows")) {
@@ -45,17 +54,17 @@ public class Errorlog {
             } else if (SystemUtils.IS_OS_UNIX) {
                 filePath = System.getProperty("user.home") + "/library/SmartHomeEditor/errorlogs";
             } else {
-                UserInterface.out(new Message("Betriebssystem konnte nicht ermittelt werden!"));
+                addError("Betriebssystem konnte nicht ermittlet werden!");
                 fehler = true;
             }
             File errorFile = FileHandler.generateFile(filePath, "Errorlog", "txt");
             try {
-                FileHandler.writeTextFile(errorFile, errorLog);
+                FileHandler.writeTextFile(errorFile, getInstance().getErrorlogEintraege());
             } catch (IOException eIO) {
                 fehler = true;
             }
             if (fehler) {
-                UserInterface.out(new Message("Es konnte kein Fehlerbericht erstellt werden"));
+                addError("Es konnte kein Fehlerbericht erstellt werden");
             } else {
                 UserInterface.out(new Message("Es wurde ein Fehlerbericht unter " + filePath + " abgelegt"));
             }
