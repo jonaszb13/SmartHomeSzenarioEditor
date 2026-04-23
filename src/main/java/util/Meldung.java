@@ -27,6 +27,10 @@ public class Meldung {
         return Meldungstyp.FEHLER.equals(meldungstyp);
     }
 
+    public String getMeldungsTyp() {
+        return meldungstyp.getBezeichnung();
+    }
+
     public String getMeldungstext() {
         return meldungstext;
     }

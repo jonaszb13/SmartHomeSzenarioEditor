@@ -5,28 +5,30 @@ import service.FileHandler;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
 @Singleton
 public final class DebugLog {
 
-    private static DebugLog INSTANCE;
+    private static DebugLog instance;
 
-    private List<Meldung> ErrorlogEintraege;
+    private List<Meldung> errorlogEintraege;
 
     private DebugLog() {
     }
 
     public static DebugLog getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new DebugLog();
+        if (instance == null) {
+            instance = new DebugLog();
         }
-        return INSTANCE;
+        return instance;
     }
 
     public List<Meldung> getDebugLogEintraege() {
-        return ErrorlogEintraege;
+        return errorlogEintraege;
     }
 
     public static void addError(String error) {
@@ -35,6 +37,9 @@ public final class DebugLog {
 
     public static void addError(Exception exception) {
         getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.FEHLER, exception.getMessage(), exception));
+    }
+    public static void addError(String error, Exception exception) {
+        getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.FEHLER, error, exception));
     }
 
     public static void addHinweis(String hinweis) {
@@ -62,14 +67,14 @@ public final class DebugLog {
                 addError("Betriebssystem konnte nicht ermittlet werden!");
                 fehler = true;
             }
-            File errorFile = FileHandler.generateFile(filePath, "Errorlog", "txt");
-            try {
+            FileHandler.generateFile(filePath, "DebugLog", "txt");
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath))) {
                 List<Meldung> meldungen = getInstance().getDebugLogEintraege();
-                FileWriter fileWriter = new FileWriter(errorFile);
                 for (Meldung meldung : meldungen) {
-                    PrintWriter pw = new PrintWriter(fileWriter);
-                    pw.write(Arrays.toString(meldung.getStackTrace()));
-                    FileHandler.writeTextFile(errorFile, meldung.getMeldungstext());
+                    System.err.println(meldung.getMeldungstext());
+                    System.err.println(Arrays.toString(meldung.getStackTrace()));
+                    writer.write(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
+                    writer.write(Arrays.toString(meldung.getStackTrace()));
                 }
             } catch (IOException eIO) {
                 fehler = true;

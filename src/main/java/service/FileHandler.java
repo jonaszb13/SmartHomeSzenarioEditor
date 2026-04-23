@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class FileHandler {
-    public static File generateFile(String filePath, String fileName, String fileEnding) {
+    public static void generateFile(String filePath, String fileName, String fileEnding) {
         try {
             Files.createDirectories(Paths.get(filePath));
             String filePathWithName = filePath + File.separator + fileName + "_" + System.currentTimeMillis() + "." + fileEnding;
@@ -19,21 +19,10 @@ public class FileHandler {
                 boolean createFileSuccessful = file.createNewFile();
                 if (!createFileSuccessful) throw new FileNotFoundException();
             }
-            return file;
         } catch (FileNotFoundException eFnF) {
-            System.err.println("Datei konnte nicht angelegt werden: " + eFnF.getMessage());
-            DebugLog.addError(eFnF);
-            return null;
+            DebugLog.addError("Datei konnte nicht angelegt werden: " + eFnF.getMessage(), eFnF);
         } catch (IOException eIO) {
-            System.err.println("Fehler bei erstellen einer Datei: " + eIO.getMessage());
-            DebugLog.addError(eIO);
-            return null;
+            DebugLog.addError("Fehler beim Erstellen einer Datei: " + eIO.getMessage(), eIO);
         }
-    }
-
-    public static void writeTextFile(File file, String data) throws IOException {
-        FileWriter fw = new FileWriter(file);
-        fw.write(data);
-        fw.close();
     }
 }

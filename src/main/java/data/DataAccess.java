@@ -60,7 +60,6 @@ public class DataAccess {
         DebugLog.addHinweis("Datenbank verbunden und ggf. neu angelegt");
         final Statement stmt = conn.createStatement();
         //Allgemeine Tabellen
-        //TODO hat es einen Grund, dass hier executeUpdate verwendet wird
         stmt.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS Raeume (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -175,21 +174,20 @@ public class DataAccess {
                 ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
                 ORDER BY SZENARIEN.ID, GERAET
                 """);
-        letztesGeraetId = -1;
+        int letztesSzenarioId = -1;
         Szenario aktuellesSzenario = null;
 
         String szenarioName;
         int szenarioId;
         while (rs.next()) {
            szenarioId = rs.getInt("id");
-            if (szenarioId != letztesGeraetId) {
+            if (szenarioId != letztesSzenarioId) {
                 szenarioName = rs.getString("name");
                 aktuellesSzenario = new Szenario(szenarioId, szenarioName);
 
                 aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
                 szenarioMap.put(szenarioId, aktuellesSzenario);
             }
-            //TODO soll das hier liegen oder eher im if-Block und dann der else-Block als Fehlerfall?
             aktuellesSzenario.getAenderungen().put(rs.getInt("position"), new Szenario.Aenderungen(
                     geraetMap.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")
             ));
