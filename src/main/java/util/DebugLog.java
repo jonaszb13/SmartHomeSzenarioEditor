@@ -49,7 +49,7 @@ public final class DebugLog {
         return getInstance().getDebugLogEintraege().stream().anyMatch(Meldung::isError);
     }
 
-    public static void createErrorLog() {
+    public static void createErrorFile() {
         if (hasError()) {
             boolean fehler = false;
             String os = System.getProperty("os.name");
