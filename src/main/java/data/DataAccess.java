@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
@@ -56,9 +57,10 @@ public class DataAccess {
      * @throws SQLException wenn Fehler mit er Datenbankverbindung auftritt
      */
     public void setupDatabase() throws SQLException {
-        System.out.println("Datenbank verbunden und ggf. neu angelegt.");
+        DebugLog.addHinweis("Datenbank verbunden und ggf. neu angelegt");
         final Statement stmt = conn.createStatement();
         //Allgemeine Tabellen
+        //TODO hat es einen Grund, dass hier executeUpdate verwendet wird
         stmt.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS Raeume (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -109,10 +111,12 @@ public class DataAccess {
         final Statement stmt = conn.createStatement();
         //Laden der Räume
         ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
+        String raumName;
+        int raumId;
         while (rs.next()) {
-            final int id = rs.getInt("id");
-            final String name = rs.getString("name");
-            raumMap.put(id, new Raum(id, name));
+            raumId = rs.getInt("id");
+            raumName = rs.getString("name");
+            raumMap.put(raumId, new Raum(raumId, raumName));
         }
         //Laden der Geräteklassen
         Map<String, Class> klassenListe = new HashMap<>();
@@ -127,32 +131,42 @@ public class DataAccess {
                 ORDER BY Geraete.ART, Geraete.ID
                 """);
         stmt.close();
-        Map<String, String> atributeHashMap = new HashMap<>();
-        int lastId = -1;
+        Map<String, String> attributeHashMap = new HashMap<>();
+        int letztesGeraetId = -1;
         Geraet aktuellesGeraet = null;
         boolean erstesMal = true;
+        String geraeteName;
+        int geraeteId;
+        String geraeteSchluessel;
+        String geraeteWert;
+        String geraeteArt;
+        int geraeteRaum;
         while (rs.next()) {
-            final int id = rs.getInt("id");
-            final String schluessel = rs.getString("schluessel");
-            final String wert = rs.getString("wert");
-            if (id == lastId) {
-                atributeHashMap.put(schluessel, wert);
+            geraeteId = rs.getInt("id");
+            geraeteSchluessel = rs.getString("schluessel");
+            geraeteWert = rs.getString("wert");
+            if (geraeteId == letztesGeraetId) {
+                attributeHashMap.put(geraeteSchluessel, geraeteWert);
             } else {
-                if (erstesMal) erstesMal = false;
-                else aktuellesGeraet.setValues(atributeHashMap);
-                final String name = rs.getString("name");
-                final String art = rs.getString("art");
-                final int raum = rs.getInt("raum");
-                aktuellesGeraet = (Geraet) klassenListe.get("data.daos.geraete." + art)
+                if (erstesMal) {
+                    erstesMal = false;
+                }
+                else aktuellesGeraet.setValues(attributeHashMap);
+                geraeteName = rs.getString("name");
+                geraeteArt = rs.getString("art");
+                geraeteRaum = rs.getInt("raum");
+                aktuellesGeraet = (Geraet) klassenListe.get("data.daos.geraete." + geraeteArt)
                         .getDeclaredConstructor(int.class, String.class, Raum.class)
-                        .newInstance(id, name, raumMap.get(raum));
-                atributeHashMap.put(schluessel, wert);
-                geraetMap.put(id, aktuellesGeraet);
-                raumMap.get(raum).getGeraete().add(aktuellesGeraet);
-                lastId = id;
+                        .newInstance(geraeteId, geraeteName, raumMap.get(geraeteRaum));
+                attributeHashMap.put(geraeteSchluessel, geraeteWert);
+                geraetMap.put(geraeteId, aktuellesGeraet);
+                raumMap.get(geraeteRaum).getGeraete().add(aktuellesGeraet);
+                letztesGeraetId = geraeteId;
             }
         }
-        if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
+        if (aktuellesGeraet != null) {
+            aktuellesGeraet.setValues(attributeHashMap);
+        }
         //Laden der Szenarien
         rs = stmt.executeQuery("""
                 SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, ATTRIBUT, WERT, POSITION
@@ -161,17 +175,22 @@ public class DataAccess {
                 ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
                 ORDER BY SZENARIEN.ID, GERAET
                 """);
-        lastId = -1;
+        letztesGeraetId = -1;
         Szenario aktuellesSzenario = null;
+
+        String szenarioName;
+        int szenarioId;
         while (rs.next()) {
-            final int id = rs.getInt("id");
-            if (id != lastId) {
-                final String name = rs.getString("name");
-                aktuellesSzenario = new Szenario(id, name);
+           szenarioId = rs.getInt("id");
+            if (szenarioId != letztesGeraetId) {
+                szenarioName = rs.getString("name");
+                aktuellesSzenario = new Szenario(szenarioId, szenarioName);
+
                 aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
-                szenarioMap.put(id, aktuellesSzenario);
+                szenarioMap.put(szenarioId, aktuellesSzenario);
             }
-            aktuellesSzenario.getAenderungen().put(rs.getInt("position"), new Szenario.aenderungen(
+            //TODO soll das hier liegen oder eher im if-Block und dann der else-Block als Fehlerfall?
+            aktuellesSzenario.getAenderungen().put(rs.getInt("position"), new Szenario.Aenderungen(
                     geraetMap.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")
             ));
         }
@@ -186,7 +205,7 @@ public class DataAccess {
         final InputStream stream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(paket.replaceAll("[.]", "/"));
         if (stream == null) throw new NoGeraetProvidedException("Es wurde keine Geräte Klasse gefunden");
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
         return reader.lines()
                 .filter(line -> line.endsWith(".class"))
                 .map(line -> getClass(line, paket))
