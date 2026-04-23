@@ -2,49 +2,54 @@ package util;
 
 import jakarta.inject.Singleton;
 import service.FileHandler;
-import ui.Message;
-import ui.UserInterface;
 import org.apache.commons.lang3.SystemUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Singleton
-public final class Errorlog {
+public final class DebugLog {
 
-    private static Errorlog INSTANCE;
+    private static DebugLog INSTANCE;
 
     private List<Meldung> ErrorlogEintraege;
 
-    private Errorlog() {
+    private DebugLog() {
     }
 
-    public static Errorlog getInstance() {
+    public static DebugLog getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new Errorlog();
+            INSTANCE = new DebugLog();
         }
         return INSTANCE;
     }
 
-    public List<Meldung> getErrorlogEintraege() {
+    public List<Meldung> getDebugLogEintraege() {
         return ErrorlogEintraege;
     }
 
     public static void addError(String error) {
-        getInstance().getErrorlogEintraege().add(new Meldung(Meldungstyp.FEHLER, error));
+        getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.FEHLER, error));
     }
 
     public static void addError(Exception exception) {
-        getInstance().getErrorlogEintraege().add(new Meldung(Meldungstyp.FEHLER, exception.getMessage(), exception));
+        getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.FEHLER, exception.getMessage(), exception));
+    }
+
+    public static void addHinweis(String hinweis) {
+        getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.HINWEIS, hinweis));
+    }
+
+    public static void addMetadaten(String metadaten) {
+        getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.METADATEN, metadaten));
     }
 
     public static boolean hasError() {
-        return getInstance().getErrorlogEintraege().stream().anyMatch(Meldung::isError);
+        return getInstance().getDebugLogEintraege().stream().anyMatch(Meldung::isError);
     }
 
-    public static void endProgramm() {
+    public static void createErrorLog() {
         if (hasError()) {
             boolean fehler = false;
             String os = System.getProperty("os.name");
@@ -59,21 +64,22 @@ public final class Errorlog {
             }
             File errorFile = FileHandler.generateFile(filePath, "Errorlog", "txt");
             try {
-                FileHandler.writeTextFile(errorFile, getInstance().getErrorlogEintraege());
+                List<Meldung> meldungen = getInstance().getDebugLogEintraege();
+                FileWriter fileWriter = new FileWriter(errorFile);
+                for (Meldung meldung : meldungen) {
+                    PrintWriter pw = new PrintWriter(fileWriter);
+                    pw.write(Arrays.toString(meldung.getStackTrace()));
+                    FileHandler.writeTextFile(errorFile, meldung.getMeldungstext());
+                }
             } catch (IOException eIO) {
                 fehler = true;
             }
             if (fehler) {
                 addError("Es konnte kein Fehlerbericht erstellt werden");
             } else {
-                UserInterface.out(new Message("Es wurde ein Fehlerbericht unter " + filePath + " abgelegt"));
+                addMetadaten("Es wurde ein Fehlerbericht unter " + filePath + " abgelegt");
             }
-            UserInterface.out(new Message("Das Programm wurde kontrolliert beendet"));
-            System.exit(1);
-        } else {
-            UserInterface.out(new Message("Das Programm wurde kontrolliert beendet"));
-            System.exit(0);
         }
-
-    }
+        addMetadaten("Das Programm wurde kontrolliert beendet");
+        }
 }

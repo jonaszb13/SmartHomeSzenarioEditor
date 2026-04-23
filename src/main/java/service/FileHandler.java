@@ -1,6 +1,6 @@
 package service;
 
-import util.Errorlog;
+import util.DebugLog;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,11 +22,11 @@ public class FileHandler {
             return file;
         } catch (FileNotFoundException eFnF) {
             System.err.println("Datei konnte nicht angelegt werden: " + eFnF.getMessage());
-            Errorlog.addError(eFnF);
+            DebugLog.addError(eFnF);
             return null;
         } catch (IOException eIO) {
             System.err.println("Fehler bei erstellen einer Datei: " + eIO.getMessage());
-            Errorlog.addError(eIO);
+            DebugLog.addError(eIO);
             return null;
         }
     }

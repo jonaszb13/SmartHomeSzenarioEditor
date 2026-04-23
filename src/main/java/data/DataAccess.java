@@ -3,7 +3,7 @@ package data;
 import data.daos.Geraet;
 import data.daos.Raum;
 import data.daos.Szenario;
-import util.Errorlog;
+import util.DebugLog;
 import util.customExceptions.NoGeraetProvidedException;
 
 import java.io.BufferedReader;
@@ -47,7 +47,7 @@ public class DataAccess {
             dataAccess.getAllData(raumHashMap, geraetHashMap, szenarioHashMap, geraeteKlassen);
         } catch (SQLException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException | NoGeraetProvidedException e) {
-            Errorlog.addError(e);
+            DebugLog.addError(e);
         }
     }
 
@@ -204,7 +204,7 @@ public class DataAccess {
         try {
             clazz = Class.forName(packageName + "." + className.substring(0, className.lastIndexOf('.')));
         } catch (ClassNotFoundException eCNF) {
-            Errorlog.addError(eCNF);
+            DebugLog.addError(eCNF);
         }
         return clazz;
     }
