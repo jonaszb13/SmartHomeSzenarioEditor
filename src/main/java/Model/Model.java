@@ -1,4 +1,4 @@
-package service;
+package Model;
 
 public class Model {
 }

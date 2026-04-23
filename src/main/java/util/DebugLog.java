@@ -1,7 +1,6 @@
 package util;
 
 import jakarta.inject.Singleton;
-import service.FileHandler;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
