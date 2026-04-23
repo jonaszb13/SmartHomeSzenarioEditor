@@ -1,34 +1,34 @@
 package ui;
 
 public class Message {
-    private String contend;
-    private String[] contends;
+    private String content;
+    private String[] contents;
     private Object metadata;
 
-    public Message(String contend) {
-        this.contend = contend;
+    public Message(String content) {
+        this.content = content;
     }
 
-    public Message(String[] contends) {
-        this.contends = contends;
+    public Message(String[] contents) {
+        this.contents = contents.clone();
     }
 
-    public Message(String contend, Object metadata) {
-        this.contend = contend;
+    public Message(String content, Object metadata) {
+        this.content = content;
         this.metadata = metadata;
     }
 
-    public Message(String[] contends, Object metadata) {
-        this.contends = contends;
+    public Message(String[] contents, Object metadata) {
+        this.contents = contents.clone();
         this.metadata = metadata;
     }
 
     public String getContent() {
-        return contend;
+        return content;
     }
 
     public String[] getContents() {
-        return contends;
+        return contents.clone();
     }
 
     public Object getMetadata() {

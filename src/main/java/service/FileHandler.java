@@ -13,8 +13,8 @@ public class FileHandler {
     public static File generateFile(String filePath, String fileName, String fileEnding) {
         try {
             Files.createDirectories(Paths.get(filePath));
-            filePath += File.separator + fileName + "_" + System.currentTimeMillis() + "." + fileEnding;
-            File file = new File(filePath);
+            String filePathWithName = filePath + File.separator + fileName + "_" + System.currentTimeMillis() + "." + fileEnding;
+            File file = new File(filePathWithName);
             if (!file.exists()) {
                 boolean createFileSuccessful = file.createNewFile();
                 if (!createFileSuccessful) throw new FileNotFoundException();
