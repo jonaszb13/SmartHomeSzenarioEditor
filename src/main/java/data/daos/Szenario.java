@@ -1,18 +1,18 @@
 package data.daos;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Szenario extends DAO {
     String beschreibung;
     Timestamp naesteAusfuerung;
     String rythmus;
-    List<aenderungen> aenderungen;
+    Map<Integer,aenderungen> aenderungen;
 
     public Szenario(int id, String name) {
         super(id, name);
-        this.aenderungen = new ArrayList<aenderungen>();
+        this.aenderungen = new HashMap<Integer, aenderungen>();
     }
 
     public String getRythmus() {
@@ -31,7 +31,7 @@ public class Szenario extends DAO {
         this.naesteAusfuerung = naesteAusfuerung;
     }
 
-    public List<aenderungen> getAenderungen() {
+    public Map<Integer,aenderungen> getAenderungen() {
         return aenderungen;
     }
 
