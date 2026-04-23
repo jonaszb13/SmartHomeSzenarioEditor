@@ -16,25 +16,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Klasse die alle Interaktionen mit der persistenten Datenhaltung handhabt.
+ * @author Ben Knirsch
+ */
 public class DataAccess {
     private final Connection conn;
 
+    /**
+     * @param url      Pfad, in dem Datenbank angelegt werden soll
+     * @param user     Benutzername des Standartnutzers
+     * @param password Passwort des Standartnutzers
+     * @throws SQLException Wird geworfen, wenn ungültige werte übergeben werden und Verbindung nicht hergestellt werden kann
+     */
     public DataAccess(String url, String user, String password) throws SQLException {
-        this.conn = DriverManager.getConnection(url, user, password);
+        this.conn = DriverManager.getConnection("jdbc:h2:file:" + url + ";AUTO_SERVER=TRUE", user, password);
     }
 
     public static void main(String[] args) {
-        final String url = "jdbc:h2:file:./data/mydb;AUTO_SERVER=TRUE";
+        final String url = "./data/mydb";
         final String user = "sa";
         final String password = "";
-        Map<Integer, Raum> raumList = new HashMap<>();
-        Map<Integer, Geraet> geraetList = new HashMap<>();
-        Map<Integer, Szenario> szenarioList = new HashMap<>();
+        Map<Integer, Raum> raumHashMap = new HashMap<>();
+        Map<Integer, Geraet> geraetHashMap = new HashMap<>();
+        Map<Integer, Szenario> szenarioHashMap = new HashMap<>();
         try {
             final DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
             List<Class> geraeteKlassen = dataAccess.getGeraeteKlassen("data.daos.geraete");
-            dataAccess.getAllData(raumList, geraetList, szenarioList, geraeteKlassen);
+            dataAccess.getAllData(raumHashMap, geraetHashMap, szenarioHashMap, geraeteKlassen);
         } catch (SQLException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException | NoGeraetProvidedException e) {
             Errorlog.addError(e);
@@ -43,10 +53,8 @@ public class DataAccess {
 
     /**
      * Methode, die die Datenbank zur persistenten speicherung der Zustände anlegt
-     * @author Ben Knirsch
      * @throws SQLException wenn Fehler mit er Datenbankverbindung auftritt
      */
-
     public void setupDatabase() throws SQLException {
         System.out.println("Datenbank verbunden und ggf. neu angelegt.");
         final Statement stmt = conn.createStatement();
@@ -96,18 +104,19 @@ public class DataAccess {
         stmt.close();
     }
 
-    public void getAllData(Map<Integer, Raum> raumList, Map<Integer, Geraet> geraetList, Map<Integer, Szenario> szenarioList, List<Class> geraeteKlasen) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+
+    public void getAllData(Map<Integer, Raum> raumMap, Map<Integer, Geraet> geraetMap, Map<Integer, Szenario> szenarioMap, List<Class> geraeteKlasenList) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         final Statement stmt = conn.createStatement();
         //Laden der Räume
         ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
         while (rs.next()) {
             final int id = rs.getInt("id");
             final String name = rs.getString("name");
-            raumList.put(id, new Raum(id, name));
+            raumMap.put(id, new Raum(id, name));
         }
         //Laden der Geräteklassen
         Map<String, Class> klassenListe = new HashMap<>();
-        for (Class aClass : geraeteKlasen) {
+        for (Class aClass : geraeteKlasenList) {
             klassenListe.put(aClass.getName(), aClass);
         }
         //Landen der Geräte
@@ -136,10 +145,10 @@ public class DataAccess {
                 final int raum = rs.getInt("raum");
                 aktuellesGeraet = (Geraet) klassenListe.get("data.daos.geraete." + art)
                         .getDeclaredConstructor(int.class, String.class, Raum.class)
-                        .newInstance(id, name, raumList.get(raum));
+                        .newInstance(id, name, raumMap.get(raum));
                 atributeHashMap.put(schluessel, wert);
-                geraetList.put(id, aktuellesGeraet);
-                raumList.get(raum).getGeraete().add(aktuellesGeraet);
+                geraetMap.put(id, aktuellesGeraet);
+                raumMap.get(raum).getGeraete().add(aktuellesGeraet);
                 lastId = id;
             }
         }
@@ -160,14 +169,19 @@ public class DataAccess {
                 final String name = rs.getString("name");
                 aktuellesSzenario = new Szenario(id, name);
                 aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
-                szenarioList.put(id, aktuellesSzenario);
+                szenarioMap.put(id, aktuellesSzenario);
             }
-            aktuellesSzenario.getAenderungen().put(rs.getInt("position"),new Szenario.aenderungen(
-                geraetList.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")
+            aktuellesSzenario.getAenderungen().put(rs.getInt("position"), new Szenario.aenderungen(
+                    geraetMap.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")
             ));
         }
     }
 
+    /**
+     * @param paket Paket in dem die Klassen aller Geräte liegen
+     * @return Liste aller Klassen, in dem übergeben Paket
+     * @throws NoGeraetProvidedException Wird geworfen, wenn der Ordner leer ist
+     */
     private List<Class> getGeraeteKlassen(String paket) throws NoGeraetProvidedException {
         final InputStream stream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(paket.replaceAll("[.]", "/"));
@@ -179,6 +193,12 @@ public class DataAccess {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Subklasse für Fehlerhandling im Lamda-Ausdruck
+     * @param className Name der Klasse die gefunden werden soll
+     * @param packageName Paket in dem die Klassen aller Geräte liegen
+     * @return gefundene Klasse
+     */
     private Class getClass(String className, String packageName) {
         Class clazz = null;
         try {
