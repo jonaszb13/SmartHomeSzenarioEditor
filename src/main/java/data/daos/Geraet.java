@@ -18,6 +18,6 @@ public abstract class Geraet extends DAO {
         this.raum = raum;
     }
 
-    public abstract void setValues (Map<String, String> map) throws IllegalArgumentException;
+    public abstract void setValues(Map<String, String> map) throws IllegalArgumentException;
 
 }

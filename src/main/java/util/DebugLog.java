@@ -39,6 +39,7 @@ public final class DebugLog {
     public static void addError(Exception exception) {
         getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.FEHLER, exception.getMessage(), exception));
     }
+
     public static void addError(String error, Exception exception) {
         getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.FEHLER, error, exception));
     }
@@ -87,5 +88,6 @@ public final class DebugLog {
             }
         }
         addMetadaten("Das Programm wurde kontrolliert beendet");
-        }
+        // Legendär das versucht wird in das Log zu schreiben, dass das Log nicht geschrieben werden kann
+    }
 }
