@@ -1,8 +1,8 @@
 package data;
 
-import data.daos.Geraet;
-import data.daos.Raum;
-import data.daos.Szenario;
+import data.models.Geraet;
+import data.models.Raum;
+import data.models.Szenario;
 import util.DebugLog;
 import util.customExceptions.NoGeraetProvidedException;
 
@@ -35,6 +35,8 @@ public class DataAccess {
     }
 
     public static void main(String[] args) {
+        DebugLog.addError("Fehler");
+        DebugLog.createErrorFile();
         final String url = "./data/mydb";
         final String user = "sa";
         final String password = "";
@@ -44,7 +46,7 @@ public class DataAccess {
         try {
             final DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
-            List<Class> geraeteKlassen = dataAccess.getGeraeteKlassen("data.daos.geraete");
+            List<Class> geraeteKlassen = dataAccess.getGeraeteKlassen("data.models.geraete");
             dataAccess.getAllData(raumHashMap, geraetHashMap, szenarioHashMap, geraeteKlassen);
         } catch (SQLException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException | NoGeraetProvidedException e) {
@@ -106,7 +108,7 @@ public class DataAccess {
     }
 
 
-    public void getAllData(Map<Integer, Raum> raumMap, Map<Integer, Geraet> geraetMap, Map<Integer, Szenario> szenarioMap, List<Class> geraeteKlasenList) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void getAllData(Map<Integer, Raum> raumMap, Map<Integer, Geraet> geraetMap, Map<Integer, Szenario> szenarioMap, List<Class> geraeteKlassenList) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         final Statement stmt = conn.createStatement();
         //Laden der Räume
         ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
@@ -119,7 +121,7 @@ public class DataAccess {
         }
         //Laden der Geräteklassen
         Map<String, Class> klassenListe = new HashMap<>();
-        for (Class aClass : geraeteKlasenList) {
+        for (Class aClass : geraeteKlassenList) {
             klassenListe.put(aClass.getName(), aClass);
         }
         //Landen der Geräte
@@ -211,7 +213,7 @@ public class DataAccess {
     }
 
     /**
-     * Subklasse für Fehlerhandling im Lamda-Ausdruck
+     * Subklasse für Fehlerhandling im Lambda-Ausdruck
      * @param className Name der Klasse die gefunden werden soll
      * @param packageName Paket in dem die Klassen aller Geräte liegen
      * @return gefundene Klasse

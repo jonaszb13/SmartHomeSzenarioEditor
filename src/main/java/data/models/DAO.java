@@ -1,4 +1,4 @@
-package data.daos;
+package data.models;
 
 public class DAO {
     private final int id;
