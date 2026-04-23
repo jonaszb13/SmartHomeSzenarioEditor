@@ -6,9 +6,9 @@ import java.util.Stack;
 
 public class Meldung {
 
-    private Meldungstyp meldungstyp;
+    private final Meldungstyp meldungstyp;
 
-    private String meldungstext;
+    private final String meldungstext;
 
     private Throwable exceptionForDebugLog;
 
