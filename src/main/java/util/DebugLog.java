@@ -60,24 +60,30 @@ public final class DebugLog {
             String os = System.getProperty("os.name");
             String filePath = "";
             if (os.toLowerCase().contains("windows")) {
-                filePath = System.getenv("LocalAppData") + "\\SmartHomeEditor\\errorlogs";
+                filePath = System.getenv("LocalAppData") + "\\SmartHomeEditor\\debuglogs";
             } else if (SystemUtils.IS_OS_UNIX) {
                 filePath = System.getProperty("user.home") + "/library/SmartHomeEditor/errorlogs";
             } else {
                 addError("Betriebssystem konnte nicht ermittlet werden!");
                 fehler = true;
             }
-            FileHandler.generateFile(filePath, "DebugLog", "txt");
-            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath))) {
-                List<Meldung> meldungen = getInstance().getDebugLogEintraege();
-                for (Meldung meldung : meldungen) {
-                    System.err.println(meldung.getMeldungstext());
-                    System.err.println(Arrays.toString(meldung.getStackTrace()));
-                    writer.write(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
-                    writer.write(Arrays.toString(meldung.getStackTrace()));
-                }
-            } catch (IOException eIO) {
+            String filePathWithName = FileHandler.generateFile(filePath, "DebugLog", "txt");
+            if (filePathWithName == null) {
                 fehler = true;
+            } else {
+                try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePathWithName))) {
+                    List<Meldung> meldungen = getInstance().getDebugLogEintraege();
+                    for (Meldung meldung : meldungen) {
+                        System.err.println(meldung.getMeldungstext());
+                        writer.write(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
+                        if (meldung.getStackTrace() != null) {
+                            System.err.println(Arrays.toString(meldung.getStackTrace()));
+                            writer.write(Arrays.toString(meldung.getStackTrace()));
+                        }
+                    }
+                } catch (IOException eIO) {
+                    fehler = true;
+                }
             }
             if (fehler) {
                 addError("Es konnte kein Fehlerbericht erstellt werden");

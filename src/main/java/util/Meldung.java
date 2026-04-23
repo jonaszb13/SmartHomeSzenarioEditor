@@ -1,9 +1,5 @@
 package util;
 
-import java.io.PrintStream;
-import java.io.StringWriter;
-import java.util.Stack;
-
 public class Meldung {
 
     private final Meldungstyp meldungstyp;
@@ -36,6 +32,6 @@ public class Meldung {
     }
 
     public StackTraceElement[] getStackTrace() {
-        return exceptionForDebugLog.getStackTrace();
+        return exceptionForDebugLog == null ? null : exceptionForDebugLog.getStackTrace();
     }
 }
