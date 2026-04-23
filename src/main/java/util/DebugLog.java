@@ -94,6 +94,6 @@ public final class DebugLog {
             }
         }
         addMetadaten("Das Programm wurde kontrolliert beendet");
-        // Legendär das versucht wird in das Log zu schreiben, dass das Log nicht geschrieben werden kann
+        // Die Nachrichten können ja trotzdem auf der Maske angezeigt werden :D
     }
 }
