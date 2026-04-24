@@ -27,8 +27,11 @@ public class Lampe extends Geraet {
         final String farbe = map.get("farbe");
         final String eingeschaltet = map.get("eingeschaltet");
         if (haelligkeit != null) this.haelligkeit = Double.parseDouble(haelligkeit);
+        else throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
         if (farbe != null) this.farbe = Color.decode(farbe);
+        else throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
         if (eingeschaltet != null) this.eingeschaltet = Boolean.parseBoolean(eingeschaltet);
+        else throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
     }
 
     public double getHaelligkeit() {
