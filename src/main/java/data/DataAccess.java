@@ -85,7 +85,7 @@ public class DataAccess {
                     aktion VARCHAR(255) NOT NULL,
                     Szenario INT REFERENCES Szenarien(id),
                     Geraet INT REFERENCES Geraete(id),
-                    Attribut VARCHAR(255) NOT NULL,
+                    schluessel VARCHAR(255) NOT NULL,
                     Wert VARCHAR(255),
                     Position INT
                     );
@@ -151,7 +151,7 @@ public class DataAccess {
         if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
         //Laden der Szenarien
         rs = stmt.executeQuery("""
-                SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, ATTRIBUT, WERT, POSITION
+                SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                 FROM SZENARIEN
                 JOIN SZENARIEN_INHALT
                 ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
@@ -168,6 +168,7 @@ public class DataAccess {
                 aktuellesSzenario = new Szenario(id, name);
                 aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
                 szenarioMap.put(id, aktuellesSzenario);
+                lastId = id;
             }
             aktuellesSzenario.getAenderungen().put(rs.getInt("position"), new Szenario.Aenderungen(
                     geraetMap.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")
