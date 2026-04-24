@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+/**
+ * Statische Klasse, die zur Laufzeit ermittelt welche Klassen im geraete Paket liegen
+ * @author Ben Knirsch
+ */
 public final class GeraetTypHandler {
 
     private static final String GERAETE_KLASSEN_PAKET = "data.daos.geraete";
@@ -33,7 +37,6 @@ public final class GeraetTypHandler {
 
     /**
      * Subklasse für Fehlerhandling im Lamda-Ausdruck
-     *
      * @param className   Name der Klasse die gefunden werden soll
      * @param packageName Paket in dem die Klassen aller Geräte liegen
      * @return gefundene Klasse

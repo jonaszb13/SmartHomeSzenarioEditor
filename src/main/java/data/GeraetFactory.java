@@ -10,6 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Factory-Klasse die das dynamische erstellen von Objekten, welche von Geraet erben, ermöglicht
+ * @author Ben Knirsch
+ */
 public final class GeraetFactory {
 
     private static GeraetFactory instance;

@@ -102,6 +102,13 @@ public class DataAccess {
     }
 
 
+    /**
+     * @param raumMap Map in der alle Räume in der Datenbank auf ihre IDs gemaped werden
+     * @param geraetMap Map in der alle Geräte in der Datenbank mit ihren Attributen auf ihre IDs gemaped werden
+     * @param szenarioMap Map in der alle Szenarien in der Datenbank mit ihren Inhalten auf ihre IDs gemaped werden
+     * @throws SQLException wenn ein Fehler bei der Datenbankverbindung auftritt
+     * @throws NoGeraetProvidedException tritt auf, wenn in dem Ordner geraete keine Klassen vorhanden sind
+     */
     public void getAllData(Map<Integer, Raum> raumMap, Map<Integer, Geraet> geraetMap, Map<Integer, Szenario> szenarioMap) throws SQLException, NoGeraetProvidedException {
         final Statement stmt = conn.createStatement();
         //Laden der Räume

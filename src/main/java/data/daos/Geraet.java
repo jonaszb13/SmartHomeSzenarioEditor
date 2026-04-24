@@ -2,6 +2,8 @@ package data.daos;
 
 import java.util.Map;
 
+
+
 public abstract class Geraet extends DAO {
     private Raum raum;
 
@@ -18,7 +20,7 @@ public abstract class Geraet extends DAO {
         this.raum = raum;
     }
 
-    public void setValues(Map<String, String> map) throws IllegalArgumentException{
+    public void setValues(Map<String, String> map) throws IllegalArgumentException {
         for (Map.Entry<String, String> entry : map.entrySet()) {
             updateValue(entry.getKey(), entry.getValue());
         }
