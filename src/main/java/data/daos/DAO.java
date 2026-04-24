@@ -2,7 +2,7 @@ package data.daos;
 
 public class DAO {
     private final int id;
-    String name;
+    private String name;
 
     public DAO(int id, String name) {
         this.id = id;

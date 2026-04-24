@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Szenario extends DAO {
-    String beschreibung;
-    Timestamp naesteAusfuerung;
-    String rythmus;
-    Map<Integer,Aenderungen> aenderungen;
+    private String beschreibung;
+    private Timestamp naesteAusfuerung;
+    private String rythmus;
+    private Map<Integer,Aenderungen> aenderungen;
 
     public Szenario(int id, String name) {
         super(id, name);
-        this.aenderungen = new HashMap<Integer, Aenderungen>();
+        this.aenderungen = new HashMap<>();
     }
 
     public String getRythmus() {

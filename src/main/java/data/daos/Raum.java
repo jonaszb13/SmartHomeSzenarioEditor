@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Raum extends DAO {
-    List<Geraet> geraete;
+    private List<Geraet> geraete;
 
     public Raum(int id, String name) {
         super(id, name);
-        this.name = name;
-        geraete = new ArrayList<Geraet>();
+        geraete = new ArrayList<>();
     }
 
     public List<Geraet> getGeraete() {

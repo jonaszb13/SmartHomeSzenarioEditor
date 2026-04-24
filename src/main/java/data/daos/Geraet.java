@@ -3,12 +3,12 @@ package data.daos;
 import java.util.Map;
 
 public abstract class Geraet extends DAO {
+    private Raum raum;
+
     public Geraet(int id, String name, Raum raum) {
         super(id, name);
         this.raum = raum;
     }
-
-    Raum raum;
 
     public Raum getRaum() {
         return raum;

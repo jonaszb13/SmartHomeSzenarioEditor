@@ -22,9 +22,9 @@ public final class GeraetFactory {
     public static GeraetFactory getInstance() throws NoGeraetProvidedException {
         if (instance == null) {
             instance = new GeraetFactory();
-            instance.geraeteKlassen = new HashMap<String, Class>();
-            List<Class> geraeteKlassenList = GeraetTypHandler.getGeraeteKlassen();
-            for (Class aClass : geraeteKlassenList) {
+            instance.geraeteKlassen = new HashMap<>();
+            final List<Class> geraeteKlassenList = GeraetTypHandler.getGeraeteKlassen();
+            for (final Class aClass : geraeteKlassenList) {
                 instance.geraeteKlassen.put(aClass.getName(), aClass);
             }
         }
@@ -32,14 +32,15 @@ public final class GeraetFactory {
     }
 
     public Geraet createGeraet(int id, String name, Raum raum, String typ) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Geraet geraet = null;
         try {
-            return (Geraet) geraeteKlassen.get("data.daos.geraete." + typ)
+            geraet = (Geraet) geraeteKlassen.get("data.daos.geraete." + typ)
                     .getDeclaredConstructor(int.class, String.class, Raum.class)
                     .newInstance(id, name, raum);
         } catch (ClassCastException eCC) {
             DebugLog.addError("Es befindet sich eine Klasse im Gerätetypen-Ordner die nicht von Gerät erbt", eCC);
         }
-        return null;
+        return geraet;
     }
 
 }

@@ -6,7 +6,6 @@ import data.daos.Szenario;
 import util.DebugLog;
 import util.customExceptions.NoGeraetProvidedException;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import java.util.Map;
 
 /**
  * Klasse die alle Interaktionen mit der persistenten Datenhaltung handhabt.
- *
  * @author Ben Knirsch
  */
 public class DataAccess {
@@ -25,7 +23,7 @@ public class DataAccess {
      * @param url      Pfad, in dem Datenbank angelegt werden soll
      * @param user     Benutzername des Standartnutzers
      * @param password Passwort des Standartnutzers
-     * @throws SQLException Wird geworfen, wenn ungültige werte übergeben werden und Verbindung nicht hergestellt werden kann
+     * @throws SQLException Wird geworfen, wenn ungültige Werte übergeben werden und Verbindung nicht hergestellt werden kann
      */
     public DataAccess(String url, String user, String password) throws SQLException {
         this.conn = DriverManager.getConnection("jdbc:h2:file:" + url + ";AUTO_SERVER=TRUE", user, password);
@@ -43,7 +41,6 @@ public class DataAccess {
             dataAccess.setupDatabase();
             List<Class> geraeteKlassen = GeraetTypHandler.getGeraeteKlassen();
             dataAccess.getAllData(raumHashMap, geraetHashMap, szenarioHashMap);
-            System.out.println(" ");
         } catch (SQLException | NoGeraetProvidedException e) {
             e.printStackTrace();
             DebugLog.addError(e);
@@ -115,8 +112,8 @@ public class DataAccess {
             raumMap.put(id, new Raum(id, name));
         }
         //Landen der Geräte
-        GeraetFactory gf = GeraetFactory.getInstance();
-        //QUESTION Sollen geräte ohne Attribute geladen werden?
+        final GeraetFactory gf = GeraetFactory.getInstance();
+        //QUESTION: Sollen geräte ohne Attribute geladen werden?
         rs = stmt.executeQuery("""
                 SELECT GERAETE.ID, GERAETE.NAME, GERAETE.RAUM, Geraete.ART, SCHLUESSEL, WERT
                 FROM Geraete

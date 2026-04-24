@@ -27,7 +27,7 @@ public class Steckdose extends Geraet {
 
     @Override
     public void setValues (Map<String, String > map) throws IllegalArgumentException {
-        String strom = map.get("Strom");
+        final String strom = map.get("Strom");
         if (strom == null) throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
         else this.strom = Boolean.parseBoolean(strom);
     }

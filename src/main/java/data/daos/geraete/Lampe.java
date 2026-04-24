@@ -23,9 +23,9 @@ public class Lampe extends Geraet {
 
     @Override
     public void setValues(Map<String, String> map) throws IllegalArgumentException {
-        String haelligkeit = map.get("haelligkeit");
-        String farbe = map.get("farbe");
-        String eingeschaltet = map.get("eingeschaltet");
+        final String haelligkeit = map.get("haelligkeit");
+        final String farbe = map.get("farbe");
+        final String eingeschaltet = map.get("eingeschaltet");
         if (haelligkeit != null) this.haelligkeit = Double.parseDouble(haelligkeit);
         if (farbe != null) this.farbe = Color.decode(farbe);
         if (eingeschaltet != null) this.eingeschaltet = Boolean.parseBoolean(eingeschaltet);

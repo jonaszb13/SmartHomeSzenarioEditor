@@ -19,7 +19,7 @@ public class Heizung extends Geraet {
 
     @Override
     public void setValues(Map<String, String> map) throws IllegalArgumentException {
-        String zielTempString = map.get("zielTemp");
+        final String zielTempString = map.get("zielTemp");
         if (zielTempString == null) throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
         else this.zielTemp = Float.parseFloat(zielTempString);
     }

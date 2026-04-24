@@ -10,29 +10,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class GeraetTypHandler {
+public final class GeraetTypHandler {
 
-    private static final String geraeteKlassenPaket = "data.daos.geraete";
+    private static final String GERAETE_KLASSEN_PAKET = "data.daos.geraete";
 
 
     /**
      * @return Liste aller Klassen, in dem übergeben Paket
      * @throws NoGeraetProvidedException Wird geworfen, wenn der Ordner leer ist
      */
-     static List<Class> getGeraeteKlassen() throws NoGeraetProvidedException {
+    /* package */
+    static List<Class> getGeraeteKlassen() throws NoGeraetProvidedException {
         final InputStream stream = ClassLoader.getSystemClassLoader()
-                .getResourceAsStream(geraeteKlassenPaket.replaceAll("[.]", "/"));
+                .getResourceAsStream(GERAETE_KLASSEN_PAKET.replaceAll("[.]", "/"));
         if (stream == null) throw new NoGeraetProvidedException("Es wurde keine Geräte Klasse gefunden");
         final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         return reader.lines()
                 .filter(line -> line.endsWith(".class"))
-                .map(line -> getClass(line, geraeteKlassenPaket))
+                .map(line -> getClass(line, GERAETE_KLASSEN_PAKET))
                 .collect(Collectors.toList());
     }
 
     /**
      * Subklasse für Fehlerhandling im Lamda-Ausdruck
-     * @param className Name der Klasse die gefunden werden soll
+     *
+     * @param className   Name der Klasse die gefunden werden soll
      * @param packageName Paket in dem die Klassen aller Geräte liegen
      * @return gefundene Klasse
      */
