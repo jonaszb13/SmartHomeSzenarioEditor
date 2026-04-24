@@ -3,8 +3,6 @@ package data.daos.geraete;
 import data.daos.Geraet;
 import data.daos.Raum;
 
-import java.util.Map;
-
 public class Rollladen extends Geraet {
 
     private float schliessstatus;
@@ -31,12 +29,16 @@ public class Rollladen extends Geraet {
     }
 
     @Override
-    public void setValues(Map<String, String> map) throws IllegalArgumentException {
-        final String schliessstatus = map.get("schliessstatus");
-        final String winckelung = map.get("winckelung");
-        if (schliessstatus != null) setSchliessstatus(Float.parseFloat(schliessstatus));
-        else throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
-        if (winckelung != null) setWinckelung(Float.parseFloat(winckelung));
-        else throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+    public void updateValue(String key, String value) {
+        switch (key) {
+            case "schliessstatus":
+                setSchliessstatus(Float.parseFloat(value));
+                break;
+            case "winckelung":
+                setWinckelung(Float.parseFloat(value));
+                break;
+            default:
+                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        }
     }
 }

@@ -4,7 +4,6 @@ import data.daos.Geraet;
 import data.daos.Raum;
 
 import java.awt.*;
-import java.util.Map;
 
 public class Lampe extends Geraet {
     private double haelligkeit;
@@ -19,19 +18,6 @@ public class Lampe extends Geraet {
     }
     public Lampe(int id, String name, Raum raum) {
         super(id, name, raum);
-    }
-
-    @Override
-    public void setValues(Map<String, String> map) throws IllegalArgumentException {
-        final String haelligkeit = map.get("haelligkeit");
-        final String farbe = map.get("farbe");
-        final String eingeschaltet = map.get("eingeschaltet");
-        if (haelligkeit != null) this.haelligkeit = Double.parseDouble(haelligkeit);
-        else throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
-        if (farbe != null) this.farbe = Color.decode(farbe);
-        else throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
-        if (eingeschaltet != null) this.eingeschaltet = Boolean.parseBoolean(eingeschaltet);
-        else throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
     }
 
     public double getHaelligkeit() {
@@ -56,5 +42,22 @@ public class Lampe extends Geraet {
 
     public void setEingeschaltet(boolean eingeschaltet) {
         this.eingeschaltet = eingeschaltet;
+    }
+
+    @Override
+    public void updateValue(String key, String value) {
+        switch (key) {
+            case "eingeschaltet":
+                setEingeschaltet(Boolean.parseBoolean(value));
+                break;
+            case "haelligkeit":
+                setHaelligkeit(Double.parseDouble(value));
+                break;
+            case "farbe":
+                setFarbe(Color.decode(value));
+                break;
+            default:
+                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        }
     }
 }

@@ -31,12 +31,16 @@ public class Sensor extends Geraet {
     }
 
     @Override
-    public void setValues(Map<String, String> map) {
-        final String eingeschaltet = map.get("eingeschaltet");
-        final String ausschlag = map.get("ausschlag");
-        if (eingeschaltet != null) setEingeschaltet(Boolean.parseBoolean(eingeschaltet));
-        else throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
-        if (ausschlag != null) setAusschlag(Boolean.parseBoolean(ausschlag));
-        else throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+    public void updateValue(String key, String value) {
+        switch (key) {
+            case "eingeschaltet":
+                setEingeschaltet(Boolean.parseBoolean(value));
+                break;
+            case "ausschlag":
+                setAusschlag(Boolean.parseBoolean(value));
+                break;
+            default:
+                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        }
     }
 }
