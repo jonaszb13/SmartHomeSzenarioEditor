@@ -24,7 +24,7 @@ public final class GeraetTypHandler {
      * @throws NoGeraetProvidedException Wird geworfen, wenn der Ordner leer ist
      */
     /* package */
-    static List<Class> getGeraeteKlassen() throws NoGeraetProvidedException {
+    static List<Class<?>> getGeraeteKlassen() throws NoGeraetProvidedException {
         final InputStream stream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(GERAETE_KLASSEN_PAKET.replaceAll("[.]", "/"));
         if (stream == null) throw new NoGeraetProvidedException("Es wurde keine Geräte Klasse gefunden");
@@ -32,7 +32,7 @@ public final class GeraetTypHandler {
         return reader.lines()
                 .filter(line -> line.endsWith(".class"))
                 .map(line -> getClass(line, GERAETE_KLASSEN_PAKET))
-                .collect(Collectors.toList());
+                .collect(Collectors.<Class<?>>toList());
     }
 
     /**
@@ -41,8 +41,8 @@ public final class GeraetTypHandler {
      * @param packageName Paket in dem die Klassen aller Geräte liegen
      * @return gefundene Klasse
      */
-    private static Class getClass(String className, String packageName) {
-        Class clazz = null;
+    private static Class<?> getClass(String className, String packageName) {
+        Class<?> clazz = null;
         try {
             clazz = Class.forName(packageName + "." + className.substring(0, className.lastIndexOf('.')));
         } catch (ClassNotFoundException eCNF) {

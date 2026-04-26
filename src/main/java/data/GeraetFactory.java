@@ -27,9 +27,9 @@ public final class GeraetFactory {
         if (instance == null) {
             instance = new GeraetFactory();
             instance.geraeteKlassen = new HashMap<>();
-            final List<Class> geraeteKlassenList = GeraetTypHandler.getGeraeteKlassen();
+            final List<Class<?>> geraeteKlassenList = GeraetTypHandler.getGeraeteKlassen();
             for (final Class aClass : geraeteKlassenList) {
-                instance.geraeteKlassen.put(aClass.getName(), aClass);
+                instance.geraeteKlassen.put(aClass.getName().substring(aClass.getName().lastIndexOf('.') + 1), aClass);
             }
         }
         return instance;
@@ -38,7 +38,7 @@ public final class GeraetFactory {
     public Geraet createGeraet(int id, String name, Raum raum, String typ) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Geraet geraet = null;
         try {
-            geraet = (Geraet) geraeteKlassen.get("data.daos.geraete." + typ)
+            geraet = (Geraet) geraeteKlassen.get(typ)
                     .getDeclaredConstructor(int.class, String.class, Raum.class)
                     .newInstance(id, name, raum);
         } catch (ClassCastException eCC) {

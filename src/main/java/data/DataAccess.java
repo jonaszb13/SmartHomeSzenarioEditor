@@ -39,7 +39,7 @@ public class DataAccess {
         try {
             final DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
-            List<Class> geraeteKlassen = GeraetTypHandler.getGeraeteKlassen();
+            List<Class<?>> geraeteKlassen = GeraetTypHandler.getGeraeteKlassen();
             dataAccess.getAllData(raumHashMap, geraetHashMap, szenarioHashMap);
         } catch (SQLException | NoGeraetProvidedException e) {
             e.printStackTrace();
@@ -120,7 +120,7 @@ public class DataAccess {
         }
         //Landen der Geräte
         final GeraetFactory gf = GeraetFactory.getInstance();
-        //QUESTION: Sollen geräte ohne Attribute geladen werden?
+        //TODO QUESTION: Sollen geräte ohne Attribute geladen werden?
         rs = stmt.executeQuery("""
                 SELECT GERAETE.ID, GERAETE.NAME, GERAETE.RAUM, Geraete.ART, SCHLUESSEL, WERT
                 FROM Geraete
