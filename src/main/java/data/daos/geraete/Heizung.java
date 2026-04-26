@@ -25,12 +25,10 @@ public class Heizung extends Geraet {
 
     @Override
     public void updateValue(String key, String value) {
-        switch (key) {
-            case "zielTemp":
-                setZielTemp(Float.parseFloat(value));
-                break;
-            default:
-                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        if (key.equals("zielTemp")) {
+            setZielTemp(Float.parseFloat(value));
+        } else {
+            throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
         }
     }
 }

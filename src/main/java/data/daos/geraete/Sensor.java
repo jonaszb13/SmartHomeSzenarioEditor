@@ -3,8 +3,6 @@ package data.daos.geraete;
 import data.daos.Geraet;
 import data.daos.Raum;
 
-import java.util.Map;
-
 public class Sensor extends Geraet {
 
     private boolean eingeschaltet;

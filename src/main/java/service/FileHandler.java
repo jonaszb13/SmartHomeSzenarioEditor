@@ -15,11 +15,12 @@ public final class FileHandler {
             Files.createDirectories(Paths.get(filePath));
             File file = new File(filePathWithName);
             if (!file.exists() && !file.createNewFile()) throw new FileNotFoundException();
+            return filePathWithName;
         } catch (FileNotFoundException eFnF) {
             DebugLog.addError("Datei konnte nicht angelegt werden: " + eFnF.getMessage(), eFnF);
         } catch (IOException eIO) {
             DebugLog.addError("Fehler beim Erstellen einer Datei: " + eIO.getMessage(), eIO);
         }
-        return filePathWithName;
+        return null;
     }
 }
