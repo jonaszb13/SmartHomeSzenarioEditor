@@ -38,7 +38,6 @@ public final class GeraetTypHandler {
 
     /**
      * Subklasse für Fehlerhandling im Lamda-Ausdruck
-     *
      * @param className Name der Klasse die gefunden werden soll
      * @return gefundene Klasse
      */

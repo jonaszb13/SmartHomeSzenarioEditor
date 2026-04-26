@@ -17,7 +17,7 @@ import java.util.Map;
 public final class GeraetFactory {
 
     private static GeraetFactory instance;
-    private Map<String, Class> geraeteKlassen;
+    private Map<String, Class<?>> geraeteKlassen;
 
 
     private GeraetFactory() {
@@ -28,7 +28,7 @@ public final class GeraetFactory {
             instance = new GeraetFactory();
             instance.geraeteKlassen = new HashMap<>();
             final List<Class<?>> geraeteKlassenList = GeraetTypHandler.getGeraeteKlassen();
-            for (final Class aClass : geraeteKlassenList) {
+            for (final Class<?> aClass : geraeteKlassenList) {
                 instance.geraeteKlassen.put(aClass.getName().substring(aClass.getName().lastIndexOf('.') + 1), aClass);
             }
         }
@@ -43,6 +43,8 @@ public final class GeraetFactory {
                     .newInstance(id, name, raum);
         } catch (ClassCastException eCC) {
             DebugLog.addError("Es befindet sich eine Klasse im Gerätetypen-Ordner die nicht von Gerät erbt", eCC);
+        } catch (NullPointerException eNP) {
+            DebugLog.addError("In der Datenbank vorhandene Klasse konnte nicht im Paket gefunden werden",eNP);
         }
         return geraet;
     }
