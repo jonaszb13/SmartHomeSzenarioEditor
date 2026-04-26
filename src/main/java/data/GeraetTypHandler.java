@@ -25,26 +25,27 @@ public final class GeraetTypHandler {
      */
     /* package */
     static List<Class<?>> getGeraeteKlassen() throws NoGeraetProvidedException {
+        DebugLog.addHinweis("Beginne Geräteklassen zu laden");
         final InputStream stream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(GERAETE_KLASSEN_PAKET.replaceAll("[.]", "/"));
         if (stream == null) throw new NoGeraetProvidedException("Es wurde keine Geräte Klasse gefunden");
         final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         return reader.lines()
                 .filter(line -> line.endsWith(".class"))
-                .map(line -> getClass(line, GERAETE_KLASSEN_PAKET))
+                .map(GeraetTypHandler::getClass)
                 .collect(Collectors.<Class<?>>toList());
     }
 
     /**
      * Subklasse für Fehlerhandling im Lamda-Ausdruck
-     * @param className   Name der Klasse die gefunden werden soll
-     * @param packageName Paket in dem die Klassen aller Geräte liegen
+     *
+     * @param className Name der Klasse die gefunden werden soll
      * @return gefundene Klasse
      */
-    private static Class<?> getClass(String className, String packageName) {
+    private static Class<?> getClass(String className) {
         Class<?> clazz = null;
         try {
-            clazz = Class.forName(packageName + "." + className.substring(0, className.lastIndexOf('.')));
+            clazz = Class.forName(GeraetTypHandler.GERAETE_KLASSEN_PAKET + "." + className.substring(0, className.lastIndexOf('.')));
         } catch (ClassNotFoundException eCNF) {
             DebugLog.addError(eCNF);
         }

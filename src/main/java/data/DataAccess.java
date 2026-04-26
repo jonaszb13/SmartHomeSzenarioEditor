@@ -112,13 +112,16 @@ public class DataAccess {
     public void getAllData(Map<Integer, Raum> raumMap, Map<Integer, Geraet> geraetMap, Map<Integer, Szenario> szenarioMap) throws SQLException, NoGeraetProvidedException {
         final Statement stmt = conn.createStatement();
         //Laden der Räume
+        DebugLog.addHinweis("Beginne RäumeMap zu laden");
         ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
         while (rs.next()) {
             final int id = rs.getInt("id");
             final String name = rs.getString("name");
             raumMap.put(id, new Raum(id, name));
         }
+        DebugLog.addHinweis("RäumeMap erfolgreich geladen");
         //Landen der Geräte
+        DebugLog.addHinweis("Beginne GeräteMap zu laden");
         final GeraetFactory gf = GeraetFactory.getInstance();
         //TODO QUESTION: Sollen geräte ohne Attribute geladen werden?
         rs = stmt.executeQuery("""
@@ -156,7 +159,9 @@ public class DataAccess {
             atributeHashMap.put(rs.getString("schluessel"), rs.getString("wert"));
         }
         if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
+        DebugLog.addHinweis("GeräteMap erfolgreich geladen");
         //Laden der Szenarien
+        DebugLog.addHinweis("Beginne SzenarienMap zu laden");
         rs = stmt.executeQuery("""
                 SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                 FROM SZENARIEN
@@ -181,5 +186,6 @@ public class DataAccess {
                     geraetMap.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")
             ));
         }
+        DebugLog.addHinweis("SzenarienMap erfolgreich geladen");
     }
 }
