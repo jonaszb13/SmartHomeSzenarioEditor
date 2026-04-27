@@ -12,48 +12,48 @@ import java.util.List;
 import java.util.Locale;
 
 @Singleton
-public final class DebugLog {
+public final class StatusLog {
 
-    private static DebugLog instance;
+    private static StatusLog instance;
 
-    private final List<Meldung> errorlogEintraege = new ArrayList<>();
+    private final List<Meldung> statusLogEintraege = new ArrayList<>();
 
-    private DebugLog() {
+    private StatusLog() {
     }
 
-    public static DebugLog getInstance() {
+    public static StatusLog getInstance() {
         if (instance == null) {
-            instance = new DebugLog();
+            instance = new StatusLog();
         }
         return instance;
     }
 
-    public List<Meldung> getDebugLogEintraege() {
-        return errorlogEintraege;
+    public List<Meldung> getStatusLogEintraege() {
+        return statusLogEintraege;
     }
 
     public static void addError(String error) {
-        getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.FEHLER, error));
+        getInstance().getStatusLogEintraege().add(new Meldung(Meldungstyp.FEHLER, error));
     }
 
     public static void addError(Exception exception) {
-        getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.FEHLER, exception.getMessage(), exception));
+        getInstance().getStatusLogEintraege().add(new Meldung(Meldungstyp.FEHLER, exception.getMessage(), exception));
     }
 
     public static void addError(String error, Exception exception) {
-        getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.FEHLER, error, exception));
+        getInstance().getStatusLogEintraege().add(new Meldung(Meldungstyp.FEHLER, error, exception));
     }
 
     public static void addHinweis(String hinweis) {
-        getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.HINWEIS, hinweis));
+        getInstance().getStatusLogEintraege().add(new Meldung(Meldungstyp.HINWEIS, hinweis));
     }
 
     public static void addMetadaten(String metadaten) {
-        getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.METADATEN, metadaten));
+        getInstance().getStatusLogEintraege().add(new Meldung(Meldungstyp.METADATEN, metadaten));
     }
 
     public static boolean hasError() {
-        return getInstance().getDebugLogEintraege().stream().anyMatch(Meldung::isError);
+        return getInstance().getStatusLogEintraege().stream().anyMatch(Meldung::isError);
     }
 
     //TODO wann soll immer ein Fehlerbericht erstellt werden
@@ -76,7 +76,7 @@ public final class DebugLog {
                 fehler = true;
             } else {
                 try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePathWithName))) {
-                    final List<Meldung> meldungen = getInstance().getDebugLogEintraege();
+                    final List<Meldung> meldungen = getInstance().getStatusLogEintraege();
                     for (final Meldung meldung : meldungen) {
                         System.err.println(meldung.getMeldungstext());
                         writer.write(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());

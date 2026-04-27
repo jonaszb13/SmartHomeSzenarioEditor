@@ -3,7 +3,7 @@ package data;
 import data.models.Geraet;
 import data.models.Raum;
 import data.models.Szenario;
-import util.DebugLog;
+import util.StatusLog;
 import util.customExceptions.NoGeraetProvidedException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -46,8 +46,8 @@ public class DataAccess {
             dataAccess.mapAllData(raumHashMap, geraetHashMap, szenarioHashMap);
         } catch (SQLException | NoGeraetProvidedException e) {
             e.printStackTrace();
-            DebugLog.addError(e);
-            DebugLog.createErrorFile();
+            StatusLog.addError(e);
+            StatusLog.createErrorFile();
         }
         System.out.println("");
     }
@@ -58,7 +58,7 @@ public class DataAccess {
      * @throws SQLException wenn Fehler mit er Datenbankverbindung auftritt
      */
     public void setupDatabase() throws SQLException {
-        DebugLog.addHinweis("Datenbank verbunden und ggf. neu angelegt");
+        StatusLog.addHinweis("Datenbank verbunden und ggf. neu angelegt");
         final Statement stmt = conn.createStatement();
         //Allgemeine Tabellen
         stmt.executeUpdate("""
@@ -126,19 +126,19 @@ public class DataAccess {
     public void mapAllRaeume(final Map<UUID, Raum> raumMap) throws SQLException {
         final Statement stmt = conn.createStatement();
         //Laden der Räume
-        DebugLog.addHinweis("Beginne RäumeMap zu laden");
+        StatusLog.addHinweis("Beginne RäumeMap zu laden");
         final ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
         while (rs.next()) {
             final UUID id = UUID.fromString(rs.getString("id"));
             final String name = rs.getString("name");
             raumMap.put(id, new Raum(id, name));
         }
-        DebugLog.addHinweis("RäumeMap erfolgreich geladen");
+        StatusLog.addHinweis("RäumeMap erfolgreich geladen");
     }
 
     public void mapAllGeraete(final Map<UUID, Raum> raumMap, final Map<UUID, Geraet> geraetMap) throws SQLException, NoGeraetProvidedException {
         final Statement stmt = conn.createStatement();
-        DebugLog.addHinweis("Beginne GeräteMap zu laden");
+        StatusLog.addHinweis("Beginne GeräteMap zu laden");
         final GeraetFactory gf = GeraetFactory.getInstance();
         //TODO QUESTION: Sollen geräte ohne Attribute geladen werden?
         final ResultSet rs = stmt.executeQuery("""
@@ -165,7 +165,7 @@ public class DataAccess {
                             raumMap.get(raum), rs.getString("art"));
                 } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                          IllegalAccessException e) {
-                    DebugLog.addError("Bei der dynamischen Erstellung eines Geräts ist ein Fehler aufgetreten", e);
+                    StatusLog.addError("Bei der dynamischen Erstellung eines Geräts ist ein Fehler aufgetreten", e);
                     //TODO was mit Null tun?
                 }
                 atributeHashMap.put(rs.getString("schluessel"), rs.getString("wert"));
@@ -176,12 +176,12 @@ public class DataAccess {
             atributeHashMap.put(rs.getString("schluessel"), rs.getString("wert"));
         }
         if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
-        DebugLog.addHinweis("GeräteMap erfolgreich geladen");
+        StatusLog.addHinweis("GeräteMap erfolgreich geladen");
     }
 
     public void mapAllSzenarien(final Map<UUID, Geraet> geraetMap, final Map<UUID, Szenario> szenarioMap) throws SQLException {
         final Statement stmt = conn.createStatement();
-        DebugLog.addHinweis("Beginne SzenarienMap zu laden");
+        StatusLog.addHinweis("Beginne SzenarienMap zu laden");
         final ResultSet rs = stmt.executeQuery("""
                 SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                 FROM SZENARIEN
@@ -206,6 +206,6 @@ public class DataAccess {
                     geraetMap.get(UUID.fromString(rs.getString("geraet"))), rs.getString("schluessel"), rs.getString("wert")
             ));
         }
-        DebugLog.addHinweis("SzenarienMap erfolgreich geladen");
+        StatusLog.addHinweis("SzenarienMap erfolgreich geladen");
     }
 }

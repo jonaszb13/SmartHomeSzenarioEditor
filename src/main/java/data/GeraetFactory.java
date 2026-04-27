@@ -2,7 +2,7 @@ package data;
 
 import data.models.Geraet;
 import data.models.Raum;
-import util.DebugLog;
+import util.StatusLog;
 import util.customExceptions.NoGeraetProvidedException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -44,9 +44,9 @@ public final class GeraetFactory {
                     .getDeclaredConstructor(UUID.class, String.class, Raum.class)
                     .newInstance(id, name, raum);
         } catch (ClassCastException eCC) {
-            DebugLog.addError("Es befindet sich eine Klasse im Gerätetypen-Ordner die nicht von Gerät erbt", eCC);
+            StatusLog.addError("Es befindet sich eine Klasse im Gerätetypen-Ordner die nicht von Gerät erbt", eCC);
         } catch (NullPointerException eNP) {
-            DebugLog.addError("In der Datenbank vorhandene Klasse konnte nicht im Paket gefunden werden",eNP);
+            StatusLog.addError("In der Datenbank vorhandene Klasse konnte nicht im Paket gefunden werden",eNP);
         }
         return geraet;
     }

@@ -1,6 +1,6 @@
 package data;
 
-import util.DebugLog;
+import util.StatusLog;
 import util.customExceptions.NoGeraetProvidedException;
 
 import java.io.BufferedReader;
@@ -26,7 +26,7 @@ public final class GeraetTypHandler {
      */
     /* package */
     static List<Class<?>> getGeraeteKlassen() throws NoGeraetProvidedException {
-        DebugLog.addHinweis("Beginne Geräteklassen zu laden");
+        StatusLog.addHinweis("Beginne Geräteklassen zu laden");
         final InputStream stream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(GERAETE_KLASSEN_PAKET.replaceAll("[.]", "/"));
         if (stream == null) throw new NoGeraetProvidedException("Es wurde keine Geräte Klasse gefunden");
@@ -48,7 +48,7 @@ public final class GeraetTypHandler {
             //KEY: Klassenname ohne Dateiendung
             clazz = Class.forName(GERAETE_KLASSEN_PAKET + "." + className.substring(0, className.lastIndexOf('.')));
         } catch (ClassNotFoundException eCNF) {
-            DebugLog.addError(eCNF);
+            StatusLog.addError(eCNF);
         }
         return clazz;
     }

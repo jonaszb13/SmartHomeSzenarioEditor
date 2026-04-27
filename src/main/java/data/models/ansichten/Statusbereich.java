@@ -1,20 +1,29 @@
 package data.models.ansichten;
 
-import util.DebugLog;
+import javafx.scene.Node;
+import util.StatusLog;
 import util.Meldung;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class Statusbereich {
 
-
-    //TODO möglicherweise umstieg von StringBuilder
-    public String getNachrichten() {
-        StringBuilder meldungsAusgabe = new StringBuilder();
-        List<Meldung> meldungen = DebugLog.getInstance().getDebugLogEintraege().reversed();
-        for (Meldung meldung : meldungen) {
-            meldungsAusgabe.append(meldung.getMeldungsTyp()).append(": ").append(meldung.getMeldungstext()).append("\n");
+    public List<Meldung> getNewMessages(Node letzterNode) {
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        if (null == letzterNode) {
+            return meldungen;
         }
-        return meldungsAusgabe.toString();
+        //TODO hier vielleicht direkt eine Fehlermeldung schmeißen, falls die id nicht mehr gefunden wird
+        int indexNeueMeldung = IntStream.range(0, meldungen.size())
+                .filter(i -> meldungen.get(i).getMeldungsId().equals(letzterNode.getUserData()))
+                .findFirst()
+                .orElse(-1) + 1;
+        if (indexNeueMeldung == 0) {
+            StatusLog.addError("Gespeicherte Meldung kann nicht mehr im StatusLog abgerufen werden.");
+            return new ArrayList<>();
+        }
+        return meldungen.subList(indexNeueMeldung, meldungen.size());
     }
 }

@@ -15,9 +15,9 @@ public final class FileHandler {
             if (!file.exists() && !file.createNewFile()) throw new FileNotFoundException();
             return filePathWithName;
         } catch (FileNotFoundException eFnF) {
-            DebugLog.addError("Datei konnte nicht angelegt werden: " + eFnF.getMessage(), eFnF);
+            StatusLog.addError("Datei konnte nicht angelegt werden: " + eFnF.getMessage(), eFnF);
         } catch (IOException eIO) {
-            DebugLog.addError("Fehler beim Erstellen einer Datei: " + eIO.getMessage(), eIO);
+            StatusLog.addError("Fehler beim Erstellen einer Datei: " + eIO.getMessage(), eIO);
         }
         return null;
     }

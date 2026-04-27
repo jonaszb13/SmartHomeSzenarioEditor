@@ -4,12 +4,15 @@ import data.models.Model;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
 import userInterface.views.View;
-import util.DebugLog;
+import util.Meldung;
+import util.StatusLog;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 public class Controller implements ChangeListener<TreeItem<String>> {
@@ -26,11 +29,6 @@ public class Controller implements ChangeListener<TreeItem<String>> {
     public void changed(ObservableValue<? extends TreeItem<String>> observable,
                         TreeItem<String> oldValue, TreeItem<String> newValue) {
 
-        //TODO nur für Testen
-        DebugLog.addHinweis("Meldung");
-        //TODO dieser Aufruf muss in jeden changed (oder einen generischeren)
-        view.getStatusPanel().setText(model.getStatusbereich().getNachrichten());
-
         if (newValue == null) return;
 
         String fxmlFile = switch (newValue.getValue().strip()) {
@@ -46,7 +44,29 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             );
             view.getHauptPane().getChildren().setAll(neuesPanel);
         } catch (IOException e) {
-            DebugLog.addError("FXMLLoader konnte nicht geladen werden", e);
+            StatusLog.addError("FXMLLoader konnte nicht geladen werden", e);
         }
+
+        //TODO nur für Testen
+        StatusLog.addHinweis("Meldung");
+        //TODO dieser Aufruf muss in jeden changed (oder einen generischeren)
+        //TODO nur durchführen, wenn der Statusbereich sichtbar ist
+        updateStatusLog();
+    }
+
+    //TODO farbliche Fehlermeldungen
+    private void updateStatusLog() {
+        List<Meldung> newMessages = model.getStatusbereich()
+                .getNewMessages(view.getStatusLogVBox()
+                        .getChildren().isEmpty()
+                        ? null : view.getStatusLogVBox()
+                        .getChildren().getFirst());
+        newMessages.stream()
+                .map(meldung -> {
+                    Label label = new Label(meldung.getMeldungstext());
+                    label.setUserData(meldung.getMeldungsId());
+                    return label;
+        })
+                .forEach(view.getStatusLogVBox().getChildren()::addFirst);
     }
 }

@@ -2,16 +2,15 @@ package userInterface.views;
 
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 public class View {
-
-    @FXML private Label statusPanel;
     @FXML private TreeView<String> uebersichtTree;
     @FXML private Pane hauptPane;
+    @FXML private VBox statusLogVBox;
 
     @FXML
     public void initialize() {
@@ -23,8 +22,9 @@ public class View {
         return hauptPane;
     }
 
-    public Label getStatusPanel() {
-        return statusPanel;
+    //TODO hellgrau färben
+    public VBox getStatusLogVBox() {
+        return statusLogVBox;
     }
 
     public void addUebersichtTreeSelectionListener(ChangeListener<TreeItem<String>> listener) {

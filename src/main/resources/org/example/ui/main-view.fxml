@@ -22,19 +22,14 @@
     </left>
 
     <right>
-        <Pane fx:id="statusbereichPane" prefWidth="300" style="-fx-background-color: lightgray;">
-            <Label text="Statusübersicht" BorderPane.alignment="TOP_LEFT">
-                <padding>
-                    <Insets left="10.0" top="10.0" />
-                </padding>
-            </Label>
-         <Label fx:id="statusPanel" alignment="TOP_LEFT" layoutX="4.0" layoutY="37.0" prefHeight="355.0" prefWidth="292.0" wrapText="true" />
-        </Pane>
+        <ScrollPane fitToWidth="true" prefWidth="300" style="-fx-background-color: lightgray;">
+            <VBox fx:id="statusLogVBox" style="-fx-background-color: lightgray;">
+                </VBox>
+        </ScrollPane>
     </right>
 
     <center>
         <AnchorPane fx:id="hauptPane">
-
         </AnchorPane>
     </center>
 
