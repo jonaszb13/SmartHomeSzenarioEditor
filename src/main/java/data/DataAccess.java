@@ -15,6 +15,7 @@ import java.util.UUID;
 
 /**
  * Klasse die alle Interaktionen mit der persistenten Datenhaltung handhabt.
+ *
  * @author Ben Knirsch
  */
 public class DataAccess {
@@ -52,6 +53,7 @@ public class DataAccess {
 
     /**
      * Methode, die die Datenbank zur persistenten speicherung der Zustände anlegt
+     *
      * @throws SQLException wenn Fehler mit er Datenbankverbindung auftritt
      */
     public void setupDatabase() throws SQLException {
@@ -112,6 +114,12 @@ public class DataAccess {
      * @throws NoGeraetProvidedException tritt auf, wenn in dem Ordner geraete keine Klassen vorhanden sind
      */
     public void getAllData(Map<UUID, Raum> raumMap, Map<UUID, Geraet> geraetMap, Map<UUID, Szenario> szenarioMap) throws SQLException, NoGeraetProvidedException {
+        getAllRaeume(raumMap);
+        getAllGeraete(raumMap, geraetMap);
+        getAllSzenarien(geraetMap,szenarioMap);
+    }
+
+    public void getAllRaeume(Map<UUID, Raum> raumMap) throws SQLException {
         final Statement stmt = conn.createStatement();
         //Laden der Räume
         DebugLog.addHinweis("Beginne RäumeMap zu laden");
@@ -122,11 +130,14 @@ public class DataAccess {
             raumMap.put(id, new Raum(id, name));
         }
         DebugLog.addHinweis("RäumeMap erfolgreich geladen");
-        //Landen der Geräte
+    }
+
+    public void getAllGeraete(Map<UUID, Raum> raumMap, Map<UUID, Geraet> geraetMap) throws SQLException, NoGeraetProvidedException {
+        final Statement stmt = conn.createStatement();
         DebugLog.addHinweis("Beginne GeräteMap zu laden");
         final GeraetFactory gf = GeraetFactory.getInstance();
         //TODO QUESTION: Sollen geräte ohne Attribute geladen werden?
-        rs = stmt.executeQuery("""
+        ResultSet rs = stmt.executeQuery("""
                 SELECT GERAETE.ID, GERAETE.NAME, GERAETE.RAUM, Geraete.ART, SCHLUESSEL, WERT
                 FROM Geraete
                 JOIN GERAETE_WERTE ON Geraete.ID = GERAETE_WERTE.Geraet
@@ -162,9 +173,12 @@ public class DataAccess {
         }
         if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
         DebugLog.addHinweis("GeräteMap erfolgreich geladen");
-        //Laden der Szenarien
+    }
+
+    public void getAllSzenarien (Map<UUID, Geraet> geraetMap, Map<UUID, Szenario> szenarioMap) throws SQLException {
+        final Statement stmt = conn.createStatement();
         DebugLog.addHinweis("Beginne SzenarienMap zu laden");
-        rs = stmt.executeQuery("""
+        ResultSet rs = stmt.executeQuery("""
                 SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                 FROM SZENARIEN
                 JOIN SZENARIEN_INHALT
@@ -172,12 +186,12 @@ public class DataAccess {
                 ORDER BY SZENARIEN.ID, GERAET
                 """);
         //Wert der definitiv nicht in Datenbank vorhanden ist
-        lastId = null;
+        UUID lastId = null;
         Szenario aktuellesSzenario = null;
         while (rs.next()) {
             final UUID id = UUID.fromString(rs.getString("id"));
             //Beim ersten Szenario und jedem neuen Gerät Wahr
-            if (!id.equals(lastId) ) {
+            if (!id.equals(lastId)) {
                 final String name = rs.getString("name");
                 aktuellesSzenario = new Szenario(id, name);
                 aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
