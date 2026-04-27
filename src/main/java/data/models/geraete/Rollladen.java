@@ -1,7 +1,7 @@
-package data.daos.geraete;
+package data.models.geraete;
 
-import data.daos.Geraet;
-import data.daos.Raum;
+import data.models.Geraet;
+import data.models.Raum;
 
 import java.util.UUID;
 

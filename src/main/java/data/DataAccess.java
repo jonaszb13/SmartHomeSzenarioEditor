@@ -1,8 +1,8 @@
 package data;
 
-import data.daos.Geraet;
-import data.daos.Raum;
-import data.daos.Szenario;
+import data.models.Geraet;
+import data.models.Raum;
+import data.models.Szenario;
 import util.DebugLog;
 import util.customExceptions.NoGeraetProvidedException;
 

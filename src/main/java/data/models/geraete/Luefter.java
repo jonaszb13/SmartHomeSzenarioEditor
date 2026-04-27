@@ -1,16 +1,15 @@
-package data.daos.geraete;
+package data.models.geraete;
 
-import data.daos.Geraet;
-import data.daos.Raum;
+import data.models.Geraet;
+import data.models.Raum;
 
 import java.util.UUID;
 
-public class Sensor extends Geraet {
-
+public class Luefter extends Geraet {
     private boolean eingeschaltet;
-    private boolean ausschlag;
+    private float staerke;
 
-    public Sensor(UUID id, String name, Raum raum) {
+    public Luefter(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
     }
 
@@ -18,16 +17,16 @@ public class Sensor extends Geraet {
         return eingeschaltet;
     }
 
-    public void setEingeschaltet(boolean eingeschaltet) {
+    public void setEingeschaltet(final boolean eingeschaltet) {
         this.eingeschaltet = eingeschaltet;
     }
 
-    public boolean isAusschlag() {
-        return ausschlag;
+    public float getStaerke() {
+        return staerke;
     }
 
-    public void setAusschlag(boolean ausschlag) {
-        this.ausschlag = ausschlag;
+    public void setStaerke(final float staerke) {
+        this.staerke = staerke;
     }
 
     @Override
@@ -36,8 +35,8 @@ public class Sensor extends Geraet {
             case "eingeschaltet":
                 setEingeschaltet(Boolean.parseBoolean(value));
                 break;
-            case "ausschlag":
-                setAusschlag(Boolean.parseBoolean(value));
+            case "staerke":
+                setStaerke(Float.parseFloat(value));
                 break;
             default:
                 throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");

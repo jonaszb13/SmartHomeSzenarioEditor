@@ -1,7 +1,6 @@
 package util;
 
 import jakarta.inject.Singleton;
-import service.FileHandler;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
@@ -95,6 +94,5 @@ public final class DebugLog {
             }
         }
         addMetadaten("Das Programm wurde kontrolliert beendet");
-        // Die Nachrichten können ja trotzdem auf der Maske angezeigt werden :D
-    }
+        }
 }

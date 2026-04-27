@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.views.View">
+
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <Menu mnemonicParsing="false" text="Neu"/>
+            <Menu mnemonicParsing="false" text="Öffnen"/>
+            <Menu mnemonicParsing="false" text="Speichern"/>
+            <Menu mnemonicParsing="false" text="Szeanrio öffnen"/>
+        </MenuBar>
+    </top>
+
+    <left>
+        <VBox prefWidth="200" style="-fx-background-color: lightgray;">
+            <TreeView fx:id="uebersichtTree" />
+        </VBox>
+    </left>
+
+    <right>
+        <Pane fx:id="statusbereichPane" prefWidth="300" style="-fx-background-color: lightgray;">
+            <Label text="Statusübersicht" BorderPane.alignment="TOP_LEFT">
+                <padding>
+                    <Insets left="10.0" top="10.0" />
+                </padding>
+            </Label>
+         <Label fx:id="statusPanel" alignment="TOP_LEFT" layoutX="4.0" layoutY="37.0" prefHeight="355.0" prefWidth="292.0" wrapText="true" />
+        </Pane>
+    </right>
+
+    <center>
+        <AnchorPane fx:id="hauptPane">
+
+        </AnchorPane>
+    </center>
+
+</BorderPane>

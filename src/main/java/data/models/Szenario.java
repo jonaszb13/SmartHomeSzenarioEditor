@@ -1,4 +1,4 @@
-package data.daos;
+package data.models;
 
 import java.sql.Timestamp;
 import java.util.HashMap;

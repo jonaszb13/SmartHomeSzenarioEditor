@@ -37,3 +37,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/data/mydb.mv.db
+/data/mydb.trace.db
+/.idea/dataSources.xml
+/.mvn/wrapper/maven-wrapper.jar
+/.mvn/wrapper/maven-wrapper.properties
