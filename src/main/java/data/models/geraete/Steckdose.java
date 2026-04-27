@@ -3,32 +3,45 @@ package data.models.geraete;
 import data.models.Geraet;
 import data.models.Raum;
 
-import java.util.Map;
+import java.util.UUID;
 
 public class Steckdose extends Geraet {
-    private boolean strom;
-    public Steckdose(int id, String name, Raum raum) {
+
+    private boolean eingeschaltet;
+    private float aktuelleLeistung;
+
+    public Steckdose(UUID id, String name, Raum raum) {
         super(id, name, raum);
-        strom = false;
+        eingeschaltet = false;
     }
 
-    public Steckdose(int id, String name, Raum raum, boolean strom) {
-        super(id, name, raum);
-        this.strom = strom;
+    public boolean isEingeschaltet() {
+        return eingeschaltet;
     }
 
-    public boolean isStrom() {
-        return strom;
+    public void setEingeschaltet(boolean eingeschaltet) {
+        this.eingeschaltet = eingeschaltet;
     }
 
-    public void setStrom(boolean strom) {
-        this.strom = strom;
+    public float getAktuelleLeistung() {
+        return aktuelleLeistung;
+    }
+
+    public void setAktuelleLeistung(float aktuelleLeistung) {
+        this.aktuelleLeistung = aktuelleLeistung;
     }
 
     @Override
-    public void setValues (Map<String, String > map) throws IllegalArgumentException {
-        String strom = map.get("Strom");
-        if (strom == null) throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
-        else this.strom = Boolean.parseBoolean(strom);
+    public void updateValue(String key, String value) {
+        switch (key) {
+            case "eingeschaltet":
+                setEingeschaltet(Boolean.parseBoolean(value));
+                break;
+            case "aktuelleLeistung":
+                setAktuelleLeistung(Float.parseFloat(value));
+                break;
+            default:
+                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        }
     }
 }

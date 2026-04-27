@@ -3,15 +3,43 @@ package data.models.geraete;
 import data.models.Geraet;
 import data.models.Raum;
 
-import java.util.Map;
+import java.util.UUID;
 
 public class Luefter extends Geraet {
-    public Luefter(int id, String name, Raum raum) {
+    private boolean eingeschaltet;
+    private float staerke;
+
+    public Luefter(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
     }
 
-    @Override
-    public void setValues(Map<String, String> map) throws IllegalArgumentException {
+    public boolean isEingeschaltet() {
+        return eingeschaltet;
     }
 
+    public void setEingeschaltet(final boolean eingeschaltet) {
+        this.eingeschaltet = eingeschaltet;
+    }
+
+    public float getStaerke() {
+        return staerke;
+    }
+
+    public void setStaerke(final float staerke) {
+        this.staerke = staerke;
+    }
+
+    @Override
+    public void updateValue(String key, String value) {
+        switch (key) {
+            case "eingeschaltet":
+                setEingeschaltet(Boolean.parseBoolean(value));
+                break;
+            case "staerke":
+                setStaerke(Float.parseFloat(value));
+                break;
+            default:
+                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        }
+    }
 }

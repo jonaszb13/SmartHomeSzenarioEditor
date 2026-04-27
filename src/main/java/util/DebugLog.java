@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 @Singleton
 public final class DebugLog {
@@ -38,6 +39,7 @@ public final class DebugLog {
     public static void addError(Exception exception) {
         getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.FEHLER, exception.getMessage(), exception));
     }
+
     public static void addError(String error, Exception exception) {
         getInstance().getDebugLogEintraege().add(new Meldung(Meldungstyp.FEHLER, error, exception));
     }
@@ -57,9 +59,9 @@ public final class DebugLog {
     public static void createErrorFile() {
         if (hasError()) {
             boolean fehler = false;
-            String os = System.getProperty("os.name");
+            final String os = System.getProperty("os.name");
             String filePath = "";
-            if (os.toLowerCase().contains("windows")) {
+            if (os.toLowerCase(Locale.GERMAN).contains("windows")) {
                 filePath = System.getenv("LocalAppData") + "\\SmartHomeEditor\\debuglogs";
             } else if (SystemUtils.IS_OS_UNIX) {
                 filePath = System.getProperty("user.home") + "/library/SmartHomeEditor/errorlogs";
@@ -72,8 +74,8 @@ public final class DebugLog {
                 fehler = true;
             } else {
                 try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePathWithName))) {
-                    List<Meldung> meldungen = getInstance().getDebugLogEintraege();
-                    for (Meldung meldung : meldungen) {
+                    final List<Meldung> meldungen = getInstance().getDebugLogEintraege();
+                    for (final Meldung meldung : meldungen) {
                         System.err.println(meldung.getMeldungstext());
                         writer.write(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
                         if (meldung.getStackTrace() != null) {

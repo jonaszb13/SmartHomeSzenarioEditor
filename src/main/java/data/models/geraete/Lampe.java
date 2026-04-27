@@ -4,38 +4,28 @@ import data.models.Geraet;
 import data.models.Raum;
 
 import java.awt.*;
-import java.util.Map;
+import java.util.UUID;
 
 public class Lampe extends Geraet {
     private double haelligkeit;
     private Color farbe;
     private boolean eingeschaltet;
 
-    public Lampe(int id, String name, Raum raum, double haelligkeit, Color farbe, boolean eingeschaltet) {
+    public Lampe(final UUID id, final String name, final Raum raum, final double haelligkeit, final Color farbe, final boolean eingeschaltet) {
         super(id, name, raum);
         this.haelligkeit = haelligkeit;
         this.farbe = farbe;
         this.eingeschaltet = eingeschaltet;
     }
-    public Lampe(int id, String name, Raum raum) {
+    public Lampe(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
-    }
-
-    @Override
-    public void setValues(Map<String, String> map) throws IllegalArgumentException {
-        String haelligkeit = map.get("haelligkeit");
-        String farbe = map.get("farbe");
-        String eingeschaltet = map.get("eingeschaltet");
-        if (haelligkeit != null) this.haelligkeit = Double.parseDouble(haelligkeit);
-        if (farbe != null) this.farbe = Color.decode(farbe);
-        if (eingeschaltet != null) this.eingeschaltet = Boolean.parseBoolean(eingeschaltet);
     }
 
     public double getHaelligkeit() {
         return haelligkeit;
     }
 
-    public void setHaelligkeit(double haelligkeit) {
+    public void setHaelligkeit(final double haelligkeit) {
         this.haelligkeit = haelligkeit;
     }
 
@@ -43,7 +33,7 @@ public class Lampe extends Geraet {
         return farbe;
     }
 
-    public void setFarbe(Color farbe) {
+    public void setFarbe(final Color farbe) {
         this.farbe = farbe;
     }
 
@@ -51,7 +41,24 @@ public class Lampe extends Geraet {
         return eingeschaltet;
     }
 
-    public void setEingeschaltet(boolean eingeschaltet) {
+    public void setEingeschaltet(final boolean eingeschaltet) {
         this.eingeschaltet = eingeschaltet;
+    }
+
+    @Override
+    public void updateValue(final String key, final String value) {
+        switch (key) {
+            case "eingeschaltet":
+                setEingeschaltet(Boolean.parseBoolean(value));
+                break;
+            case "haelligkeit":
+                setHaelligkeit(Double.parseDouble(value));
+                break;
+            case "farbe":
+                setFarbe(Color.decode(value));
+                break;
+            default:
+                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        }
     }
 }

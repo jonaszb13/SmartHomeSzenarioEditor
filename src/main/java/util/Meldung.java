@@ -20,7 +20,7 @@ public class Meldung {
     }
 
     public boolean isError() {
-        return Meldungstyp.FEHLER.equals(meldungstyp);
+        return Meldungstyp.FEHLER == meldungstyp;
     }
 
     public String getMeldungsTyp() {

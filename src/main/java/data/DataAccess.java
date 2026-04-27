@@ -6,19 +6,16 @@ import data.models.Szenario;
 import util.DebugLog;
 import util.customExceptions.NoGeraetProvidedException;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 /**
  * Klasse die alle Interaktionen mit der persistenten Datenhaltung handhabt.
+ *
  * @author Ben Knirsch
  */
 public class DataAccess {
@@ -28,34 +25,36 @@ public class DataAccess {
      * @param url      Pfad, in dem Datenbank angelegt werden soll
      * @param user     Benutzername des Standartnutzers
      * @param password Passwort des Standartnutzers
-     * @throws SQLException Wird geworfen, wenn ungültige werte übergeben werden und Verbindung nicht hergestellt werden kann
+     * @throws SQLException Wird geworfen, wenn ungültige Werte übergeben werden
+     *                      und Verbindung nicht hergestellt werden kann
      */
-    public DataAccess(String url, String user, String password) throws SQLException {
+    public DataAccess(final String url, final String user, final String password) throws SQLException {
         this.conn = DriverManager.getConnection("jdbc:h2:file:" + url + ";AUTO_SERVER=TRUE", user, password);
     }
 
     public static void main(String[] args) {
-        DebugLog.addError("Fehler");
-        DebugLog.createErrorFile();
         final String url = "./data/mydb";
         final String user = "sa";
         final String password = "";
-        Map<Integer, Raum> raumHashMap = new HashMap<>();
-        Map<Integer, Geraet> geraetHashMap = new HashMap<>();
-        Map<Integer, Szenario> szenarioHashMap = new HashMap<>();
+        final Map<UUID, Raum> raumHashMap = new HashMap<>();
+        final Map<UUID, Geraet> geraetHashMap = new HashMap<>();
+        final Map<UUID, Szenario> szenarioHashMap = new HashMap<>();
         try {
             final DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
-            List<Class> geraeteKlassen = dataAccess.getGeraeteKlassen("data.models.geraete");
-            dataAccess.getAllData(raumHashMap, geraetHashMap, szenarioHashMap, geraeteKlassen);
-        } catch (SQLException | NoSuchMethodException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException | NoGeraetProvidedException e) {
+            List<Class<?>> geraeteKlassen = GeraetTypHandler.getGeraeteKlassen();
+            dataAccess.mapAllData(raumHashMap, geraetHashMap, szenarioHashMap);
+        } catch (SQLException | NoGeraetProvidedException e) {
+            e.printStackTrace();
             DebugLog.addError(e);
+            DebugLog.createErrorFile();
         }
+        System.out.println("");
     }
 
     /**
      * Methode, die die Datenbank zur persistenten speicherung der Zustände anlegt
+     *
      * @throws SQLException wenn Fehler mit er Datenbankverbindung auftritt
      */
     public void setupDatabase() throws SQLException {
@@ -64,21 +63,21 @@ public class DataAccess {
         //Allgemeine Tabellen
         stmt.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS Raeume (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id uuid PRIMARY KEY,
                     name VARCHAR(255) NOT NULL);
                 """);
         stmt.execute("""
                     CREATE TABLE IF NOT EXISTS Geraete
                     (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id uuid PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
-                    Raum INT REFERENCES RAEUME(id),
+                    Raum uuid REFERENCES RAEUME(id),
                     Art varchar(63) NOT NULL
                     );
                 """);
         stmt.execute("""
                     CREATE TABLE IF NOT EXISTS Szenarien (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id uuid PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
                     Rythmus VARCHAR(255),
                     Status VARCHAR(255),
@@ -87,19 +86,19 @@ public class DataAccess {
                 """);
         stmt.execute("""
                     CREATE TABLE IF NOT EXISTS Szenarien_Inhalt (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id uuid PRIMARY KEY,
                     aktion VARCHAR(255) NOT NULL,
-                    Szenario INT REFERENCES Szenarien(id),
-                    Geraet INT REFERENCES Geraete(id),
-                    Attribut VARCHAR(255) NOT NULL,
+                    Szenario uuid REFERENCES Szenarien(id),
+                    Geraet uuid REFERENCES Geraete(id),
+                    schluessel VARCHAR(255) NOT NULL,
                     Wert VARCHAR(255),
                     Position INT
                     );
                 """);
         stmt.execute("""
                     CREATE TABLE IF NOT EXISTS Geraete_Werte (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    Geraet INT REFERENCES Geraete(id),
+                    id uuid PRIMARY KEY,
+                    Geraet uuid REFERENCES Geraete(id),
                     schluessel VARCHAR(255) NOT NULL,
                     Wert VARCHAR(255)
                     )
@@ -108,123 +107,105 @@ public class DataAccess {
     }
 
 
-    public void getAllData(Map<Integer, Raum> raumMap, Map<Integer, Geraet> geraetMap, Map<Integer, Szenario> szenarioMap, List<Class> geraeteKlassenList) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    /**
+     * @param raumMap     Map in der alle Räume in der Datenbank
+     *                    auf ihre IDs gemaped werden
+     * @param geraetMap   Map in der alle Geräte in der Datenbank
+     *                    mit ihren Attributen auf ihre IDs gemaped werden
+     * @param szenarioMap Map in der alle Szenarien in der Datenbank
+     *                    mit ihren Inhalten auf ihre IDs gemaped werden
+     * @throws SQLException              wenn ein Fehler bei der Datenbankverbindung auftritt
+     * @throws NoGeraetProvidedException tritt auf, wenn in dem Ordner geraete keine Klassen vorhanden sind
+     */
+    public void mapAllData(final Map<UUID, Raum> raumMap, final Map<UUID, Geraet> geraetMap, final Map<UUID, Szenario> szenarioMap) throws SQLException, NoGeraetProvidedException {
+        mapAllRaeume(raumMap);
+        mapAllGeraete(raumMap, geraetMap);
+        mapAllSzenarien(geraetMap, szenarioMap);
+    }
+
+    public void mapAllRaeume(final Map<UUID, Raum> raumMap) throws SQLException {
         final Statement stmt = conn.createStatement();
         //Laden der Räume
-        ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
-        String raumName;
-        int raumId;
+        DebugLog.addHinweis("Beginne RäumeMap zu laden");
+        final ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
         while (rs.next()) {
-            raumId = rs.getInt("id");
-            raumName = rs.getString("name");
-            raumMap.put(raumId, new Raum(raumId, raumName));
+            final UUID id = UUID.fromString(rs.getString("id"));
+            final String name = rs.getString("name");
+            raumMap.put(id, new Raum(id, name));
         }
-        //Laden der Geräteklassen
-        Map<String, Class> klassenListe = new HashMap<>();
-        for (Class aClass : geraeteKlassenList) {
-            klassenListe.put(aClass.getName(), aClass);
-        }
-        //Landen der Geräte
-        rs = stmt.executeQuery("""
+        DebugLog.addHinweis("RäumeMap erfolgreich geladen");
+    }
+
+    public void mapAllGeraete(final Map<UUID, Raum> raumMap, final Map<UUID, Geraet> geraetMap) throws SQLException, NoGeraetProvidedException {
+        final Statement stmt = conn.createStatement();
+        DebugLog.addHinweis("Beginne GeräteMap zu laden");
+        final GeraetFactory gf = GeraetFactory.getInstance();
+        //TODO QUESTION: Sollen geräte ohne Attribute geladen werden?
+        final ResultSet rs = stmt.executeQuery("""
                 SELECT GERAETE.ID, GERAETE.NAME, GERAETE.RAUM, Geraete.ART, SCHLUESSEL, WERT
                 FROM Geraete
                 JOIN GERAETE_WERTE ON Geraete.ID = GERAETE_WERTE.Geraet
                 ORDER BY Geraete.ART, Geraete.ID
                 """);
-        stmt.close();
-        Map<String, String> attributeHashMap = new HashMap<>();
-        int letztesGeraetId = -1;
+        Map<String, String> atributeHashMap = new HashMap<>();
+        UUID lastId = null;
         Geraet aktuellesGeraet = null;
         boolean erstesMal = true;
-        String geraeteName;
-        int geraeteId;
-        String geraeteSchluessel;
-        String geraeteWert;
-        String geraeteArt;
-        int geraeteRaum;
         while (rs.next()) {
-            geraeteId = rs.getInt("id");
-            geraeteSchluessel = rs.getString("schluessel");
-            geraeteWert = rs.getString("wert");
-            if (geraeteId == letztesGeraetId) {
-                attributeHashMap.put(geraeteSchluessel, geraeteWert);
-            } else {
-                if (erstesMal) {
-                    erstesMal = false;
+            final UUID id = UUID.fromString(rs.getString("id"));
+            if (!id.equals(lastId)) {
+                if (erstesMal) erstesMal = false;
+                else {
+                    aktuellesGeraet.setValues(atributeHashMap);
+                    atributeHashMap = new HashMap<>();
                 }
-                else aktuellesGeraet.setValues(attributeHashMap);
-                geraeteName = rs.getString("name");
-                geraeteArt = rs.getString("art");
-                geraeteRaum = rs.getInt("raum");
-                aktuellesGeraet = (Geraet) klassenListe.get("data.daos.geraete." + geraeteArt)
-                        .getDeclaredConstructor(int.class, String.class, Raum.class)
-                        .newInstance(geraeteId, geraeteName, raumMap.get(geraeteRaum));
-                attributeHashMap.put(geraeteSchluessel, geraeteWert);
-                geraetMap.put(geraeteId, aktuellesGeraet);
-                raumMap.get(geraeteRaum).getGeraete().add(aktuellesGeraet);
-                letztesGeraetId = geraeteId;
+                final UUID raum = UUID.fromString(rs.getString("raum"));
+                try {
+                    aktuellesGeraet = gf.createGeraet(id, rs.getString("name"),
+                            raumMap.get(raum), rs.getString("art"));
+                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
+                         IllegalAccessException e) {
+                    DebugLog.addError("Bei der dynamischen Erstellung eines Geräts ist ein Fehler aufgetreten", e);
+                    //TODO was mit Null tun?
+                }
+                atributeHashMap.put(rs.getString("schluessel"), rs.getString("wert"));
+                geraetMap.put(id, aktuellesGeraet);
+                raumMap.get(raum).getGeraete().add(aktuellesGeraet);
+                lastId = id;
             }
+            atributeHashMap.put(rs.getString("schluessel"), rs.getString("wert"));
         }
-        if (aktuellesGeraet != null) {
-            aktuellesGeraet.setValues(attributeHashMap);
-        }
-        //Laden der Szenarien
-        rs = stmt.executeQuery("""
-                SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, ATTRIBUT, WERT, POSITION
+        if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
+        DebugLog.addHinweis("GeräteMap erfolgreich geladen");
+    }
+
+    public void mapAllSzenarien(final Map<UUID, Geraet> geraetMap, final Map<UUID, Szenario> szenarioMap) throws SQLException {
+        final Statement stmt = conn.createStatement();
+        DebugLog.addHinweis("Beginne SzenarienMap zu laden");
+        final ResultSet rs = stmt.executeQuery("""
+                SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                 FROM SZENARIEN
                 JOIN SZENARIEN_INHALT
                 ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
                 ORDER BY SZENARIEN.ID, GERAET
                 """);
-        int letztesSzenarioId = -1;
+        //Wert der definitiv nicht in Datenbank vorhanden ist
+        UUID lastId = null;
         Szenario aktuellesSzenario = null;
-
-        String szenarioName;
-        int szenarioId;
         while (rs.next()) {
-           szenarioId = rs.getInt("id");
-            if (szenarioId != letztesSzenarioId) {
-                szenarioName = rs.getString("name");
-                aktuellesSzenario = new Szenario(szenarioId, szenarioName);
-
+            final UUID id = UUID.fromString(rs.getString("id"));
+            //Beim ersten Szenario und jedem neuen Gerät Wahr
+            if (!id.equals(lastId)) {
+                final String name = rs.getString("name");
+                aktuellesSzenario = new Szenario(id, name);
                 aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
-                szenarioMap.put(szenarioId, aktuellesSzenario);
+                szenarioMap.put(id, aktuellesSzenario);
+                lastId = id;
             }
             aktuellesSzenario.getAenderungen().put(rs.getInt("position"), new Szenario.Aenderungen(
-                    geraetMap.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")
+                    geraetMap.get(UUID.fromString(rs.getString("geraet"))), rs.getString("schluessel"), rs.getString("wert")
             ));
         }
-    }
-
-    /**
-     * @param paket Paket in dem die Klassen aller Geräte liegen
-     * @return Liste aller Klassen, in dem übergeben Paket
-     * @throws NoGeraetProvidedException Wird geworfen, wenn der Ordner leer ist
-     */
-    private List<Class> getGeraeteKlassen(String paket) throws NoGeraetProvidedException {
-        final InputStream stream = ClassLoader.getSystemClassLoader()
-                .getResourceAsStream(paket.replaceAll("[.]", "/"));
-        if (stream == null) throw new NoGeraetProvidedException("Es wurde keine Geräte Klasse gefunden");
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-        return reader.lines()
-                .filter(line -> line.endsWith(".class"))
-                .map(line -> getClass(line, paket))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Subklasse für Fehlerhandling im Lambda-Ausdruck
-     * @param className Name der Klasse die gefunden werden soll
-     * @param packageName Paket in dem die Klassen aller Geräte liegen
-     * @return gefundene Klasse
-     */
-    private Class getClass(String className, String packageName) {
-        Class clazz = null;
-        try {
-            clazz = Class.forName(packageName + "." + className.substring(0, className.lastIndexOf('.')));
-        } catch (ClassNotFoundException eCNF) {
-            DebugLog.addError(eCNF);
-        }
-        return clazz;
+        DebugLog.addHinweis("SzenarienMap erfolgreich geladen");
     }
 }

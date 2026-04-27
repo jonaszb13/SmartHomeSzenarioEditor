@@ -3,32 +3,34 @@ package data.models.geraete;
 import data.models.Geraet;
 import data.models.Raum;
 
-import java.util.Map;
+import java.util.UUID;
 
 public class Heizung extends Geraet {
     private float zielTemp;
 
-    public Heizung(int id, String name, Raum raum, float zielTemp) {
+    public Heizung(final UUID id, final String name, final Raum raum, final float zielTemp) {
         super(id, name, raum);
         this.zielTemp = zielTemp;
     }
 
-    public Heizung(int id, String name, Raum raum) {
+    public Heizung(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
-    }
-
-    @Override
-    public void setValues(Map<String, String> map) throws IllegalArgumentException {
-        String zielTempString = map.get("zielTemp");
-        if (zielTempString == null) throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
-        else this.zielTemp = Float.parseFloat(zielTempString);
     }
 
     public float getZielTemp() {
         return zielTemp;
     }
 
-    public void setZielTemp(float zielTemp) {
+    public void setZielTemp(final float zielTemp) {
         this.zielTemp = zielTemp;
+    }
+
+    @Override
+    public void updateValue(final String key, final String value) {
+        if ("zielTemp".equals(key)) {
+            setZielTemp(Float.parseFloat(value));
+        } else {
+            throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        }
     }
 }

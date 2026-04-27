@@ -3,15 +3,44 @@ package data.models.geraete;
 import data.models.Geraet;
 import data.models.Raum;
 
-import java.util.Map;
+import java.util.UUID;
 
 public class Rollladen extends Geraet {
-    public Rollladen(int id, String name, Raum raum) {
+
+    private float schliessstatus;
+    private float winckelung;
+
+    public Rollladen(UUID id, String name, Raum raum) {
         super(id, name, raum);
     }
 
-    @Override
-    public void setValues(Map<String, String> map) throws IllegalArgumentException {
+    public float getSchliessstatus() {
+        return schliessstatus;
     }
 
+    public void setSchliessstatus(float schliessstatus) {
+        this.schliessstatus = schliessstatus;
+    }
+
+    public float getWinckelung() {
+        return winckelung;
+    }
+
+    public void setWinckelung(float winckelung) {
+        this.winckelung = winckelung;
+    }
+
+    @Override
+    public void updateValue(String key, String value) {
+        switch (key) {
+            case "schliessstatus":
+                setSchliessstatus(Float.parseFloat(value));
+                break;
+            case "winckelung":
+                setWinckelung(Float.parseFloat(value));
+                break;
+            default:
+                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        }
+    }
 }

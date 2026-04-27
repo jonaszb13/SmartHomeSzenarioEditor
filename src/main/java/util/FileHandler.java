@@ -6,16 +6,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class FileHandler {
+public final class FileHandler {
     public static String generateFile(String filePath, String fileName, String fileEnding) {
+        final String filePathWithName = filePath + File.separator + fileName + "_" + System.currentTimeMillis() + "." + fileEnding;
         try {
             Files.createDirectories(Paths.get(filePath));
-            String filePathWithName = filePath + File.separator + fileName + "_" + System.currentTimeMillis() + "." + fileEnding;
-            File file = new File(filePathWithName);
-            if (!file.exists()) {
-                boolean createFileSuccessful = file.createNewFile();
-                if (!createFileSuccessful) throw new FileNotFoundException();
-            }
+            final File file = new File(filePathWithName);
+            if (!file.exists() && !file.createNewFile()) throw new FileNotFoundException();
             return filePathWithName;
         } catch (FileNotFoundException eFnF) {
             DebugLog.addError("Datei konnte nicht angelegt werden: " + eFnF.getMessage(), eFnF);
