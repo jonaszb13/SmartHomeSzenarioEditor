@@ -94,5 +94,5 @@ public final class DebugLog {
             }
         }
         addMetadaten("Das Programm wurde kontrolliert beendet");
-        }
+    }
 }

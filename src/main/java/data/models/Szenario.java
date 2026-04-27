@@ -9,7 +9,7 @@ public class Szenario extends DAO {
     private String beschreibung;
     private Timestamp naesteAusfuerung;
     private String rythmus;
-    private Map<Integer,Aenderungen> aenderungen;
+    private final Map<Integer,Aenderungen> aenderungen;
 
     public Szenario(final UUID id, final String name) {
         super(id, name);
