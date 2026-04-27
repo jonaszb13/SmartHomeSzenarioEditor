@@ -9,7 +9,7 @@ public class Luefter extends Geraet {
     private boolean eingeschaltet;
     private float staerke;
 
-    public Luefter(UUID id, String name, Raum raum) {
+    public Luefter(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
     }
 
@@ -17,7 +17,7 @@ public class Luefter extends Geraet {
         return eingeschaltet;
     }
 
-    public void setEingeschaltet(boolean eingeschaltet) {
+    public void setEingeschaltet(final boolean eingeschaltet) {
         this.eingeschaltet = eingeschaltet;
     }
 
@@ -25,7 +25,7 @@ public class Luefter extends Geraet {
         return staerke;
     }
 
-    public void setStaerke(float staerke) {
+    public void setStaerke(final float staerke) {
         this.staerke = staerke;
     }
 

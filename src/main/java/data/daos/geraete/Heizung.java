@@ -8,12 +8,12 @@ import java.util.UUID;
 public class Heizung extends Geraet {
     private float zielTemp;
 
-    public Heizung(UUID id, String name, Raum raum, float zielTemp) {
+    public Heizung(final UUID id, final String name, final Raum raum, final float zielTemp) {
         super(id, name, raum);
         this.zielTemp = zielTemp;
     }
 
-    public Heizung(UUID id, String name, Raum raum) {
+    public Heizung(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
     }
 
@@ -21,13 +21,13 @@ public class Heizung extends Geraet {
         return zielTemp;
     }
 
-    public void setZielTemp(float zielTemp) {
+    public void setZielTemp(final float zielTemp) {
         this.zielTemp = zielTemp;
     }
 
     @Override
-    public void updateValue(String key, String value) {
-        if (key.equals("zielTemp")) {
+    public void updateValue(final String key, final String value) {
+        if ("zielTemp".equals(key)) {
             setZielTemp(Float.parseFloat(value));
         } else {
             throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");

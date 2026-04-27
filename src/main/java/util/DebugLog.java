@@ -75,7 +75,7 @@ public final class DebugLog {
                 fehler = true;
             } else {
                 try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePathWithName))) {
-                    List<Meldung> meldungen = getInstance().getDebugLogEintraege();
+                    final List<Meldung> meldungen = getInstance().getDebugLogEintraege();
                     for (final Meldung meldung : meldungen) {
                         System.err.println(meldung.getMeldungstext());
                         writer.write(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());

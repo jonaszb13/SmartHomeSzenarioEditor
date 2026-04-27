@@ -13,7 +13,7 @@ public final class FileHandler {
         final String filePathWithName = filePath + File.separator + fileName + "_" + System.currentTimeMillis() + "." + fileEnding;
         try {
             Files.createDirectories(Paths.get(filePath));
-            File file = new File(filePathWithName);
+            final File file = new File(filePathWithName);
             if (!file.exists() && !file.createNewFile()) throw new FileNotFoundException();
             return filePathWithName;
         } catch (FileNotFoundException eFnF) {

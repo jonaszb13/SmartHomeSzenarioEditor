@@ -7,7 +7,7 @@ import java.util.UUID;
 public abstract class Geraet extends DAO {
     private Raum raum;
 
-    public Geraet(UUID id, String name, Raum raum) {
+    public Geraet(final UUID id, final String name, final Raum raum) {
         super(id, name);
         this.raum = raum;
     }
@@ -16,12 +16,12 @@ public abstract class Geraet extends DAO {
         return raum;
     }
 
-    public void setRaum(Raum raum) {
+    public void setRaum(final Raum raum) {
         this.raum = raum;
     }
 
-    public void setValues(Map<String, String> map) throws IllegalArgumentException {
-        for (Map.Entry<String, String> entry : map.entrySet()) {
+    public void setValues(final Map<String, String> map) throws IllegalArgumentException {
+        for (final Map.Entry<String, String> entry : map.entrySet()) {
             updateValue(entry.getKey(), entry.getValue());
         }
     }

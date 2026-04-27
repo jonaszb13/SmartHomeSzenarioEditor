@@ -7,7 +7,7 @@ import java.util.UUID;
 public class Raum extends DAO {
     private List<Geraet> geraete;
 
-    public Raum(UUID id, String name) {
+    public Raum(final UUID id, final String name) {
         super(id, name);
         geraete = new ArrayList<>();
     }

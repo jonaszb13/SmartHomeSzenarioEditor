@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Factory-Klasse die das dynamische erstellen von Objekten, welche von Geraet erben, ermöglicht
+ * Factory-Klasse die das dynamische erstellen von Objekten,
+ * welche von Geraet erben, ermöglicht
  * @author Ben Knirsch
  */
 public final class GeraetFactory {
@@ -36,7 +37,7 @@ public final class GeraetFactory {
         return instance;
     }
 
-    public Geraet createGeraet(UUID id, String name, Raum raum, String typ) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Geraet createGeraet(final UUID id, final String name, final Raum raum, final String typ) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Geraet geraet = null;
         try {
             geraet = (Geraet) geraeteKlassen.get(typ)

@@ -6,7 +6,7 @@ public class DAO {
     private final UUID id;
     private String name;
 
-    public DAO(UUID id, String name) {
+    public DAO(final UUID id, final String name) {
         this.id = id;
         this.name = name;
     }
@@ -20,7 +20,7 @@ public class DAO {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 }

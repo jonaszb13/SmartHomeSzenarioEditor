@@ -25,9 +25,10 @@ public class DataAccess {
      * @param url      Pfad, in dem Datenbank angelegt werden soll
      * @param user     Benutzername des Standartnutzers
      * @param password Passwort des Standartnutzers
-     * @throws SQLException Wird geworfen, wenn ungültige Werte übergeben werden und Verbindung nicht hergestellt werden kann
+     * @throws SQLException Wird geworfen, wenn ungültige Werte übergeben werden
+     *                      und Verbindung nicht hergestellt werden kann
      */
-    public DataAccess(String url, String user, String password) throws SQLException {
+    public DataAccess(final String url, final String user, final String password) throws SQLException {
         this.conn = DriverManager.getConnection("jdbc:h2:file:" + url + ";AUTO_SERVER=TRUE", user, password);
     }
 
@@ -35,14 +36,14 @@ public class DataAccess {
         final String url = "./data/mydb";
         final String user = "sa";
         final String password = "";
-        Map<UUID, Raum> raumHashMap = new HashMap<>();
-        Map<UUID, Geraet> geraetHashMap = new HashMap<>();
-        Map<UUID, Szenario> szenarioHashMap = new HashMap<>();
+        final Map<UUID, Raum> raumHashMap = new HashMap<>();
+        final Map<UUID, Geraet> geraetHashMap = new HashMap<>();
+        final Map<UUID, Szenario> szenarioHashMap = new HashMap<>();
         try {
             final DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
             List<Class<?>> geraeteKlassen = GeraetTypHandler.getGeraeteKlassen();
-            dataAccess.getAllData(raumHashMap, geraetHashMap, szenarioHashMap);
+            dataAccess.mapAllData(raumHashMap, geraetHashMap, szenarioHashMap);
         } catch (SQLException | NoGeraetProvidedException e) {
             e.printStackTrace();
             DebugLog.addError(e);
@@ -107,23 +108,26 @@ public class DataAccess {
 
 
     /**
-     * @param raumMap     Map in der alle Räume in der Datenbank auf ihre IDs gemaped werden
-     * @param geraetMap   Map in der alle Geräte in der Datenbank mit ihren Attributen auf ihre IDs gemaped werden
-     * @param szenarioMap Map in der alle Szenarien in der Datenbank mit ihren Inhalten auf ihre IDs gemaped werden
+     * @param raumMap     Map in der alle Räume in der Datenbank
+     *                    auf ihre IDs gemaped werden
+     * @param geraetMap   Map in der alle Geräte in der Datenbank
+     *                    mit ihren Attributen auf ihre IDs gemaped werden
+     * @param szenarioMap Map in der alle Szenarien in der Datenbank
+     *                    mit ihren Inhalten auf ihre IDs gemaped werden
      * @throws SQLException              wenn ein Fehler bei der Datenbankverbindung auftritt
      * @throws NoGeraetProvidedException tritt auf, wenn in dem Ordner geraete keine Klassen vorhanden sind
      */
-    public void getAllData(Map<UUID, Raum> raumMap, Map<UUID, Geraet> geraetMap, Map<UUID, Szenario> szenarioMap) throws SQLException, NoGeraetProvidedException {
-        getAllRaeume(raumMap);
-        getAllGeraete(raumMap, geraetMap);
-        getAllSzenarien(geraetMap,szenarioMap);
+    public void mapAllData(final Map<UUID, Raum> raumMap, final Map<UUID, Geraet> geraetMap, final Map<UUID, Szenario> szenarioMap) throws SQLException, NoGeraetProvidedException {
+        mapAllRaeume(raumMap);
+        mapAllGeraete(raumMap, geraetMap);
+        mapAllSzenarien(geraetMap, szenarioMap);
     }
 
-    public void getAllRaeume(Map<UUID, Raum> raumMap) throws SQLException {
+    public void mapAllRaeume(final Map<UUID, Raum> raumMap) throws SQLException {
         final Statement stmt = conn.createStatement();
         //Laden der Räume
         DebugLog.addHinweis("Beginne RäumeMap zu laden");
-        ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
+        final ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
         while (rs.next()) {
             final UUID id = UUID.fromString(rs.getString("id"));
             final String name = rs.getString("name");
@@ -132,12 +136,12 @@ public class DataAccess {
         DebugLog.addHinweis("RäumeMap erfolgreich geladen");
     }
 
-    public void getAllGeraete(Map<UUID, Raum> raumMap, Map<UUID, Geraet> geraetMap) throws SQLException, NoGeraetProvidedException {
+    public void mapAllGeraete(final Map<UUID, Raum> raumMap, final Map<UUID, Geraet> geraetMap) throws SQLException, NoGeraetProvidedException {
         final Statement stmt = conn.createStatement();
         DebugLog.addHinweis("Beginne GeräteMap zu laden");
         final GeraetFactory gf = GeraetFactory.getInstance();
         //TODO QUESTION: Sollen geräte ohne Attribute geladen werden?
-        ResultSet rs = stmt.executeQuery("""
+        final ResultSet rs = stmt.executeQuery("""
                 SELECT GERAETE.ID, GERAETE.NAME, GERAETE.RAUM, Geraete.ART, SCHLUESSEL, WERT
                 FROM Geraete
                 JOIN GERAETE_WERTE ON Geraete.ID = GERAETE_WERTE.Geraet
@@ -175,10 +179,10 @@ public class DataAccess {
         DebugLog.addHinweis("GeräteMap erfolgreich geladen");
     }
 
-    public void getAllSzenarien (Map<UUID, Geraet> geraetMap, Map<UUID, Szenario> szenarioMap) throws SQLException {
+    public void mapAllSzenarien(final Map<UUID, Geraet> geraetMap, final Map<UUID, Szenario> szenarioMap) throws SQLException {
         final Statement stmt = conn.createStatement();
         DebugLog.addHinweis("Beginne SzenarienMap zu laden");
-        ResultSet rs = stmt.executeQuery("""
+        final ResultSet rs = stmt.executeQuery("""
                 SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                 FROM SZENARIEN
                 JOIN SZENARIEN_INHALT

@@ -11,7 +11,8 @@ import java.util.stream.Collectors;
 
 
 /**
- * Statische Klasse, die zur Laufzeit ermittelt welche Klassen im geraete Paket liegen
+ * Utility Klasse, die zur Laufzeit ermittelt,
+ * welche Klassen im geraete Paket liegen
  * @author Ben Knirsch
  */
 public final class GeraetTypHandler {
@@ -41,10 +42,11 @@ public final class GeraetTypHandler {
      * @param className Name der Klasse die gefunden werden soll
      * @return gefundene Klasse
      */
-    private static Class<?> getClass(String className) {
+    private static Class<?> getClass(final String className) {
         Class<?> clazz = null;
         try {
-            clazz = Class.forName(GeraetTypHandler.GERAETE_KLASSEN_PAKET + "." + className.substring(0, className.lastIndexOf('.')));
+            //KEY: Klassenname ohne Dateiendung
+            clazz = Class.forName(GERAETE_KLASSEN_PAKET + "." + className.substring(0, className.lastIndexOf('.')));
         } catch (ClassNotFoundException eCNF) {
             DebugLog.addError(eCNF);
         }
