@@ -26,6 +26,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
     public void changed(ObservableValue<? extends TreeItem<String>> observable,
                         TreeItem<String> oldValue, TreeItem<String> newValue) {
 
+        //TODO nur für Testen
         DebugLog.addHinweis("Meldung");
         //TODO dieser Aufruf muss in jeden changed (oder einen generischeren)
         view.getStatusPanel().setText(model.getStatusbereich().getNachrichten());
