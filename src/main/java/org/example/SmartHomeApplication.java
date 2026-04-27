@@ -1,6 +1,7 @@
 package org.example;
 
 import controller.Controller;
+import data.models.Model;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -23,15 +24,14 @@ public class SmartHomeApplication extends Application {
         loader.load();
 
         View view = loader.getController();
-        new Controller(view);
+        //TODO hier müssen die ganzen Daten reingeladen werden --> vielleicht auch direkte Methoden im Modell, wodurch das keine Parameter mehr sein müssen
+        Model model = new Model(null, null, null);
+        new Controller(view, model);
 
         Pane defaultPanel = FXMLLoader.load(
                 Objects.requireNonNull(getClass().getResource("/org/example/ui/haupt-view.fxml"))
         );
         view.getHauptPane().getChildren().setAll(defaultPanel);
-
-        //TODO: so kann bspw. der Text im Statusfeld gesetzt werden
-        view.getStatusPanel().setText("testlsjatklakltlk\nteksltkjatklatlaklt\ndsajfkasdjfljaskflka");
 
         Scene scene = new Scene(loader.getRoot());
         stage.setTitle("Smart Home");

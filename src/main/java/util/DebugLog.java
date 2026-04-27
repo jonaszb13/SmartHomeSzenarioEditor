@@ -56,6 +56,8 @@ public final class DebugLog {
         return getInstance().getDebugLogEintraege().stream().anyMatch(Meldung::isError);
     }
 
+    //TODO wann soll immer ein Fehlerbericht erstellt werden
+
     public static void createErrorFile() {
         if (hasError()) {
             boolean fehler = false;

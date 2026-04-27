@@ -1,5 +1,6 @@
 package controller;
 
+import data.models.Model;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
@@ -13,15 +14,22 @@ import java.util.Objects;
 
 public class Controller implements ChangeListener<TreeItem<String>> {
     private final View view;
+    private final Model model;
 
-    public Controller(View view) {
+    public Controller(View view, Model model) {
         this.view = view;
         this.view.addUebersichtTreeSelectionListener(this);
+        this.model = model;
     }
 
     @Override
     public void changed(ObservableValue<? extends TreeItem<String>> observable,
                         TreeItem<String> oldValue, TreeItem<String> newValue) {
+
+        DebugLog.addHinweis("Meldung");
+        //TODO dieser Aufruf muss in jeden changed (oder einen generischeren)
+        view.getStatusPanel().setText(model.getStatusbereich().getNachrichten());
+
         if (newValue == null) return;
 
         String fxmlFile = switch (newValue.getValue().strip()) {
