@@ -1,30 +1,43 @@
 package controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.TreeItem;
+import javafx.scene.layout.Pane;
 import userInterface.views.View;
-import data.models.Model;
+import util.DebugLog;
 
-import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import java.awt.*;
+import java.io.IOException;
+import java.util.Objects;
 
-public class Controller implements TreeSelectionListener {
-    private final Model model;
+public class Controller implements ChangeListener<TreeItem<String>> {
     private final View view;
 
-    public Controller() {
-        this.model = new Model(null, null, null);
-        this.view = new View();
+    public Controller(View view) {
+        this.view = view;
         this.view.addUebersichtTreeSelectionListener(this);
     }
 
     @Override
-    public void valueChanged(TreeSelectionEvent e) {
-        DefaultMutableTreeNode node = view.getSelectedNode();
-        if (node == null) return;
-        //TODO je nach durchgeführter Änderung aufrufen des Models für Abrufen oder Aktualisieren der Daten des Models
-        //TODO neue Daten werden in der View angepasst
-        view.getHauptPanel().setBackground(Color.PINK);
+    public void changed(ObservableValue<? extends TreeItem<String>> observable,
+                        TreeItem<String> oldValue, TreeItem<String> newValue) {
+        if (newValue == null) return;
+
+        String fxmlFile = switch (newValue.getValue().strip()) {
+            case "Räume"     -> "raum-view.fxml";
+            case "Geräte"    -> "geraete-view.fxml";
+            case "Szenarien" -> "szenarien-view.fxml";
+            default          -> "haupt-view.fxml";
+        };
+
+        try {
+            Pane neuesPanel = FXMLLoader.load(
+                    Objects.requireNonNull(getClass().getResource("/org/example/ui/" + fxmlFile))
+            );
+            view.getHauptPane().getChildren().setAll(neuesPanel);
+        } catch (IOException e) {
+            DebugLog.addError("FXMLLoader konnte nicht geladen werden", e);
+        }
     }
 }
