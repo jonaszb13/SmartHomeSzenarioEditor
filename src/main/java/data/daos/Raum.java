@@ -2,11 +2,12 @@ package data.daos;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Raum extends DAO {
     private List<Geraet> geraete;
 
-    public Raum(int id, String name) {
+    public Raum(UUID id, String name) {
         super(id, name);
         geraete = new ArrayList<>();
     }

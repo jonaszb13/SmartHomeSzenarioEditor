@@ -3,12 +3,14 @@ package data.daos.geraete;
 import data.daos.Geraet;
 import data.daos.Raum;
 
+import java.util.UUID;
+
 public class Rollladen extends Geraet {
 
     private float schliessstatus;
     private float winckelung;
 
-    public Rollladen(int id, String name, Raum raum) {
+    public Rollladen(UUID id, String name, Raum raum) {
         super(id, name, raum);
     }
 

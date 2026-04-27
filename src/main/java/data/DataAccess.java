@@ -11,6 +11,7 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Klasse die alle Interaktionen mit der persistenten Datenhaltung handhabt.
@@ -33,9 +34,9 @@ public class DataAccess {
         final String url = "./data/mydb";
         final String user = "sa";
         final String password = "";
-        Map<Integer, Raum> raumHashMap = new HashMap<>();
-        Map<Integer, Geraet> geraetHashMap = new HashMap<>();
-        Map<Integer, Szenario> szenarioHashMap = new HashMap<>();
+        Map<UUID, Raum> raumHashMap = new HashMap<>();
+        Map<UUID, Geraet> geraetHashMap = new HashMap<>();
+        Map<UUID, Szenario> szenarioHashMap = new HashMap<>();
         try {
             final DataAccess dataAccess = new DataAccess(url, user, password);
             dataAccess.setupDatabase();
@@ -46,6 +47,7 @@ public class DataAccess {
             DebugLog.addError(e);
             DebugLog.createErrorFile();
         }
+        System.out.println("");
     }
 
     /**
@@ -58,21 +60,21 @@ public class DataAccess {
         //Allgemeine Tabellen
         stmt.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS Raeume (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id uuid PRIMARY KEY,
                     name VARCHAR(255) NOT NULL);
                 """);
         stmt.execute("""
                     CREATE TABLE IF NOT EXISTS Geraete
                     (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id uuid PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
-                    Raum INT REFERENCES RAEUME(id),
+                    Raum uuid REFERENCES RAEUME(id),
                     Art varchar(63) NOT NULL
                     );
                 """);
         stmt.execute("""
                     CREATE TABLE IF NOT EXISTS Szenarien (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id uuid PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
                     Rythmus VARCHAR(255),
                     Status VARCHAR(255),
@@ -81,10 +83,10 @@ public class DataAccess {
                 """);
         stmt.execute("""
                     CREATE TABLE IF NOT EXISTS Szenarien_Inhalt (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id uuid PRIMARY KEY,
                     aktion VARCHAR(255) NOT NULL,
-                    Szenario INT REFERENCES Szenarien(id),
-                    Geraet INT REFERENCES Geraete(id),
+                    Szenario uuid REFERENCES Szenarien(id),
+                    Geraet uuid REFERENCES Geraete(id),
                     schluessel VARCHAR(255) NOT NULL,
                     Wert VARCHAR(255),
                     Position INT
@@ -92,8 +94,8 @@ public class DataAccess {
                 """);
         stmt.execute("""
                     CREATE TABLE IF NOT EXISTS Geraete_Werte (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    Geraet INT REFERENCES Geraete(id),
+                    id uuid PRIMARY KEY,
+                    Geraet uuid REFERENCES Geraete(id),
                     schluessel VARCHAR(255) NOT NULL,
                     Wert VARCHAR(255)
                     )
@@ -109,13 +111,13 @@ public class DataAccess {
      * @throws SQLException              wenn ein Fehler bei der Datenbankverbindung auftritt
      * @throws NoGeraetProvidedException tritt auf, wenn in dem Ordner geraete keine Klassen vorhanden sind
      */
-    public void getAllData(Map<Integer, Raum> raumMap, Map<Integer, Geraet> geraetMap, Map<Integer, Szenario> szenarioMap) throws SQLException, NoGeraetProvidedException {
+    public void getAllData(Map<UUID, Raum> raumMap, Map<UUID, Geraet> geraetMap, Map<UUID, Szenario> szenarioMap) throws SQLException, NoGeraetProvidedException {
         final Statement stmt = conn.createStatement();
         //Laden der Räume
         DebugLog.addHinweis("Beginne RäumeMap zu laden");
         ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
         while (rs.next()) {
-            final int id = rs.getInt("id");
+            final UUID id = UUID.fromString(rs.getString("id"));
             final String name = rs.getString("name");
             raumMap.put(id, new Raum(id, name));
         }
@@ -131,18 +133,18 @@ public class DataAccess {
                 ORDER BY Geraete.ART, Geraete.ID
                 """);
         Map<String, String> atributeHashMap = new HashMap<>();
-        int lastId = -1;
+        UUID lastId = null;
         Geraet aktuellesGeraet = null;
         boolean erstesMal = true;
         while (rs.next()) {
-            final int id = rs.getInt("id");
-            if (id != lastId) {
+            final UUID id = UUID.fromString(rs.getString("id"));
+            if (!id.equals(lastId)) {
                 if (erstesMal) erstesMal = false;
                 else {
                     aktuellesGeraet.setValues(atributeHashMap);
                     atributeHashMap = new HashMap<>();
                 }
-                final int raum = rs.getInt("raum");
+                final UUID raum = UUID.fromString(rs.getString("raum"));
                 try {
                     aktuellesGeraet = gf.createGeraet(id, rs.getString("name"),
                             raumMap.get(raum), rs.getString("art"));
@@ -170,12 +172,12 @@ public class DataAccess {
                 ORDER BY SZENARIEN.ID, GERAET
                 """);
         //Wert der definitiv nicht in Datenbank vorhanden ist
-        lastId = -1;
+        lastId = null;
         Szenario aktuellesSzenario = null;
         while (rs.next()) {
-            final int id = rs.getInt("id");
+            final UUID id = UUID.fromString(rs.getString("id"));
             //Beim ersten Szenario und jedem neuen Gerät Wahr
-            if (id != lastId) {
+            if (!id.equals(lastId) ) {
                 final String name = rs.getString("name");
                 aktuellesSzenario = new Szenario(id, name);
                 aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
@@ -183,7 +185,7 @@ public class DataAccess {
                 lastId = id;
             }
             aktuellesSzenario.getAenderungen().put(rs.getInt("position"), new Szenario.Aenderungen(
-                    geraetMap.get(rs.getInt("geraet")), rs.getString("schluessel"), rs.getString("wert")
+                    geraetMap.get(UUID.fromString(rs.getString("geraet"))), rs.getString("schluessel"), rs.getString("wert")
             ));
         }
         DebugLog.addHinweis("SzenarienMap erfolgreich geladen");

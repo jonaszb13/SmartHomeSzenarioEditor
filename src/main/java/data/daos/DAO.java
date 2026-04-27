@@ -1,16 +1,18 @@
 package data.daos;
 
+import java.util.UUID;
+
 public class DAO {
-    private final int id;
+    private final UUID id;
     private String name;
 
-    public DAO(int id, String name) {
+    public DAO(UUID id, String name) {
         this.id = id;
         this.name = name;
     }
 
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 

@@ -4,19 +4,20 @@ import data.daos.Geraet;
 import data.daos.Raum;
 
 import java.awt.*;
+import java.util.UUID;
 
 public class Lampe extends Geraet {
     private double haelligkeit;
     private Color farbe;
     private boolean eingeschaltet;
 
-    public Lampe(int id, String name, Raum raum, double haelligkeit, Color farbe, boolean eingeschaltet) {
+    public Lampe(UUID id, String name, Raum raum, double haelligkeit, Color farbe, boolean eingeschaltet) {
         super(id, name, raum);
         this.haelligkeit = haelligkeit;
         this.farbe = farbe;
         this.eingeschaltet = eingeschaltet;
     }
-    public Lampe(int id, String name, Raum raum) {
+    public Lampe(UUID id, String name, Raum raum) {
         super(id, name, raum);
     }
 

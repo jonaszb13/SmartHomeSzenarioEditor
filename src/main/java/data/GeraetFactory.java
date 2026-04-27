@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Factory-Klasse die das dynamische erstellen von Objekten, welche von Geraet erben, ermöglicht
@@ -35,11 +36,11 @@ public final class GeraetFactory {
         return instance;
     }
 
-    public Geraet createGeraet(int id, String name, Raum raum, String typ) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Geraet createGeraet(UUID id, String name, Raum raum, String typ) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Geraet geraet = null;
         try {
             geraet = (Geraet) geraeteKlassen.get(typ)
-                    .getDeclaredConstructor(int.class, String.class, Raum.class)
+                    .getDeclaredConstructor(UUID.class, String.class, Raum.class)
                     .newInstance(id, name, raum);
         } catch (ClassCastException eCC) {
             DebugLog.addError("Es befindet sich eine Klasse im Gerätetypen-Ordner die nicht von Gerät erbt", eCC);

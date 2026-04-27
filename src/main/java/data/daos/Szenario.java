@@ -3,6 +3,7 @@ package data.daos;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Szenario extends DAO {
     private String beschreibung;
@@ -10,7 +11,7 @@ public class Szenario extends DAO {
     private String rythmus;
     private Map<Integer,Aenderungen> aenderungen;
 
-    public Szenario(int id, String name) {
+    public Szenario(UUID id, String name) {
         super(id, name);
         this.aenderungen = new HashMap<>();
     }

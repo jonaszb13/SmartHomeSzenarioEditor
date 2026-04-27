@@ -1,13 +1,13 @@
 package data.daos;
 
 import java.util.Map;
-
+import java.util.UUID;
 
 
 public abstract class Geraet extends DAO {
     private Raum raum;
 
-    public Geraet(int id, String name, Raum raum) {
+    public Geraet(UUID id, String name, Raum raum) {
         super(id, name);
         this.raum = raum;
     }

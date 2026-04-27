@@ -3,12 +3,14 @@ package data.daos.geraete;
 import data.daos.Geraet;
 import data.daos.Raum;
 
+import java.util.UUID;
+
 public class Steckdose extends Geraet {
 
     private boolean eingeschaltet;
     private float aktuelleLeistung;
 
-    public Steckdose(int id, String name, Raum raum) {
+    public Steckdose(UUID id, String name, Raum raum) {
         super(id, name, raum);
         eingeschaltet = false;
     }

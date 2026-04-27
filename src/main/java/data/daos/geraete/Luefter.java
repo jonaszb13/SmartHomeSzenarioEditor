@@ -3,11 +3,13 @@ package data.daos.geraete;
 import data.daos.Geraet;
 import data.daos.Raum;
 
+import java.util.UUID;
+
 public class Luefter extends Geraet {
     private boolean eingeschaltet;
     private float staerke;
 
-    public Luefter(int id, String name, Raum raum) {
+    public Luefter(UUID id, String name, Raum raum) {
         super(id, name, raum);
     }
 

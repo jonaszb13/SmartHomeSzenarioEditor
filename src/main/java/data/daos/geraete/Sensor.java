@@ -3,12 +3,14 @@ package data.daos.geraete;
 import data.daos.Geraet;
 import data.daos.Raum;
 
+import java.util.UUID;
+
 public class Sensor extends Geraet {
 
     private boolean eingeschaltet;
     private boolean ausschlag;
 
-    public Sensor(int id, String name, Raum raum) {
+    public Sensor(UUID id, String name, Raum raum) {
         super(id, name, raum);
     }
 
