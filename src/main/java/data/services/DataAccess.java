@@ -1,5 +1,6 @@
-package data;
+package data.services;
 
+import data.models.GeraetFactory;
 import data.models.Geraet;
 import data.models.Raum;
 import data.models.Szenario;
@@ -32,6 +33,7 @@ public class DataAccess {
         this.conn = DriverManager.getConnection("jdbc:h2:file:" + url + ";AUTO_SERVER=TRUE", user, password);
     }
 
+    //Nur für @Ben zum Testen
     public static void main(String[] args) {
         final String url = "./data/mydb";
         final String user = "sa";

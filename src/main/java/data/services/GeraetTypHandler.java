@@ -1,4 +1,4 @@
-package data;
+package data.services;
 
 import util.StatusLog;
 import util.customExceptions.NoGeraetProvidedException;
@@ -24,8 +24,7 @@ public final class GeraetTypHandler {
      * @return Liste aller Klassen, in dem übergeben Paket
      * @throws NoGeraetProvidedException Wird geworfen, wenn der Ordner leer ist
      */
-    /* package */
-    static List<Class<?>> getGeraeteKlassen() throws NoGeraetProvidedException {
+    public static List<Class<?>> getGeraeteKlassen() throws NoGeraetProvidedException {
         StatusLog.addHinweis("Beginne Geräteklassen zu laden");
         final InputStream stream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(GERAETE_KLASSEN_PAKET.replaceAll("[.]", "/"));

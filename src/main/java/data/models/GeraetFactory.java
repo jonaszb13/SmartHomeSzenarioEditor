@@ -1,7 +1,6 @@
-package data;
+package data.models;
 
-import data.models.Geraet;
-import data.models.Raum;
+import data.services.GeraetTypHandler;
 import util.StatusLog;
 import util.customExceptions.NoGeraetProvidedException;
 
