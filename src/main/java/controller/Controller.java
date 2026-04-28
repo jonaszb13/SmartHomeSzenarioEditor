@@ -55,6 +55,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
     }
 
     //TODO farbliche Fehlermeldungen
+    //TODO: Meldungstyp ergänzen (Meldung/Hinweis/Fehler)
     private void updateStatusLog() {
         List<Meldung> newMessages = model.getStatusbereich()
                 .getNewMessages(view.getStatusLogVBox()

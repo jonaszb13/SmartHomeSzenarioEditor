@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -8,21 +7,21 @@
 
     <top>
         <MenuBar BorderPane.alignment="CENTER">
-            <Menu mnemonicParsing="false" text="Neu"/>
-            <Menu mnemonicParsing="false" text="Öffnen"/>
-            <Menu mnemonicParsing="false" text="Speichern"/>
-            <Menu mnemonicParsing="false" text="Szeanrio öffnen"/>
+            <Menu mnemonicParsing="false" text="Neu" />
+            <Menu mnemonicParsing="false" text="Öffnen" />
+            <Menu mnemonicParsing="false" text="Speichern" />
+            <Menu mnemonicParsing="false" text="Szeanrio öffnen" />
         </MenuBar>
     </top>
 
     <left>
         <VBox prefWidth="200" style="-fx-background-color: lightgray;">
-            <TreeView fx:id="uebersichtTree" />
+            <TreeView fx:id="uebersichtTree" style="-fx-background-color: lightgray;" />
         </VBox>
     </left>
 
     <right>
-        <ScrollPane fitToWidth="true" prefWidth="300" style="-fx-background-color: lightgray;">
+        <ScrollPane fitToWidth="true" prefWidth="300" style="-fx-background: lightgray; -fx-border-color: lightgray;">
             <VBox fx:id="statusLogVBox" style="-fx-background-color: lightgray;">
                 </VBox>
         </ScrollPane>
@@ -30,6 +29,7 @@
 
     <center>
         <AnchorPane fx:id="hauptPane">
+
         </AnchorPane>
     </center>
 

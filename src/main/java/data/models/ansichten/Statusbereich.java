@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 
 public class Statusbereich {
 
+    //TODO: Umbau auf String anstatt Node
     public List<Meldung> getNewMessages(Node letzterNode) {
         List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
         if (null == letzterNode) {
