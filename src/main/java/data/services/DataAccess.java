@@ -210,4 +210,24 @@ public class DataAccess {
         }
         StatusLog.addHinweis("SzenarienMap erfolgreich geladen");
     }
+
+    void addRaum (String sql, UUID id, String name) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setObject(1, id);
+        pStmt.setString(2, name);
+        pStmt.executeUpdate();
+    }
+
+    void updateRaum (String sql, UUID id, String name) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setString(1, name);
+        pStmt.setObject(2, id);
+        pStmt.executeUpdate();
+    }
+
+    void deleteRaum (String sql, UUID id) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setObject(1, id);
+        pStmt.executeUpdate();
+    }
 }
