@@ -1,4 +1,4 @@
-package data.services.dvk;
+package data.services.datenServices;
 
 import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Geraet;
@@ -63,7 +63,8 @@ public class DataAccess {
         System.out.println("");
     }
 
-    public void createTable(String sql) throws SQLException {
+    /* package */
+    void createTable(String sql) throws SQLException {
         final Statement stmt = conn.createStatement();
         stmt.executeUpdate(sql);
         stmt.close();
@@ -171,6 +172,7 @@ public class DataAccess {
         StatusLog.addHinweis("SzenarienMap erfolgreich geladen");
     }
 
+    /* package */
     void addRaum(String sql, UUID id, String name) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
@@ -178,6 +180,7 @@ public class DataAccess {
         pStmt.executeUpdate();
     }
 
+    /* package */
     void updateRaum(String sql, UUID id, String name) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setString(1, name);
@@ -185,12 +188,14 @@ public class DataAccess {
         pStmt.executeUpdate();
     }
 
+    /* package */
     void deleteRaum(String sql, UUID id) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
         pStmt.executeUpdate();
     }
 
+    /* package */
     void addGeraet(String sql, UUID id, String name, String art, UUID raum) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
@@ -200,6 +205,7 @@ public class DataAccess {
         pStmt.executeUpdate();
     }
 
+    /* package */
     void addGeraetWert(String sql, UUID id, UUID geraet, String schluessel, String wert) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
@@ -209,12 +215,14 @@ public class DataAccess {
         pStmt.executeUpdate();
     }
 
+    /* package */
     void deleteGeraetOrWert(String sql, UUID id) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
         pStmt.executeUpdate();
     }
 
+    /* package */
     void updateGeraetName(String sql, UUID id, String name) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setString(1, name);
@@ -222,6 +230,7 @@ public class DataAccess {
         pStmt.executeUpdate();
     }
 
+    /* package */
     void updateGeraetRaum(String sql, UUID id, UUID raum) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, raum);
@@ -229,6 +238,7 @@ public class DataAccess {
         pStmt.executeUpdate();
     }
 
+    /* package */
     void updateGeratWert(String sql, UUID geraet, String schluessel, String wert) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setString(1, wert);

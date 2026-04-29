@@ -1,4 +1,4 @@
-package data.services.dvk;
+package data.services.datenServices;
 
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
@@ -10,37 +10,38 @@ import java.util.Map;
 import java.util.UUID;
 
 @Singleton
-public class GeraetService {
+public final class GeraetDataService {
 
-    static GeraetService instance;
-    DataAccess dataAccess;
+    private static GeraetDataService instance;
+    private final DataAccess dataAccess;
 
-    private GeraetService(DataAccess dataAccess) {
+    private GeraetDataService(DataAccess dataAccess) {
         this.dataAccess = dataAccess;
     }
 
-    public static GeraetService getInstance() throws SQLException {
+    public static GeraetDataService getInstance() throws SQLException {
         if (instance == null) {
-            instance = new GeraetService(DataAccess.getInstance());
+            instance = new GeraetDataService(DataAccess.getInstance());
         }
         return instance;
     }
 
-    public static GeraetService setUpGeraetService(DataAccess dataAccess) {
-        return new GeraetService(dataAccess);
+    public static GeraetDataService setUpGeraetService(DataAccess dataAccess) {
+        return new GeraetDataService(dataAccess);
     }
 
     public boolean addGeraet(String name, String art, Raum raum, Map<String, String> attributeMap) {
         boolean erfolgreich = false;
+        //language=SQL
         String sql = """
                 INSERT INTO geraet (id, name, art, raum)
                 VALUES (?, ?, ?, ?)
                 ;""";
         try {
             //TODO Was tun wenn fehler in der Mitte?
-            UUID geraetId = UUID.randomUUID();
+            final UUID geraetId = UUID.randomUUID();
             dataAccess.addGeraet(sql, geraetId, name, art, raum.getId());
-            for (Map.Entry<String, String> entry : attributeMap.entrySet()) {
+            for (final Map.Entry<String, String>  entry : attributeMap.entrySet()) {
                 sql = """
                         INSERT INTO geraete_werte (id, geraet, schluessel, wert)
                         VALUES (?, ?, ?, ?)
@@ -56,6 +57,7 @@ public class GeraetService {
 
     public boolean deleteGeraet(Geraet geraet) {
         boolean erfolgreich = false;
+        //language=SQL
         String sql = """
                 DELETE FROM geraete_werte
                 WHERE geraet = ?
@@ -76,13 +78,15 @@ public class GeraetService {
 
     public boolean updateGeraetName(Geraet geraet, String newName) {
         boolean erfolgreich = false;
-        String sql = """
+        //language=SQL
+        final String sql = """
                 UPDATE geraet
                 SET name = ?
                 WHERE id = ?
                 """;
         try {
             dataAccess.updateGeraetName(sql, geraet.getId(), newName);
+            erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
         }
@@ -91,13 +95,15 @@ public class GeraetService {
 
     public boolean updateGeraetRaum(Geraet geraet, Raum raum) {
         boolean erfolgreich = false;
-        String sql = """
-                UPDATE geraet
+        //language=SQL
+        final String sql = """
+                UPDATE GERAETE
                 SET raum = ?
                 WHERE id = ?
                 """;
         try {
             dataAccess.updateGeraetRaum(sql, geraet.getId(), raum.getId());
+            erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
         }
@@ -106,7 +112,8 @@ public class GeraetService {
 
     public boolean updateGeraetWert(Geraet geraet, String schluessel, String wert) {
         boolean erfolgreich = false;
-        String sql = """
+        //language=SQL
+        final String sql = """
                 UPDATE geraete_werte
                 SET wert = ?
                 WHERE id = ?
@@ -114,6 +121,7 @@ public class GeraetService {
                 """;
         try {
             dataAccess.updateGeratWert(sql, geraet.getId(), schluessel, wert);
+            erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
         }
@@ -122,7 +130,7 @@ public class GeraetService {
 
     public boolean updateGeraetWerte(Geraet geraet, Map<String, String> attributeMap) {
         boolean erfolgreich = true;
-        for (Map.Entry<String, String> entry : attributeMap.entrySet()) {
+        for (final Map.Entry<String, String> entry : attributeMap.entrySet()) {
             if (!updateGeraetWert(geraet, entry.getKey(), entry.getValue())) {
                 erfolgreich = false;
             }

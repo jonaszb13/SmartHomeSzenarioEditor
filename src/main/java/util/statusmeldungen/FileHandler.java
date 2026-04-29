@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public final class FileHandler {
+    private FileHandler() {}
+
     public static String generateFile(String filePath, String fileName, String fileEnding) {
         final String filePathWithName = filePath + File.separator + fileName + "_" + System.currentTimeMillis() + "." + fileEnding;
         try {

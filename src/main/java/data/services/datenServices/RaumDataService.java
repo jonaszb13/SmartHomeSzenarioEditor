@@ -1,4 +1,4 @@
-package data.services.dvk;
+package data.services.datenServices;
 
 import data.models.fachobjekte.Raum;
 import jakarta.inject.Singleton;
@@ -8,34 +8,30 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 @Singleton
-public final class RaumService {
+public final class RaumDataService {
 
-    static RaumService raumService;
-    DataAccess dataAccess;
+    private static RaumDataService raumDataService;
+    private final DataAccess dataAccess;
 
-    private RaumService(DataAccess dataAccess) {
+    private RaumDataService(DataAccess dataAccess) {
         this.dataAccess = dataAccess;
     }
 
-    private RaumService setupRaumService(DataAccess dataAccess) {
-        return new RaumService(dataAccess);
-    }
-
-    public static RaumService getInstance(DataAccess dataAccess) throws SQLException {
-        if (raumService == null) {
-            raumService = new RaumService(DataAccess.getInstance());
+    public static RaumDataService getInstance(DataAccess dataAccess) throws SQLException {
+        if (raumDataService == null) {
+            raumDataService = new RaumDataService(DataAccess.getInstance());
         }
-        return raumService;
+        return raumDataService;
     }
 
     public boolean addRaum(String name) {
         boolean erfolgreich = false;
         //language=SQL
-        String sql = """
+        final String sql = """
                 INSERT INTO RAEUME ("ID", "NAME")
                 VALUES (?, ?)
                 """;
-        Raum raum = new Raum(UUID.randomUUID(), name);
+        final Raum raum = new Raum(UUID.randomUUID(), name);
         try {
             dataAccess.addRaum(sql, raum.getId(), name);
             erfolgreich = true;
@@ -45,10 +41,10 @@ public final class RaumService {
         return erfolgreich;
     }
 
-    public boolean updateRaum(UUID id, String name) {
+    public boolean updateRaumName(UUID id, String name) {
         boolean erfolgreich = false;
         //language=SQL
-        String sql = """
+        final String sql = """
                 UPDATE RAEUME SET NAME = ?
                 WHERE ID = ?;""";
         try {
@@ -63,7 +59,7 @@ public final class RaumService {
     public boolean deleteRaum(UUID id) {
         boolean erfolgreich = false;
         //language=SQL
-        String sql = """
+        final String sql = """
                 DELETE FROM RAEUME
                 WHERE ID = ?;
                 """;

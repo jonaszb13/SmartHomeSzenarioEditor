@@ -17,8 +17,9 @@ import java.util.stream.Collectors;
  */
 public final class GeraetTypHandler {
 
-    private static final String GERAETE_KLASSEN_PAKET = "data.models.fachobjekte.geraete";
+    private static final String GERAETE_KLASSEN_PAKET = "data.models.fachobjekte.geraeteArten";
 
+    private GeraetTypHandler() {}
 
     /**
      * @return Liste aller Klassen, in dem übergeben Paket

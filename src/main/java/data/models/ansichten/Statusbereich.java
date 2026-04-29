@@ -1,6 +1,5 @@
 package data.models.ansichten;
 
-import javafx.scene.Node;
 import util.customExceptions.MessageMissing;
 import util.statusmeldungen.StatusLog;
 import util.statusmeldungen.Meldung;

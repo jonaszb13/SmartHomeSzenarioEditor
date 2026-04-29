@@ -1,10 +1,11 @@
-package data.services.dvk;
+package data.services.datenServices;
 
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
 
 public class DatabaseCreationService {
+    private DatabaseCreationService() {}
 
     /**
      * Methode, die die Datenbank zur persistenten speicherung der Zustände anlegt
@@ -13,7 +14,7 @@ public class DatabaseCreationService {
      */
     public static void createDatabase() throws SQLException {
         StatusLog.addHinweis("Datenbank wird verbunden und ggf. neu angelegt");
-        DataAccess dataAccess = DataAccess.getInstance();
+        final DataAccess dataAccess = DataAccess.getInstance();
         dataAccess.createTable("""
                     CREATE TABLE IF NOT EXISTS Raeume (
                     id uuid PRIMARY KEY,

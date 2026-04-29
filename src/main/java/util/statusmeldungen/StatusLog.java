@@ -71,7 +71,7 @@ public final class StatusLog {
                 addError("Betriebssystem konnte nicht ermittlet werden!");
                 fehler = true;
             }
-            String filePathWithName = FileHandler.generateFile(filePath, "DebugLog", "txt");
+            final String filePathWithName = FileHandler.generateFile(filePath, "DebugLog", "txt");
             if (filePathWithName == null) {
                 fehler = true;
             } else {

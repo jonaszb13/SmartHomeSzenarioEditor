@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
- import javafx.scene.paint.Color;
 import userInterface.View;
 import util.customExceptions.MessageMissing;
 import util.statusmeldungen.Meldung;
