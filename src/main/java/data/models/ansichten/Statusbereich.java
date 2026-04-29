@@ -1,6 +1,7 @@
 package data.models.ansichten;
 
 import javafx.scene.Node;
+import util.customExceptions.MessageMissing;
 import util.statusmeldungen.StatusLog;
 import util.statusmeldungen.Meldung;
 
@@ -11,16 +12,15 @@ import java.util.stream.IntStream;
 
 public class Statusbereich {
 
-    public List<Meldung> getNewMessages(UUID userDataLetzterNode) {
+    public List<Meldung> getNewMessages(UUID userDataLetzterNode) throws MessageMissing {
         List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
         if (null == userDataLetzterNode) {
             return meldungen;
         }
-        //TODO hier vielleicht direkt eine Fehlermeldung schmeißen, falls die id nicht mehr gefunden wird
         int indexNeueMeldung = IntStream.range(0, meldungen.size())
                 .filter(i -> meldungen.get(i).getMeldungsId().equals(userDataLetzterNode))
                 .findFirst()
-                .orElse(-1) + 1;
+                .orElseThrow(() -> new MessageMissing("Es liegt eine inkonsistente Datenbasis vor: Eine Meldung konnte nicht im Statuslog gefunden werden.")) + 1;
         if (indexNeueMeldung == 0) {
             StatusLog.addError("Gespeicherte Meldung kann nicht mehr im StatusLog abgerufen werden.");
             return new ArrayList<>();
