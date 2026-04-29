@@ -52,7 +52,7 @@ public class DataAccess {
         final Map<UUID, Szenario> szenarioHashMap = new HashMap<>();
         try {
             final DataAccess dataAccess = new DataAccess(url, user, password);
-            dataAccess.setupDatabase();
+            DatabaseCreationService.createDatabase();
             List<Class<?>> geraeteKlassen = GeraetTypHandler.getGeraeteKlassen();
             dataAccess.mapAllData(raumHashMap, geraetHashMap, szenarioHashMap);
         } catch (SQLException | NoGeraetProvidedException e) {
@@ -63,60 +63,11 @@ public class DataAccess {
         System.out.println("");
     }
 
-    /**
-     * Methode, die die Datenbank zur persistenten speicherung der Zustände anlegt
-     *
-     * @throws SQLException wenn Fehler mit er Datenbankverbindung auftritt
-     */
-    public void setupDatabase() throws SQLException {
-        StatusLog.addHinweis("Datenbank verbunden und ggf. neu angelegt");
+    public void createTable(String sql) throws SQLException {
         final Statement stmt = conn.createStatement();
-        //Allgemeine Tabellen
-        stmt.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS Raeume (
-                    id uuid PRIMARY KEY,
-                    name VARCHAR(255) NOT NULL);
-                """);
-        stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS Geraete
-                    (
-                    id uuid PRIMARY KEY,
-                    name VARCHAR(255) NOT NULL,
-                    Raum uuid REFERENCES RAEUME(id),
-                    Art varchar(63) NOT NULL
-                    );
-                """);
-        stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS Szenarien (
-                    id uuid PRIMARY KEY,
-                    name VARCHAR(255) NOT NULL,
-                    Rythmus VARCHAR(255),
-                    Status VARCHAR(255),
-                    Beschreibung VARCHAR(255)
-                    );
-                """);
-        stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS Szenarien_Inhalt (
-                    id uuid PRIMARY KEY,
-                    aktion VARCHAR(255) NOT NULL,
-                    Szenario uuid REFERENCES Szenarien(id),
-                    Geraet uuid REFERENCES Geraete(id),
-                    schluessel VARCHAR(255) NOT NULL,
-                    Wert VARCHAR(255),
-                    Position INT
-                    );
-                """);
-        stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS Geraete_Werte (
-                    id uuid PRIMARY KEY,
-                    Geraet uuid REFERENCES Geraete(id),
-                    schluessel VARCHAR(255) NOT NULL,
-                    Wert VARCHAR(255)
-                    )
-                """);
+        stmt.executeUpdate(sql);
         stmt.close();
     }
-
 
     /**
      * @param raumMap     Map in der alle Räume in der Datenbank
