@@ -1,8 +1,8 @@
 package data.models.ansichten;
 
-import data.models.Geraet;
-import data.models.Raum;
-import data.models.Szenario;
+import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.Raum;
+import data.models.fachobjekte.Szenario;
 
 import java.util.List;
 

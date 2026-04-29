@@ -7,9 +7,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
-import userInterface.views.View;
-import util.Meldung;
-import util.StatusLog;
+import userInterface.View;
+import util.statusmeldungen.Meldung;
+import util.statusmeldungen.StatusLog;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,7 +40,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
 
         try {
             Pane neuesPanel = FXMLLoader.load(
-                    Objects.requireNonNull(getClass().getResource("/org/example/ui/" + fxmlFile))
+                    Objects.requireNonNull(getClass().getResource("/userInterface/" + fxmlFile))
             );
             view.getHauptPane().getChildren().setAll(neuesPanel);
         } catch (IOException e) {

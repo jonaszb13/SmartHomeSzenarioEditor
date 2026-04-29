@@ -1,4 +1,4 @@
-package util;
+package util.statusmeldungen;
 
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.SystemUtils;

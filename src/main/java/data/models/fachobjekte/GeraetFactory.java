@@ -1,7 +1,7 @@
-package data.models;
+package data.models.fachobjekte;
 
 import data.services.GeraetTypHandler;
-import util.StatusLog;
+import util.statusmeldungen.StatusLog;
 import util.customExceptions.NoGeraetProvidedException;
 
 import java.lang.reflect.InvocationTargetException;

@@ -1,12 +1,14 @@
 package data.services;
 
-import data.models.Raum;
+import data.models.fachobjekte.Raum;
 import jakarta.inject.Singleton;
-import util.StatusLog;
+import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
 import java.util.UUID;
 
+
+//TODO Klassenstruktur umbauen und an gvk/dvk anpassen
 @Singleton
 public final class RaumService {
 
@@ -14,13 +16,17 @@ public final class RaumService {
     DataAccess dataAccess;
 
     private RaumService(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
     }
 
-    public static RaumService setupRaumService(DataAccess dataAccess) {
+    private RaumService setupRaumService(DataAccess dataAccess) {
         return new RaumService(dataAccess);
     }
 
-    public static RaumService getInstance() {
+    public static RaumService getInstance(DataAccess dataAccess) {
+        if (raumService == null) {
+            raumService = new RaumService(dataAccess);
+        }
         return raumService;
     }
 

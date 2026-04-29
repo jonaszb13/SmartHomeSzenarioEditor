@@ -1,6 +1,6 @@
 package data.services;
 
-import util.StatusLog;
+import util.statusmeldungen.StatusLog;
 import util.customExceptions.NoGeraetProvidedException;
 
 import java.io.BufferedReader;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public final class GeraetTypHandler {
 
-    private static final String GERAETE_KLASSEN_PAKET = "data.models.geraete";
+    private static final String GERAETE_KLASSEN_PAKET = "data.models.fachobjekte.geraete";
 
 
     /**

@@ -1,17 +1,18 @@
-package data.models.geraete;
+package data.models.fachobjekte.geraeteArten;
 
-import data.models.Geraet;
-import data.models.Raum;
+import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.Raum;
 
 import java.util.UUID;
 
-public class Sensor extends Geraet {
+public class Steckdose extends Geraet {
 
     private boolean eingeschaltet;
-    private boolean ausschlag;
+    private float aktuelleLeistung;
 
-    public Sensor(UUID id, String name, Raum raum) {
+    public Steckdose(UUID id, String name, Raum raum) {
         super(id, name, raum);
+        eingeschaltet = false;
     }
 
     public boolean isEingeschaltet() {
@@ -22,12 +23,12 @@ public class Sensor extends Geraet {
         this.eingeschaltet = eingeschaltet;
     }
 
-    public boolean isAusschlag() {
-        return ausschlag;
+    public float getAktuelleLeistung() {
+        return aktuelleLeistung;
     }
 
-    public void setAusschlag(boolean ausschlag) {
-        this.ausschlag = ausschlag;
+    public void setAktuelleLeistung(float aktuelleLeistung) {
+        this.aktuelleLeistung = aktuelleLeistung;
     }
 
     @Override
@@ -36,8 +37,8 @@ public class Sensor extends Geraet {
             case "eingeschaltet":
                 setEingeschaltet(Boolean.parseBoolean(value));
                 break;
-            case "ausschlag":
-                setAusschlag(Boolean.parseBoolean(value));
+            case "aktuelleLeistung":
+                setAktuelleLeistung(Float.parseFloat(value));
                 break;
             default:
                 throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");

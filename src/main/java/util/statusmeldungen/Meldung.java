@@ -1,4 +1,4 @@
-package util;
+package util.statusmeldungen;
 
 import java.util.UUID;
 

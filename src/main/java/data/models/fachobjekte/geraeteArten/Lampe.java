@@ -1,7 +1,7 @@
-package data.models.geraete;
+package data.models.fachobjekte.geraeteArten;
 
-import data.models.Geraet;
-import data.models.Raum;
+import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.Raum;
 
 import java.awt.*;
 import java.util.UUID;

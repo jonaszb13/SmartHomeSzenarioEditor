@@ -1,4 +1,4 @@
-package userInterface.views;
+package userInterface;
 
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;

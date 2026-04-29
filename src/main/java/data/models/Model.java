@@ -2,6 +2,9 @@ package data.models;
 
 import data.models.ansichten.Statusbereich;
 import data.models.ansichten.Uebersicht;
+import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.Raum;
+import data.models.fachobjekte.Szenario;
 
 import java.util.List;
 

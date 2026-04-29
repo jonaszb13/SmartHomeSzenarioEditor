@@ -1,4 +1,4 @@
-package data.models;
+package data.models.fachobjekte;
 
 import java.sql.Timestamp;
 import java.util.HashMap;

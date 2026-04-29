@@ -1,4 +1,4 @@
-package data.models;
+package data.models.fachobjekte;
 
 import java.util.UUID;
 

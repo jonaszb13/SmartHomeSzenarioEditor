@@ -1,8 +1,8 @@
 package data.models.ansichten;
 
 import javafx.scene.Node;
-import util.StatusLog;
-import util.Meldung;
+import util.statusmeldungen.StatusLog;
+import util.statusmeldungen.Meldung;
 
 import java.util.ArrayList;
 import java.util.List;

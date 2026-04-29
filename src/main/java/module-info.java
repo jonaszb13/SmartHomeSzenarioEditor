@@ -10,10 +10,9 @@ module org.example.ui {
     requires java.desktop;
     requires javafx.graphics;
 
-    opens org.example to javafx.fxml;
-    opens org.example.ui to javafx.fxml;
-    opens userInterface.views to javafx.fxml;
-    exports org.example;
-    exports userInterface.views;
+    opens main to javafx.fxml;
+    opens userInterface to javafx.fxml;
+    exports userInterface;
     exports controller;
+    exports main;
 }

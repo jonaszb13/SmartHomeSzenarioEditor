@@ -1,10 +1,10 @@
 package data.services;
 
-import data.models.GeraetFactory;
-import data.models.Geraet;
-import data.models.Raum;
-import data.models.Szenario;
-import util.StatusLog;
+import data.models.fachobjekte.GeraetFactory;
+import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.Raum;
+import data.models.fachobjekte.Szenario;
+import util.statusmeldungen.StatusLog;
 import util.customExceptions.NoGeraetProvidedException;
 
 import java.lang.reflect.InvocationTargetException;
