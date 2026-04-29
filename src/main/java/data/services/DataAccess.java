@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+
+//TODO Singelton richten
+
 /**
  * Klasse die alle Interaktionen mit der persistenten Datenhaltung handhabt.
  *
@@ -211,23 +214,69 @@ public class DataAccess {
         StatusLog.addHinweis("SzenarienMap erfolgreich geladen");
     }
 
-    void addRaum (String sql, UUID id, String name) throws SQLException {
+    void addRaum(String sql, UUID id, String name) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
         pStmt.setString(2, name);
         pStmt.executeUpdate();
     }
 
-    void updateRaum (String sql, UUID id, String name) throws SQLException {
+    void updateRaum(String sql, UUID id, String name) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setString(1, name);
         pStmt.setObject(2, id);
         pStmt.executeUpdate();
     }
 
-    void deleteRaum (String sql, UUID id) throws SQLException {
+    void deleteRaum(String sql, UUID id) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
+        pStmt.executeUpdate();
+    }
+
+    void addGeraet(String sql, UUID id, String name, String art, UUID raum) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setObject(1, id);
+        pStmt.setString(2, name);
+        pStmt.setString(3, art);
+        pStmt.setObject(4, raum);
+        pStmt.executeUpdate();
+    }
+
+    void addGeraetWert(String sql, UUID id, UUID geraet, String schluessel, String wert) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setObject(1, id);
+        pStmt.setObject(2, geraet);
+        pStmt.setString(3, schluessel);
+        pStmt.setString(4, wert);
+        pStmt.executeUpdate();
+    }
+
+    void deleteGeraetOrWert(String sql, UUID id) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setObject(1, id);
+        pStmt.executeUpdate();
+    }
+
+    void updateGeraetName(String sql, UUID id, String name) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setString(1, name);
+        pStmt.setObject(2, id);
+        pStmt.executeUpdate();
+    }
+
+    void updateGeraetRaum(String sql, UUID id, UUID raum) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setObject(1, raum);
+        pStmt.setObject(2, id);
+        pStmt.executeUpdate();
+    }
+
+    void updateGeratWert(String sql, UUID geraet, String schluessel, String wert) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setString(1, wert);
+        pStmt.setObject(2, geraet);
+        pStmt.setString(3, schluessel);
         pStmt.executeUpdate();
     }
 }
