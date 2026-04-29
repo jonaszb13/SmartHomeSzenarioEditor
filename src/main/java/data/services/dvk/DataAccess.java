@@ -1,9 +1,10 @@
-package data.services;
+package data.services.dvk;
 
 import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
+import data.services.GeraetTypHandler;
 import util.statusmeldungen.StatusLog;
 import util.customExceptions.NoGeraetProvidedException;
 
@@ -14,9 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
-//TODO Singelton richten
-
 /**
  * Klasse die alle Interaktionen mit der persistenten Datenhaltung handhabt.
  *
@@ -24,6 +22,7 @@ import java.util.UUID;
  */
 public class DataAccess {
     private final Connection conn;
+    private static DataAccess instance;
 
     /**
      * @param url      Pfad, in dem Datenbank angelegt werden soll
@@ -34,6 +33,13 @@ public class DataAccess {
      */
     public DataAccess(final String url, final String user, final String password) throws SQLException {
         this.conn = DriverManager.getConnection("jdbc:h2:file:" + url + ";AUTO_SERVER=TRUE", user, password);
+    }
+
+    public static DataAccess getInstance() throws SQLException {
+        if (instance == null) {
+            instance = new DataAccess("./data/mydb","sa","");
+        }
+        return instance;
     }
 
     //Nur für @Ben zum Testen

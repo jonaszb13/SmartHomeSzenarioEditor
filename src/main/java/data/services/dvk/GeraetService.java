@@ -1,24 +1,29 @@
-package data.services;
+package data.services.dvk;
 
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
+import jakarta.inject.Singleton;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
 
+@Singleton
 public class GeraetService {
 
-    static GeraetService geraetService;
+    static GeraetService instance;
     DataAccess dataAccess;
 
     private GeraetService(DataAccess dataAccess) {
         this.dataAccess = dataAccess;
     }
 
-    public static GeraetService getInstance() {
-        return geraetService;
+    public static GeraetService getInstance() throws SQLException {
+        if (instance == null) {
+            instance = new GeraetService(DataAccess.getInstance());
+        }
+        return instance;
     }
 
     public static GeraetService setUpGeraetService(DataAccess dataAccess) {
