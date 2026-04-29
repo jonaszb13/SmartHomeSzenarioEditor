@@ -7,13 +7,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
+ import javafx.scene.paint.Color;
 import userInterface.View;
 import util.statusmeldungen.Meldung;
+import util.statusmeldungen.Meldungstyp;
 import util.statusmeldungen.StatusLog;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Controller implements ChangeListener<TreeItem<String>> {
     private final View view;
@@ -48,24 +51,28 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         }
 
         //TODO nur für Testen
-        StatusLog.addHinweis("Meldung");
+        StatusLog.addHinweis("Hinweis");
+        StatusLog.addError("Error");
+        StatusLog.addMetadaten("Meta");
         //TODO dieser Aufruf muss in jeden changed (oder einen generischeren)
         //TODO nur durchführen, wenn der Statusbereich sichtbar ist
         updateStatusLog();
     }
 
-    //TODO farbliche Fehlermeldungen
-    //TODO: Meldungstyp ergänzen (Meldung/Hinweis/Fehler)
     private void updateStatusLog() {
         List<Meldung> newMessages = model.getStatusbereich()
                 .getNewMessages(view.getStatusLogVBox()
                         .getChildren().isEmpty()
-                        ? null : view.getStatusLogVBox()
-                        .getChildren().getFirst());
+                        ? null : UUID.fromString(view.getStatusLogVBox()
+                        .getChildren().getFirst().getUserData().toString()));
         newMessages.stream()
                 .map(meldung -> {
-                    Label label = new Label(meldung.getMeldungstext());
+                    Label label = new Label(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
                     label.setUserData(meldung.getMeldungsId());
+                    label.setStyle(meldung.getMeldungsTyp()
+                            .equals(Meldungstyp.FEHLER.getBezeichnung()) ? "-fx-text-fill: #cc0000"
+                            : meldung.getMeldungsTyp()
+                            .equals(Meldungstyp.METADATEN.getBezeichnung()) ? "-fx-text-fill: #0000ff" : "-fx-text-fill: #000000");
                     return label;
         })
                 .forEach(view.getStatusLogVBox().getChildren()::addFirst);

@@ -22,7 +22,6 @@ public class View {
         return hauptPane;
     }
 
-    //TODO hellgrau färben
     public VBox getStatusLogVBox() {
         return statusLogVBox;
     }
