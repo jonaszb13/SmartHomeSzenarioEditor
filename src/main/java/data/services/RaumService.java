@@ -30,23 +30,21 @@ public final class RaumService {
         return raumService;
     }
 
-    public void addRaum(String name) {
+    public boolean addRaum(String name) {
         boolean erfolgreich = false;
         //language=SQL
         String sql = """
                 INSERT INTO RAEUME ("ID", "NAME")
                 VALUES (?, ?)
                 """;
-        //Dauerschleife möglich?
-        while (!erfolgreich) {
-            Raum raum = new Raum(UUID.randomUUID(), name);
-            try {
-                dataAccess.addRaum(sql, raum.getId(), name);
-                erfolgreich = true;
-            } catch (SQLException eSQL) {
-                StatusLog.addError(eSQL);
-            }
+        Raum raum = new Raum(UUID.randomUUID(), name);
+        try {
+            dataAccess.addRaum(sql, raum.getId(), name);
+            erfolgreich = true;
+        } catch (SQLException eSQL) {
+            StatusLog.addError(eSQL);
         }
+        return erfolgreich;
     }
 
     public boolean updateRaum(UUID id, String name) {
