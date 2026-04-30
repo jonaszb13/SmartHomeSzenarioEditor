@@ -26,31 +26,28 @@ public final class GeraetDataService {
         return instance;
     }
 
-    public static GeraetDataService setUpGeraetService(DataAccess dataAccess) {
-        return new GeraetDataService(dataAccess);
-    }
-
-    public boolean addGeraet(String name, String art, Raum raum, Map<String, String> attributeMap) {
+    public boolean addGeraet(Geraet geraet, String art, Map<String, String> attributeMap) {
         boolean erfolgreich = false;
         //language=SQL
         String sql = """
-                INSERT INTO geraet (id, name, art, raum)
+                INSERT INTO GERAETE (id, name, art, raum)
                 VALUES (?, ?, ?, ?)
                 ;""";
         try {
-            //TODO Was tun wenn fehler in der Mitte?
-            final UUID geraetId = UUID.randomUUID();
-            dataAccess.addGeraet(sql, geraetId, name, art, raum.getId());
-            for (final Map.Entry<String, String>  entry : attributeMap.entrySet()) {
+            dataAccess.addGeraet(sql, geraet.getId(), geraet.getName(), art, geraet.getRaum().getId());
+            for (final Map.Entry<String, String> entry : attributeMap.entrySet()) {
                 sql = """
-                        INSERT INTO geraete_werte (id, geraet, schluessel, wert)
+                        INSERT INTO GERAETE_WERTE (id, geraet, schluessel, wert)
                         VALUES (?, ?, ?, ?)
                         """;
-                dataAccess.addGeraetWert(sql, UUID.randomUUID(), geraetId, entry.getKey(), entry.getValue());
+                dataAccess.addGeraetWert(sql, UUID.randomUUID(), geraet.getId(), entry.getKey(), entry.getValue());
             }
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
+            if (!deleteGeraet(geraet)) {
+                StatusLog.addError("KATASTROPHALER FEHLER: Falsche Werte in Datenbank");
+            }
         }
         return erfolgreich;
     }
@@ -59,13 +56,13 @@ public final class GeraetDataService {
         boolean erfolgreich = false;
         //language=SQL
         String sql = """
-                DELETE FROM geraete_werte
+                DELETE FROM GERAETE_WERTE
                 WHERE geraet = ?
                 """;
         try {
             dataAccess.deleteGeraetOrWert(sql, geraet.getId());
             sql = """
-                    DELETE FROM geraet
+                    DELETE FROM GERAETE
                     WHERE id = ?
                     """;
             dataAccess.deleteGeraetOrWert(sql, geraet.getId());
@@ -80,7 +77,7 @@ public final class GeraetDataService {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
-                UPDATE geraet
+                UPDATE GERAETE
                 SET name = ?
                 WHERE id = ?
                 """;
@@ -114,7 +111,7 @@ public final class GeraetDataService {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
-                UPDATE geraete_werte
+                UPDATE GERAETE_WERTE
                 SET wert = ?
                 WHERE id = ?
                 AND schluessel = ?

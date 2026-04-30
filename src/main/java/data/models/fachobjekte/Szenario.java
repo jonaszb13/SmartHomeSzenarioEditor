@@ -2,13 +2,14 @@ package data.models.fachobjekte;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class Szenario extends DAO {
     private String beschreibung;
     private Timestamp naesteAusfuerung;
     private String rythmus;
-    private final HashMap<Integer, Aenderung> aenderungen;
+    private final Map<Integer, Aenderung> aenderungen;
 
     public Szenario(final UUID id, final String name) {
         super(id, name);
@@ -31,7 +32,7 @@ public class Szenario extends DAO {
         this.naesteAusfuerung = naesteAusfuerung;
     }
 
-    public HashMap<Integer, Aenderung> getAenderungen() {
+    public Map<Integer, Aenderung> getAenderungen() {
         return aenderungen;
     }
 

@@ -52,7 +52,7 @@ public final class RaumObjektService {
     }
 
     public boolean updateRaum(Raum raum, String neuerName) {
-        if (raumDataService.updateRaumName(raum.getId(),neuerName)) {
+        if (raumDataService.updateRaumName(raum.getId(), neuerName)) {
             raumMap.get(raum.getId()).setName(neuerName);
             StatusLog.addHinweis("Name des Raums " + raum.getId() + " wurde auf " + neuerName + " geändert.");
             return true;
@@ -62,13 +62,13 @@ public final class RaumObjektService {
         }
     }
 
-    public boolean deleteRaum(Raum raum) {
-        if (raumDataService.deleteRaum(raum.getId())) {
-            raumMap.remove(raum.getId());
-            StatusLog.addHinweis("Raum " + raum.getId() + " wurde gelöscht.");
+    public boolean deleteRaum(UUID id) {
+        if (raumDataService.deleteRaum(id)) {
+            raumMap.remove(id);
+            StatusLog.addHinweis("Raum " + id + " wurde gelöscht.");
             return true;
         } else {
-            StatusLog.addError("Raum " + raum.getId() + " konnte nicht gelöscht werden");
+            StatusLog.addError("Raum " + id + " konnte nicht gelöscht werden");
             return false;
         }
     }

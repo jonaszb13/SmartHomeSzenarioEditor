@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Singleton
-public class SzenarioObjektService {
+public final class SzenarioObjektService {
     private static SzenarioObjektService instance;
     private final SzenarioDataService dataService;
     private final Map<UUID, Szenario> szenarioMap;
