@@ -51,11 +51,12 @@ public class DataAccess {
         final String user = "sa";
         final String password = "";
         try {
+            DatabaseCreationService.createDatabase();
             final Map<UUID, Raum> raumHashMap = RaumObjektService.getInstance().getRaumMap();
             final Map<UUID, Geraet> geraetHashMap = GeraetObjektService.getInstance().getGeraetMap();
             final Map<UUID, Szenario> szenarioHashMap = SzenarioObjektService.getInstance().getSzenarioMap();
             final DataAccess dataAccess = new DataAccess(url, user, password);
-            DatabaseCreationService.createDatabase();
+
             List<Class<?>> geraeteKlassen = GeraetTypHandler.getGeraeteKlassen();
         } catch (SQLException | NoGeraetProvidedException e) {
             e.printStackTrace();

@@ -24,16 +24,15 @@ public final class RaumDataService {
         return raumDataService;
     }
 
-    public boolean addRaum(String name) {
+    public boolean addRaum(Raum raum)  {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
                 INSERT INTO RAEUME ("ID", "NAME")
                 VALUES (?, ?)
                 """;
-        final Raum raum = new Raum(UUID.randomUUID(), name);
         try {
-            dataAccess.addRaum(sql, raum.getId(), name);
+            dataAccess.addRaum(sql, raum.getId(), raum.getName());
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
