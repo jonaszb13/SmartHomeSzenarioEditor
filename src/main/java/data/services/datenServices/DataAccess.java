@@ -286,10 +286,20 @@ public class DataAccess {
         pStmt.executeUpdate();
     }
 
-    void deleteSzenarioInhalt(String sql, UUID szenario,  int position) throws SQLException {
+    void deleteSzenarioInhalt(String sql, UUID id) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
-        pStmt.setObject(1, szenario);
-        pStmt.setInt(2, position);
+        pStmt.setObject(1, id);
+        pStmt.executeUpdate();
+    }
+
+    void alterSzenarioInhalt(String sql, String aktion, String schluessel, String wert, int position, UUID id) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+
+        pStmt.setString(1, aktion);
+        pStmt.setString(2, schluessel);
+        pStmt.setString(3, wert);
+        pStmt.setInt(4, position);
+        pStmt.setObject(5, id);
         pStmt.executeUpdate();
     }
 }

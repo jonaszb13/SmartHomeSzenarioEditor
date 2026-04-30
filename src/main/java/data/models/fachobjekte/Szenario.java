@@ -2,7 +2,6 @@ package data.models.fachobjekte;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class Szenario extends DAO {
@@ -44,6 +43,6 @@ public class Szenario extends DAO {
         this.beschreibung = beschreibung;
     }
 
-    public record Aenderung(UUID id, Geraet geraet, String aktion, String attribut, String value) {
+    public record Aenderung(UUID id, Geraet geraet, String beschreibung, String schluessel, String wert) {
     }
 }
