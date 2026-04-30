@@ -70,25 +70,7 @@ public class DataAccess {
         stmt.close();
     }
 
-
-    //TODO Wegrationalisieren
-
-    /**
-     * @param raumMap     Map in der alle Räume in der Datenbank
-     *                    auf ihre IDs gemaped werden
-     * @param geraetMap   Map in der alle Geräte in der Datenbank
-     *                    mit ihren Attributen auf ihre IDs gemaped werden
-     * @param szenarioMap Map in der alle Szenarien in der Datenbank
-     *                    mit ihren Inhalten auf ihre IDs gemaped werden
-     * @throws SQLException              wenn ein Fehler bei der Datenbankverbindung auftritt
-     * @throws NoGeraetProvidedException tritt auf, wenn in dem Ordner geraete keine Klassen vorhanden sind
-     */
-    public void mapAllData(final Map<UUID, Raum> raumMap, final Map<UUID, Geraet> geraetMap, final Map<UUID, Szenario> szenarioMap) throws SQLException, NoGeraetProvidedException {
-        mapAllRaeume(raumMap);
-        mapAllGeraete(raumMap, geraetMap);
-        mapAllSzenarien(geraetMap, szenarioMap);
-    }
-
+    //nicht aufrufen → Map aus RaumObjektService entnehmen
     public void mapAllRaeume(final Map<UUID, Raum> raumMap) throws SQLException {
         final Statement stmt = conn.createStatement();
         //Laden der Räume
@@ -102,6 +84,7 @@ public class DataAccess {
         StatusLog.addHinweis("RäumeMap erfolgreich geladen");
     }
 
+    //nicht aufrufen → Map aus GeraetObjektService entnehmen
     public void mapAllGeraete(final Map<UUID, Raum> raumMap, final Map<UUID, Geraet> geraetMap) throws SQLException, NoGeraetProvidedException {
         final Statement stmt = conn.createStatement();
         StatusLog.addHinweis("Beginne GeräteMap zu laden");
@@ -145,6 +128,7 @@ public class DataAccess {
         StatusLog.addHinweis("GeräteMap erfolgreich geladen");
     }
 
+    //nicht aufrufen → Map aus SzenarioObjektService entnehmen
     public void mapAllSzenarien(final Map<UUID, Geraet> geraetMap, final Map<UUID, Szenario> szenarioMap) throws SQLException {
         final Statement stmt = conn.createStatement();
         StatusLog.addHinweis("Beginne SzenarienMap zu laden");
