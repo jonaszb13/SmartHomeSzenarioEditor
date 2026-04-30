@@ -1,12 +1,12 @@
 package data.services.datenServices;
 
-import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import data.services.GeraetTypHandler;
-import util.statusmeldungen.StatusLog;
 import util.customExceptions.NoGeraetProvidedException;
+import util.statusmeldungen.StatusLog;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
@@ -37,7 +37,7 @@ public class DataAccess {
 
     public static DataAccess getInstance() throws SQLException {
         if (instance == null) {
-            instance = new DataAccess("./data/mydb","sa","");
+            instance = new DataAccess("./data/mydb", "sa", "");
         }
         return instance;
     }
@@ -69,6 +69,9 @@ public class DataAccess {
         stmt.executeUpdate(sql);
         stmt.close();
     }
+
+
+    //TODO Wegrationalisieren
 
     /**
      * @param raumMap     Map in der alle Räume in der Datenbank
@@ -146,7 +149,7 @@ public class DataAccess {
         final Statement stmt = conn.createStatement();
         StatusLog.addHinweis("Beginne SzenarienMap zu laden");
         final ResultSet rs = stmt.executeQuery("""
-                SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
+                SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION, SZENARIEN_INHALT.ID AS SIID
                 FROM SZENARIEN
                 JOIN SZENARIEN_INHALT
                 ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
@@ -165,8 +168,8 @@ public class DataAccess {
                 szenarioMap.put(id, aktuellesSzenario);
                 lastId = id;
             }
-            aktuellesSzenario.getAenderungen().put(rs.getInt("position"), new Szenario.Aenderungen(
-                    geraetMap.get(UUID.fromString(rs.getString("geraet"))), rs.getString("schluessel"), rs.getString("wert")
+            aktuellesSzenario.getAenderungen().put(rs.getInt("position"), new Szenario.Aenderung(
+                    ,  geraetMap.get(UUID.fromString(rs.getString("geraet"))), rs.getString("Aktion"), rs.getString("schluessel"), rs.getString("wert")
             ));
         }
         StatusLog.addHinweis("SzenarienMap erfolgreich geladen");
@@ -244,6 +247,49 @@ public class DataAccess {
         pStmt.setString(1, wert);
         pStmt.setObject(2, geraet);
         pStmt.setString(3, schluessel);
+        pStmt.executeUpdate();
+    }
+
+    /* package */
+    void addSzenario(String sql, UUID id, String name, String beschreibung) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setObject(1, id);
+        pStmt.setString(2, name);
+        pStmt.setString(3, beschreibung);
+        pStmt.executeUpdate();
+    }
+
+    /* package */
+    void putSzenarioInhalte(String sql, UUID id, String beschreibung, UUID szenario, UUID geraet, String schluessel, String wert, int position) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setObject(1, id);
+        pStmt.setString(2, beschreibung);
+        pStmt.setObject(3, szenario);
+        pStmt.setObject(4, geraet);
+        pStmt.setString(5, schluessel);
+        pStmt.setString(6, wert);
+        pStmt.setInt(7, position);
+        pStmt.executeUpdate();
+    }
+
+    void updateSzenario (String sql, String name, String beschreibung, UUID id) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setString(1, name);
+        pStmt.setString(2, beschreibung);
+        pStmt.setObject(3, id);
+        pStmt.executeUpdate();
+    }
+
+    void deleteSzenario(String sql, UUID id) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setObject(1, id);
+        pStmt.executeUpdate();
+    }
+
+    void deleteSzenarioInhalt(String sql, UUID szenario,  int position) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setObject(1, szenario);
+        pStmt.setInt(2, position);
         pStmt.executeUpdate();
     }
 }

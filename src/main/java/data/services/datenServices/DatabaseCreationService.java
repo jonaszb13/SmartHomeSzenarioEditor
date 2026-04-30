@@ -15,11 +15,13 @@ public class DatabaseCreationService {
     public static void createDatabase() throws SQLException {
         StatusLog.addHinweis("Datenbank wird verbunden und ggf. neu angelegt");
         final DataAccess dataAccess = DataAccess.getInstance();
+        //language=SQL
         dataAccess.createTable("""
                     CREATE TABLE IF NOT EXISTS Raeume (
                     id uuid PRIMARY KEY,
                     name VARCHAR(255) NOT NULL);
                 """);
+        //language=SQL
         dataAccess.createTable("""
                     CREATE TABLE IF NOT EXISTS Geraete
                     (
@@ -29,6 +31,7 @@ public class DatabaseCreationService {
                     Art varchar(63) NOT NULL
                     );
                 """);
+        //language=SQL
         dataAccess.createTable("""
                     CREATE TABLE IF NOT EXISTS Szenarien (
                     id uuid PRIMARY KEY,
@@ -38,6 +41,7 @@ public class DatabaseCreationService {
                     Beschreibung VARCHAR(255)
                     );
                 """);
+        //language=SQL
         dataAccess.createTable("""
                     CREATE TABLE IF NOT EXISTS Szenarien_Inhalt (
                     id uuid PRIMARY KEY,
@@ -49,6 +53,7 @@ public class DatabaseCreationService {
                     Position INT
                     );
                 """);
+        //language=SQL
         dataAccess.createTable("""
                     CREATE TABLE IF NOT EXISTS Geraete_Werte (
                     id uuid PRIMARY KEY,

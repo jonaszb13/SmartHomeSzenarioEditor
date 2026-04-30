@@ -9,7 +9,7 @@ public class Szenario extends DAO {
     private String beschreibung;
     private Timestamp naesteAusfuerung;
     private String rythmus;
-    private final Map<Integer,Aenderungen> aenderungen;
+    private final HashMap<Integer, Aenderung> aenderungen;
 
     public Szenario(final UUID id, final String name) {
         super(id, name);
@@ -32,7 +32,7 @@ public class Szenario extends DAO {
         this.naesteAusfuerung = naesteAusfuerung;
     }
 
-    public Map<Integer,Aenderungen> getAenderungen() {
+    public HashMap<Integer, Aenderung> getAenderungen() {
         return aenderungen;
     }
 
@@ -44,6 +44,6 @@ public class Szenario extends DAO {
         this.beschreibung = beschreibung;
     }
 
-    public record Aenderungen(Geraet geraet, String attribut, String value) {
+    public record Aenderung(UUID id, Geraet geraet, String aktion, String attribut, String value) {
     }
 }
