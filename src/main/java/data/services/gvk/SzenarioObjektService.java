@@ -29,4 +29,8 @@ public class SzenarioObjektService {
         }
         return instance;
     }
+
+    public Map<UUID, Szenario> getSzenarioMap() {
+        return szenarioMap;
+    }
 }

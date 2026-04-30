@@ -5,6 +5,9 @@ import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import data.services.GeraetTypHandler;
+import data.services.gvk.GeraetObjektService;
+import data.services.gvk.RaumObjektService;
+import data.services.gvk.SzenarioObjektService;
 import util.customExceptions.NoGeraetProvidedException;
 import util.statusmeldungen.StatusLog;
 
@@ -47,14 +50,13 @@ public class DataAccess {
         final String url = "./data/mydb";
         final String user = "sa";
         final String password = "";
-        final Map<UUID, Raum> raumHashMap = new HashMap<>();
-        final Map<UUID, Geraet> geraetHashMap = new HashMap<>();
-        final Map<UUID, Szenario> szenarioHashMap = new HashMap<>();
         try {
+            final Map<UUID, Raum> raumHashMap = RaumObjektService.getInstance().getRaumMap();
+            final Map<UUID, Geraet> geraetHashMap = GeraetObjektService.getInstance().getGeraetMap();
+            final Map<UUID, Szenario> szenarioHashMap = SzenarioObjektService.getInstance().getSzenarioMap();
             final DataAccess dataAccess = new DataAccess(url, user, password);
             DatabaseCreationService.createDatabase();
             List<Class<?>> geraeteKlassen = GeraetTypHandler.getGeraeteKlassen();
-            dataAccess.mapAllData(raumHashMap, geraetHashMap, szenarioHashMap);
         } catch (SQLException | NoGeraetProvidedException e) {
             e.printStackTrace();
             StatusLog.addError(e);
