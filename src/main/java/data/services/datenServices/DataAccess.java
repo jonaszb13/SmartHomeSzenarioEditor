@@ -169,7 +169,11 @@ public class DataAccess {
                 lastId = id;
             }
             aktuellesSzenario.getAenderungen().put(rs.getInt("position"), new Szenario.Aenderung(
-                    ,  geraetMap.get(UUID.fromString(rs.getString("geraet"))), rs.getString("Aktion"), rs.getString("schluessel"), rs.getString("wert")
+                    UUID.fromString(rs.getString("SIID")),
+                    geraetMap.get(UUID.fromString(rs.getString("geraet"))),
+                    rs.getString("Aktion"),
+                    rs.getString("schluessel"),
+                    rs.getString("wert")
             ));
         }
         StatusLog.addHinweis("SzenarienMap erfolgreich geladen");
