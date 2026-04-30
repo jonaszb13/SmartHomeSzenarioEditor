@@ -284,13 +284,7 @@ public class DataAccess {
         pStmt.executeUpdate();
     }
 
-    void deleteSzenario(String sql, UUID id) throws SQLException {
-        final PreparedStatement pStmt = conn.prepareStatement(sql);
-        pStmt.setObject(1, id);
-        pStmt.executeUpdate();
-    }
-
-    void deleteSzenarioInhalt(String sql, UUID id) throws SQLException {
+    void deleteSzenarioOrSzenarioInhalt(String sql, UUID id) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
         pStmt.executeUpdate();
@@ -298,7 +292,6 @@ public class DataAccess {
 
     void alterSzenarioInhalt(String sql, String aktion, String schluessel, String wert, int position, UUID id) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
-
         pStmt.setString(1, aktion);
         pStmt.setString(2, schluessel);
         pStmt.setString(3, wert);

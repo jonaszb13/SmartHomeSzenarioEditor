@@ -12,7 +12,7 @@ import java.util.UUID;
  * Klasse die übergebene Objekte in SQL Statements für die persistente datenhaltung umwandelt
  */
 @Singleton
-public class SzenarioDataService {
+public final class SzenarioDataService {
     private static SzenarioDataService instance;
     private final DataAccess dataAccess;
 
@@ -75,7 +75,7 @@ public class SzenarioDataService {
                 if (!deleteSzenarioInhalt(e.getValue().id())) erfolgreich = false;
             }
             if (!erfolgreich) {
-                dataAccess.deleteSzenario(sql, szenario.getId());
+                dataAccess.deleteSzenarioOrSzenarioInhalt(sql, szenario.getId());
                 erfolgreich = true;
             }
         } catch (SQLException eSQL) {
@@ -124,7 +124,7 @@ public class SzenarioDataService {
                 WHERE ID = ?
                 """;
         try {
-            dataAccess.deleteSzenarioInhalt(sql, id);
+            dataAccess.deleteSzenarioOrSzenarioInhalt(sql, id);
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);

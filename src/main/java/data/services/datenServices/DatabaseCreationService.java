@@ -4,7 +4,7 @@ import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
 
-public class DatabaseCreationService {
+public final class DatabaseCreationService {
     private DatabaseCreationService() {}
 
     /**
