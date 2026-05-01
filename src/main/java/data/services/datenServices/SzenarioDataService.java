@@ -92,8 +92,8 @@ public final class SzenarioDataService {
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 """;
         try {
-            dataAccess.putSzenarioInhalte(sql, UUID.randomUUID(), aenderung.beschreibung(), szenario.getId(), aenderung.geraet().getId(), aenderung.schluessel(), aenderung.wert(), position);
-
+            dataAccess.putSzenarioInhalte(sql, UUID.randomUUID(), aenderung.beschreibung(), szenario.getId(),
+                    aenderung.geraet().getId(), aenderung.schluessel(), aenderung.wert(), position);
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
         }
@@ -109,7 +109,8 @@ public final class SzenarioDataService {
                 WHERE ID = ?
                 """;
         try {
-            dataAccess.alterSzenarioInhalt(sql, aenderung.beschreibung(), aenderung.schluessel(), aenderung.wert(), position, aenderung.id());
+            dataAccess.alterSzenarioInhalt(sql, aenderung.beschreibung(), aenderung.schluessel(),
+                    aenderung.wert(), position, aenderung.id());
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
         }
