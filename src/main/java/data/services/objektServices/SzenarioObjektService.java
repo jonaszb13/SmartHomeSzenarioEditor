@@ -5,6 +5,8 @@ import data.models.fachobjekte.Szenario;
 import data.services.datenServices.DataAccess;
 import data.services.datenServices.SzenarioDataService;
 import jakarta.inject.Singleton;
+import javafx.scene.control.TreeItem;
+import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
@@ -17,11 +19,13 @@ public final class SzenarioObjektService {
     private static SzenarioObjektService instance;
     private final SzenarioDataService szenarioDataService;
     private final Map<UUID, Szenario> szenarioMap;
+    private final DoubleMap<UUID, TreeItem<String>> szenarioTreeMap;
     private final static String szenarioString = "Szenario ";
 
     private SzenarioObjektService(final SzenarioDataService szenarioDataService, final Map<UUID, Szenario> szenarioMap) {
         this.szenarioDataService = szenarioDataService;
         this.szenarioMap = szenarioMap;
+        this.szenarioTreeMap = new DoubleMap<>();
     }
 
     public static SzenarioObjektService getInstance() throws SQLException {
@@ -35,6 +39,10 @@ public final class SzenarioObjektService {
 
     public Map<UUID, Szenario> getSzenarioMap() {
         return szenarioMap;
+    }
+
+    public DoubleMap<UUID, TreeItem<String>> getSzenarioTreeMap() {
+        return szenarioTreeMap;
     }
 
     public Szenario.Aenderung getAenderung(final Geraet geraet, final String beschreibung, final String schluessel, final String wert) {

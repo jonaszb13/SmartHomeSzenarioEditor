@@ -4,6 +4,8 @@ import data.models.fachobjekte.Raum;
 import data.services.datenServices.DataAccess;
 import data.services.datenServices.RaumDataService;
 import jakarta.inject.Singleton;
+import javafx.scene.control.TreeItem;
+import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
@@ -16,10 +18,12 @@ public final class RaumObjektService {
     private static RaumObjektService instance;
     private final RaumDataService raumDataService;
     private final Map<UUID, Raum> raumMap;
+    private final DoubleMap<UUID, TreeItem<String>> raumItemMap;
 
     private RaumObjektService(final RaumDataService raumDataService, final Map<UUID, Raum> raumMap) {
         this.raumDataService = raumDataService;
         this.raumMap = raumMap;
+        this.raumItemMap = new DoubleMap<>();
     }
 
     public static RaumObjektService getInstance() throws SQLException {
@@ -33,6 +37,10 @@ public final class RaumObjektService {
 
     public Map<UUID, Raum> getRaumMap() {
         return raumMap;
+    }
+
+    public DoubleMap<UUID, TreeItem<String>> getRaumItemMap() {
+        return raumItemMap;
     }
 
     public boolean addRaum(final String name) {
