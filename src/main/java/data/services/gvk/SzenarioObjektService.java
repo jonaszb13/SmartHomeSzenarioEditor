@@ -17,16 +17,16 @@ public final class SzenarioObjektService {
     private static SzenarioObjektService instance;
     private final SzenarioDataService szenarioDataService;
     private final Map<UUID, Szenario> szenarioMap;
-    private final String szenarioString = "Szenario ";
+    private final static String szenarioString = "Szenario ";
 
-    private SzenarioObjektService(SzenarioDataService szenarioDataService, Map<UUID, Szenario> szenarioMap) {
+    private SzenarioObjektService(final SzenarioDataService szenarioDataService, final Map<UUID, Szenario> szenarioMap) {
         this.szenarioDataService = szenarioDataService;
         this.szenarioMap = szenarioMap;
     }
 
     public static SzenarioObjektService getInstance() throws SQLException {
         if (instance == null) {
-            DataAccess dataAccess = DataAccess.getInstance();
+            final DataAccess dataAccess = DataAccess.getInstance();
             instance = new SzenarioObjektService(SzenarioDataService.getInstance(dataAccess), new HashMap<>());
             dataAccess.mapAllSzenarien(GeraetObjektService.getInstance().getGeraetMap(), instance.szenarioMap);
         }
@@ -37,19 +37,19 @@ public final class SzenarioObjektService {
         return szenarioMap;
     }
 
-    public Szenario.Aenderung getAenderung(Geraet geraet, String beschreibung, String schluessel, String wert) {
+    public Szenario.Aenderung getAenderung(final Geraet geraet, final String beschreibung, final String schluessel, final String wert) {
         return new Szenario.Aenderung(UUID.randomUUID(), geraet, beschreibung, schluessel, wert);
     }
 
-    public boolean addSzenario(String name, String beschreibung, Map<Integer, Szenario.Aenderung> aenderung) {
+    public boolean addSzenario(final String name, final String beschreibung, final Map<Integer, Szenario.Aenderung> aenderung) {
         boolean erfolgreich = false;
         UUID uuid = UUID.randomUUID();
         while (szenarioMap.containsKey(uuid)) {
             uuid = UUID.randomUUID();
         }
-        Szenario szenario = new Szenario(uuid, name);
+        final Szenario szenario = new Szenario(uuid, name);
         szenario.setBeschreibung(beschreibung);
-        for (Map.Entry<Integer, Szenario.Aenderung> entry : aenderung.entrySet()) {
+        for (final Map.Entry<Integer, Szenario.Aenderung> entry : aenderung.entrySet()) {
             szenario.getAenderungen().put(entry.getKey(), entry.getValue());
         }
         if (szenarioDataService.addSzenario(szenario)) {
@@ -62,7 +62,7 @@ public final class SzenarioObjektService {
         return erfolgreich;
     }
 
-    public boolean updateSzenario(Szenario szenario, String name, String beschreibung) {
+    public boolean updateSzenario(final Szenario szenario, final String name, final String beschreibung) {
         boolean erfolgreich = false;
         szenario.setName(name);
         szenario.setBeschreibung(beschreibung);
@@ -75,7 +75,7 @@ public final class SzenarioObjektService {
         return erfolgreich;
     }
 
-    public boolean updateSzenarioName(Szenario szenario, String name) {
+    public boolean updateSzenarioName(final Szenario szenario, final String name) {
         boolean erfolgreich = false;
         szenario.setName(name);
         if (szenarioDataService.updateSzenario(szenario)) {
@@ -87,7 +87,7 @@ public final class SzenarioObjektService {
         return erfolgreich;
     }
 
-    public boolean updateSzenarioBeschreibung(Szenario szenario, String beschreibung) {
+    public boolean updateSzenarioBeschreibung(final Szenario szenario, final String beschreibung) {
         boolean erfolgreich = false;
         szenario.setBeschreibung(beschreibung);
         if (szenarioDataService.updateSzenario(szenario)) {
@@ -99,7 +99,7 @@ public final class SzenarioObjektService {
         return erfolgreich;
     }
 
-    public boolean deleteSzenario(Szenario szenario) {
+    public boolean deleteSzenario(final Szenario szenario) {
         boolean erfolgreich = false;
         if (szenarioDataService.deleteSzenario(szenario)) {
             szenarioMap.remove(szenario.getId());
@@ -111,7 +111,7 @@ public final class SzenarioObjektService {
         return erfolgreich;
     }
 
-    public boolean addSzenarioInhalt(Szenario szenario, Szenario.Aenderung aenderung, int position) {
+    public boolean addSzenarioInhalt(final Szenario szenario, final Szenario.Aenderung aenderung, final int position) {
         boolean erfolgreich = false;
         if (szenarioDataService.addSzenarioInhalt(szenario, aenderung, position)) {
             szenario.getAenderungen().put(position, aenderung);
@@ -123,9 +123,10 @@ public final class SzenarioObjektService {
         return erfolgreich;
     }
 
-    public boolean alterSzenarioInhalt(Szenario szenario, int position, Geraet geraet, String beschreibung, String schluessel, String wert) {
+    public boolean alterSzenarioInhalt(final Szenario szenario, final int position, final Geraet geraet,
+                                       final String beschreibung, final String schluessel, final String wert) {
         boolean erfolgreich = false;
-        Szenario.Aenderung neueAenderung = new Szenario.Aenderung(szenario.getAenderungen().get(position).id(),
+        final Szenario.Aenderung neueAenderung = new Szenario.Aenderung(szenario.getAenderungen().get(position).id(),
                 geraet, beschreibung, schluessel, wert);
         if (szenarioDataService.alterSzenarioInhalt(neueAenderung, position)) {
             szenario.getAenderungen().replace(position, neueAenderung);
@@ -137,7 +138,7 @@ public final class SzenarioObjektService {
         return erfolgreich;
     }
 
-    public boolean deleteSzenarioInhalt(Szenario szenario, int position) {
+    public boolean deleteSzenarioInhalt(final Szenario szenario, final int position) {
         boolean erfolgreich = false;
         if (szenarioDataService.deleteSzenarioInhalt(szenario.getAenderungen().get(position).id())) {
             szenario.getAenderungen().remove(position);

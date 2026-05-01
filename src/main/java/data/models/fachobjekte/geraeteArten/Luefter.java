@@ -30,7 +30,7 @@ public class Luefter extends Geraet {
     }
 
     @Override
-    public void updateValue(String key, String value) {
+    public void updateValue(final String key, final String value) {
         switch (key) {
             case "eingeschaltet":
                 setEingeschaltet(Boolean.parseBoolean(value));

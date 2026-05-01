@@ -10,7 +10,7 @@ public class Rollladen extends Geraet {
     private float schliessstatus;
     private float winckelung;
 
-    public Rollladen(UUID id, String name, Raum raum) {
+    public Rollladen(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
     }
 
@@ -18,7 +18,7 @@ public class Rollladen extends Geraet {
         return schliessstatus;
     }
 
-    public void setSchliessstatus(float schliessstatus) {
+    public void setSchliessstatus(final float schliessstatus) {
         this.schliessstatus = schliessstatus;
     }
 
@@ -26,12 +26,12 @@ public class Rollladen extends Geraet {
         return winckelung;
     }
 
-    public void setWinckelung(float winckelung) {
+    public void setWinckelung(final float winckelung) {
         this.winckelung = winckelung;
     }
 
     @Override
-    public void updateValue(String key, String value) {
+    public void updateValue(final String key, final String value) {
         switch (key) {
             case "schliessstatus":
                 setSchliessstatus(Float.parseFloat(value));

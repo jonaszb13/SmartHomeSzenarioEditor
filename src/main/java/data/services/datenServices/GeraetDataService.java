@@ -15,7 +15,7 @@ public final class GeraetDataService {
     private static GeraetDataService instance;
     private final DataAccess dataAccess;
 
-    private GeraetDataService(DataAccess dataAccess) {
+    private GeraetDataService(final DataAccess dataAccess) {
         this.dataAccess = dataAccess;
     }
 
@@ -26,7 +26,7 @@ public final class GeraetDataService {
         return instance;
     }
 
-    public boolean addGeraet(Geraet geraet, String art, Map<String, String> attributeMap) {
+    public boolean addGeraet(final Geraet geraet, final String art, final Map<String, String> attributeMap) {
         boolean erfolgreich = false;
         //language=SQL
         String sql = """
@@ -52,7 +52,7 @@ public final class GeraetDataService {
         return erfolgreich;
     }
 
-    public boolean deleteGeraet(Geraet geraet) {
+    public boolean deleteGeraet(final Geraet geraet) {
         boolean erfolgreich = false;
         //language=SQL
         String sql = """
@@ -73,7 +73,7 @@ public final class GeraetDataService {
         return erfolgreich;
     }
 
-    public boolean updateGeraetName(Geraet geraet, String newName) {
+    public boolean updateGeraetName(final Geraet geraet, final String newName) {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
@@ -90,7 +90,7 @@ public final class GeraetDataService {
         return erfolgreich;
     }
 
-    public boolean updateGeraetRaum(Geraet geraet, Raum raum) {
+    public boolean updateGeraetRaum(final Geraet geraet, final Raum raum) {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
@@ -107,7 +107,7 @@ public final class GeraetDataService {
         return erfolgreich;
     }
 
-    public boolean updateGeraetWert(Geraet geraet, String schluessel, String wert) {
+    public boolean updateGeraetWert(final Geraet geraet, final String schluessel, final String wert) {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
@@ -125,7 +125,7 @@ public final class GeraetDataService {
         return erfolgreich;
     }
 
-    public boolean updateGeraetWerte(Geraet geraet, Map<String, String> attributeMap) {
+    public boolean updateGeraetWerte(final Geraet geraet, final Map<String, String> attributeMap) {
         boolean erfolgreich = true;
         for (final Map.Entry<String, String> entry : attributeMap.entrySet()) {
             if (!updateGeraetWert(geraet, entry.getKey(), entry.getValue())) {

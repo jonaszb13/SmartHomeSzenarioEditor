@@ -9,13 +9,14 @@ public class Meldung {
     private final String meldungstext;
     private Throwable exceptionForDebugLog;
 
-    public Meldung(Meldungstyp meldungstyp, String meldungstext) {
+    public Meldung(final Meldungstyp meldungstyp, final String meldungstext) {
         meldungsId = UUID.randomUUID();
         this.meldungstyp = meldungstyp;
         this.meldungstext = meldungstext;
     }
 
-    public Meldung(Meldungstyp meldungstyp, String meldungstext, Throwable exception) {
+    //TODO Frage: Warum Throwable und nicht exception?
+    public Meldung(final Meldungstyp meldungstyp, final String meldungstext, final Throwable exception) {
         meldungsId = UUID.randomUUID();
         this.meldungstyp = meldungstyp;
         this.meldungstext = meldungstext;

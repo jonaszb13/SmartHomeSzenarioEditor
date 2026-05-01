@@ -3,7 +3,8 @@ package util.statusmeldungen;
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.SystemUtils;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -32,23 +33,23 @@ public final class StatusLog {
         return statusLogEintraege;
     }
 
-    public static void addError(String error) {
+    public static void addError(final String error) {
         getInstance().getStatusLogEintraege().add(new Meldung(Meldungstyp.FEHLER, error));
     }
 
-    public static void addError(Exception exception) {
+    public static void addError(final Exception exception) {
         getInstance().getStatusLogEintraege().add(new Meldung(Meldungstyp.FEHLER, exception.getMessage(), exception));
     }
 
-    public static void addError(String error, Exception exception) {
+    public static void addError(final String error, final Exception exception) {
         getInstance().getStatusLogEintraege().add(new Meldung(Meldungstyp.FEHLER, error, exception));
     }
 
-    public static void addHinweis(String hinweis) {
+    public static void addHinweis(final String hinweis) {
         getInstance().getStatusLogEintraege().add(new Meldung(Meldungstyp.HINWEIS, hinweis));
     }
 
-    public static void addMetadaten(String metadaten) {
+    public static void addMetadaten(final String metadaten) {
         getInstance().getStatusLogEintraege().add(new Meldung(Meldungstyp.METADATEN, metadaten));
     }
 

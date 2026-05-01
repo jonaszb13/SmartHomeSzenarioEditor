@@ -20,11 +20,12 @@ public class SmartHomeApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(SmartHomeApplication.class.getResource("/userInterface/main-view.fxml"));
+        final FXMLLoader loader = new FXMLLoader(SmartHomeApplication.class.getResource("/userInterface/main-view.fxml"));
         loader.load();
 
         View view = loader.getController();
-        //TODO hier müssen die ganzen Daten reingeladen werden --> vielleicht auch direkte Methoden im Modell, wodurch das keine Parameter mehr sein müssen
+        //TODO hier müssen die ganzen Daten reingeladen werden
+        //  -> vielleicht auch direkte Methoden im Modell, wodurch das keine Parameter mehr sein müssen
         Model model = new Model(null, null, null);
         new Controller(view, model);
 

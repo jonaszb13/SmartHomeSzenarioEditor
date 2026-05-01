@@ -7,7 +7,7 @@ public enum Meldungstyp {
 
     public final String bezeichnung;
 
-    Meldungstyp(String bezeichnung) {
+    Meldungstyp(final String bezeichnung) {
         this.bezeichnung = bezeichnung;
     }
 

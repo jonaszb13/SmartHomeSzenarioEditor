@@ -10,21 +10,21 @@ import java.util.UUID;
 @Singleton
 public final class RaumDataService {
 
-    private static RaumDataService raumDataService;
+    private static RaumDataService instance;
     private final DataAccess dataAccess;
 
-    private RaumDataService(DataAccess dataAccess) {
+    private RaumDataService(final DataAccess dataAccess) {
         this.dataAccess = dataAccess;
     }
 
     public static RaumDataService getInstance(DataAccess dataAccess) throws SQLException {
-        if (raumDataService == null) {
-            raumDataService = new RaumDataService(DataAccess.getInstance());
+        if (instance == null) {
+            instance = new RaumDataService(DataAccess.getInstance());
         }
-        return raumDataService;
+        return instance;
     }
 
-    public boolean addRaum(Raum raum)  {
+    public boolean addRaum(final Raum raum) {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
@@ -40,7 +40,7 @@ public final class RaumDataService {
         return erfolgreich;
     }
 
-    public boolean updateRaumName(UUID id, String name) {
+    public boolean updateRaumName(final UUID id, final String name) {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
@@ -55,7 +55,7 @@ public final class RaumDataService {
         return erfolgreich;
     }
 
-    public boolean deleteRaum(UUID id) {
+    public boolean deleteRaum(final UUID id) {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """

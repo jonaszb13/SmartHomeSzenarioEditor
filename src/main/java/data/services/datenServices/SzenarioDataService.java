@@ -16,18 +16,18 @@ public final class SzenarioDataService {
     private static SzenarioDataService instance;
     private final DataAccess dataAccess;
 
-    private SzenarioDataService(DataAccess dataAccess) {
+    private SzenarioDataService(final DataAccess dataAccess) {
         this.dataAccess = dataAccess;
     }
 
-    public static SzenarioDataService getInstance(DataAccess dataAccess) {
+    public static SzenarioDataService getInstance(final DataAccess dataAccess) {
         if (instance == null) {
             instance = new SzenarioDataService(dataAccess);
         }
         return instance;
     }
 
-    public boolean addSzenario(Szenario szenario) {
+    public boolean addSzenario(final Szenario szenario) {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
@@ -37,8 +37,8 @@ public final class SzenarioDataService {
         try {
             dataAccess.addSzenario(sql, szenario.getId(), szenario.getName(), szenario.getBeschreibung());
             erfolgreich = true;
-            for (Map.Entry<Integer, Szenario.Aenderung> e : szenario.getAenderungen().entrySet()) {
-               if (!addSzenarioInhalt(szenario, e.getValue(), e.getKey())) erfolgreich = false;
+            for (final Map.Entry<Integer, Szenario.Aenderung> e : szenario.getAenderungen().entrySet()) {
+                if (!addSzenarioInhalt(szenario, e.getValue(), e.getKey())) erfolgreich = false;
             }
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
@@ -46,10 +46,10 @@ public final class SzenarioDataService {
         return erfolgreich;
     }
 
-    public boolean updateSzenario(Szenario szenario) {
+    public boolean updateSzenario(final Szenario szenario) {
         boolean erfolgreich = false;
         //language=SQL
-        String sql = """
+        final String sql = """
                 UPDATE SZENARIEN
                 SET NAME = ?, BESCHREIBUNG = ?
                 WHERE ID = ?
@@ -63,15 +63,15 @@ public final class SzenarioDataService {
         return erfolgreich;
     }
 
-    public boolean deleteSzenario(Szenario szenario) {
+    public boolean deleteSzenario(final Szenario szenario) {
         boolean erfolgreich = true;
         //language=SQL
-        String sql = """
+        final String sql = """
                 DELETE FROM SZENARIEN
                 WHERE ID = ?
                 """;
         try {
-            for (Map.Entry<Integer, Szenario.Aenderung> e : szenario.getAenderungen().entrySet()) {
+            for (final Map.Entry<Integer, Szenario.Aenderung> e : szenario.getAenderungen().entrySet()) {
                 if (!deleteSzenarioInhalt(e.getValue().id())) erfolgreich = false;
             }
             if (!erfolgreich) {
@@ -84,26 +84,27 @@ public final class SzenarioDataService {
         return erfolgreich;
     }
 
-    public boolean addSzenarioInhalt(Szenario szenario, Szenario.Aenderung aenderung, int position) {
+    public boolean addSzenarioInhalt(final Szenario szenario, final Szenario.Aenderung aenderung, final int position) {
         boolean erfolgreich = false;
         //language=SQL
-        String sql = """
+        final String sql = """
                 INSERT INTO SZENARIEN_INHALT ("ID", "AKTION", "SZENARIO", "GERAET", "SCHLUESSEL", "WERT", "POSITION")
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 """;
         try {
             dataAccess.putSzenarioInhalte(sql, UUID.randomUUID(), aenderung.beschreibung(), szenario.getId(),
                     aenderung.geraet().getId(), aenderung.schluessel(), aenderung.wert(), position);
+            erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
         }
         return erfolgreich;
     }
 
-    public boolean alterSzenarioInhalt(Szenario.Aenderung aenderung, int position) {
+    public boolean alterSzenarioInhalt(final Szenario.Aenderung aenderung, final int position) {
         boolean erfolgreich = false;
         //language=SQL
-        String sql = """
+        final String sql = """
                 UPDATE SZENARIEN_INHALT
                 SET AKTION = ?, SCHLUESSEL = ?, WERT = ?, POSITION = ?
                 WHERE ID = ?
@@ -111,16 +112,17 @@ public final class SzenarioDataService {
         try {
             dataAccess.alterSzenarioInhalt(sql, aenderung.beschreibung(), aenderung.schluessel(),
                     aenderung.wert(), position, aenderung.id());
+            erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
         }
         return erfolgreich;
     }
 
-    public boolean deleteSzenarioInhalt(UUID id) {
+    public boolean deleteSzenarioInhalt(final UUID id) {
         boolean erfolgreich = false;
         //language=SQL
-        String sql = """
+        final String sql = """
                 DELETE FROM SZENARIEN_INHALT
                 WHERE ID = ?
                 """;

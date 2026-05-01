@@ -20,16 +20,15 @@ public final class GeraetObjektService {
     private final GeraetDataService geraetDataService;
     private final Map<UUID, Geraet> geraetMap;
 
-    private GeraetObjektService(GeraetDataService geraetDataService, Map<UUID, Geraet> geraetMap) {
+    private GeraetObjektService(final GeraetDataService geraetDataService, final Map<UUID, Geraet> geraetMap) {
         this.geraetDataService = geraetDataService;
         this.geraetMap = geraetMap;
     }
 
     public static GeraetObjektService getInstance() throws SQLException {
         if (instance == null) {
-            DataAccess dataAccess = DataAccess.getInstance();
             instance = new GeraetObjektService(GeraetDataService.getInstance(), new HashMap<>());
-            dataAccess.mapAllGeraete(RaumObjektService.getInstance().getRaumMap(), instance.getGeraetMap());
+            DataAccess.getInstance().mapAllGeraete(RaumObjektService.getInstance().getRaumMap(), instance.getGeraetMap());
         }
         return instance;
     }
@@ -38,14 +37,14 @@ public final class GeraetObjektService {
         return geraetMap;
     }
 
-    public boolean addGeraet(String name, String art, Raum raum, Map<String, String> attributeMap) {
+    public boolean addGeraet(final String name, final String art, final Raum raum, final Map<String, String> attributeMap) {
         boolean erfolgreich = false;
         UUID id = UUID.randomUUID();
         while (geraetMap.containsKey(id)) {
             id = UUID.randomUUID();
         }
         try {
-            Geraet geraet = GeraetFactory.getInstance().createGeraet(id, name, raum, art);
+            final Geraet geraet = GeraetFactory.getInstance().createGeraet(id, name, raum, art);
             if (geraetDataService.addGeraet(geraet, art, attributeMap)) {
                 geraetMap.put(id, geraet);
                 StatusLog.addHinweis("Neues Gerät hinzugefügt. ID: " + geraet.getId());
@@ -60,7 +59,7 @@ public final class GeraetObjektService {
         return erfolgreich;
     }
 
-    public boolean deleteGeraet(UUID id) {
+    public boolean deleteGeraet(final UUID id) {
         boolean erfolgreich = false;
         if (geraetDataService.deleteGeraet(geraetMap.get(id))) {
             geraetMap.remove(id);
@@ -72,7 +71,7 @@ public final class GeraetObjektService {
         return erfolgreich;
     }
 
-    public boolean updateGeraetName(Geraet geraet, String newName) {
+    public boolean updateGeraetName(final Geraet geraet, final String newName) {
         boolean erfolgreich = false;
         if (geraetDataService.updateGeraetName(geraet, newName)) {
             geraetMap.get(geraet.getId()).setName(newName);
@@ -84,7 +83,7 @@ public final class GeraetObjektService {
         return erfolgreich;
     }
 
-    public boolean updateGeraetRaum(Geraet geraet, Raum raum) {
+    public boolean updateGeraetRaum(final Geraet geraet, final Raum raum) {
         boolean erfolgreich = false;
         if (geraetDataService.updateGeraetRaum(geraet, raum)) {
             geraetMap.get(geraet.getId()).setRaum(raum);
@@ -96,7 +95,7 @@ public final class GeraetObjektService {
         return erfolgreich;
     }
 
-    public boolean updateGeraetWerte(Geraet geraet, Map<String, String> attributeMap) {
+    public boolean updateGeraetWerte(final Geraet geraet, final Map<String, String> attributeMap) {
         boolean erfolgreich = false;
         if (geraetDataService.updateGeraetWerte(geraet, attributeMap)) {
             geraet.setValues(attributeMap);

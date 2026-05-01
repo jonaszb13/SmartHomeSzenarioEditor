@@ -17,14 +17,14 @@ public final class RaumObjektService {
     private final RaumDataService raumDataService;
     private final Map<UUID, Raum> raumMap;
 
-    private RaumObjektService(RaumDataService raumDataService, Map<UUID, Raum> raumMap) {
+    private RaumObjektService(final RaumDataService raumDataService, final Map<UUID, Raum> raumMap) {
         this.raumDataService = raumDataService;
         this.raumMap = raumMap;
     }
 
     public static RaumObjektService getInstance() throws SQLException {
         if (instance == null) {
-            DataAccess dataAccess = DataAccess.getInstance();
+            final DataAccess dataAccess = DataAccess.getInstance();
             instance = new RaumObjektService(RaumDataService.getInstance(dataAccess), new HashMap<>());
             dataAccess.mapAllRaeume(instance.getRaumMap());
         }
@@ -35,42 +35,45 @@ public final class RaumObjektService {
         return raumMap;
     }
 
-    public boolean addRaum(String name) {
+    public boolean addRaum(final String name) {
+        boolean erfolgreich = false;
         UUID uuid = UUID.randomUUID();
         while (raumMap.containsKey(uuid)) {
             uuid = UUID.randomUUID();
         }
-        Raum raum = new Raum(uuid, name);
+        final Raum raum = new Raum(uuid, name);
         if (raumDataService.addRaum(raum)) {
             raumMap.put(uuid, raum);
             StatusLog.addHinweis("Raum angelegt: " + raum.getName() + " ID: " + uuid);
-            return true;
+            erfolgreich = true;
         } else {
             StatusLog.addError("Raum konnte aufgrund eines SQL Fehlers nicht angelegt werden");
-            return false;
         }
+        return erfolgreich;
     }
 
-    public boolean updateRaum(Raum raum, String neuerName) {
+    public boolean updateRaum(final Raum raum, final String neuerName) {
+        boolean erfolgreich = false;
         if (raumDataService.updateRaumName(raum.getId(), neuerName)) {
             raumMap.get(raum.getId()).setName(neuerName);
             StatusLog.addHinweis("Name des Raums " + raum.getId() + " wurde auf " + neuerName + " geändert.");
-            return true;
+            erfolgreich = true;
         } else {
             StatusLog.addError("Name des Raums " + raum.getId() + " konnte nicht geändert werden");
-            return false;
         }
+        return erfolgreich;
     }
 
-    public boolean deleteRaum(UUID id) {
+    public boolean deleteRaum(final UUID id) {
+        boolean erfolgreich = false;
         if (raumDataService.deleteRaum(id)) {
             raumMap.remove(id);
             StatusLog.addHinweis("Raum " + id + " wurde gelöscht.");
-            return true;
+            erfolgreich = true;
         } else {
             StatusLog.addError("Raum " + id + " konnte nicht gelöscht werden");
-            return false;
         }
+        return erfolgreich;
     }
 
 }

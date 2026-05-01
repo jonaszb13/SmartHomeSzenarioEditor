@@ -1,7 +1,7 @@
 package util.customExceptions;
 
 public class NoGeraetProvidedException extends RuntimeException {
-    public NoGeraetProvidedException(String message) {
+    public NoGeraetProvidedException(final String message) {
         super(message);
     }
 }

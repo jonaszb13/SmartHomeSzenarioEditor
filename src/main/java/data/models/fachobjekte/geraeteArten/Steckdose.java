@@ -10,7 +10,7 @@ public class Steckdose extends Geraet {
     private boolean eingeschaltet;
     private float aktuelleLeistung;
 
-    public Steckdose(UUID id, String name, Raum raum) {
+    public Steckdose(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
         eingeschaltet = false;
     }
@@ -19,7 +19,7 @@ public class Steckdose extends Geraet {
         return eingeschaltet;
     }
 
-    public void setEingeschaltet(boolean eingeschaltet) {
+    public void setEingeschaltet(final boolean eingeschaltet) {
         this.eingeschaltet = eingeschaltet;
     }
 
@@ -27,12 +27,12 @@ public class Steckdose extends Geraet {
         return aktuelleLeistung;
     }
 
-    public void setAktuelleLeistung(float aktuelleLeistung) {
+    public void setAktuelleLeistung(final float aktuelleLeistung) {
         this.aktuelleLeistung = aktuelleLeistung;
     }
 
     @Override
-    public void updateValue(String key, String value) {
+    public void updateValue(final String key, final String value) {
         switch (key) {
             case "eingeschaltet":
                 setEingeschaltet(Boolean.parseBoolean(value));

@@ -10,7 +10,7 @@ public class Sensor extends Geraet {
     private boolean eingeschaltet;
     private boolean ausschlag;
 
-    public Sensor(UUID id, String name, Raum raum) {
+    public Sensor(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
     }
 
@@ -18,7 +18,7 @@ public class Sensor extends Geraet {
         return eingeschaltet;
     }
 
-    public void setEingeschaltet(boolean eingeschaltet) {
+    public void setEingeschaltet(final boolean eingeschaltet) {
         this.eingeschaltet = eingeschaltet;
     }
 
@@ -26,12 +26,12 @@ public class Sensor extends Geraet {
         return ausschlag;
     }
 
-    public void setAusschlag(boolean ausschlag) {
+    public void setAusschlag(final boolean ausschlag) {
         this.ausschlag = ausschlag;
     }
 
     @Override
-    public void updateValue(String key, String value) {
+    public void updateValue(final String key, final String value) {
         switch (key) {
             case "eingeschaltet":
                 setEingeschaltet(Boolean.parseBoolean(value));

@@ -32,43 +32,43 @@ public class Controller implements ChangeListener<TreeItem<String>> {
     public void changed(ObservableValue<? extends TreeItem<String>> observable,
                         TreeItem<String> oldValue, TreeItem<String> newValue) {
 
-        if (newValue == null) return;
+        if (newValue != null) {
+            final String fxmlFile = switch (newValue.getValue().strip()) {
+                case "Räume" -> "raum-view.fxml";
+                case "Geräte" -> "geraete-view.fxml";
+                case "Szenarien" -> "szenarien-view.fxml";
+                default -> "haupt-view.fxml";
+            };
 
-        String fxmlFile = switch (newValue.getValue().strip()) {
-            case "Räume"     -> "raum-view.fxml";
-            case "Geräte"    -> "geraete-view.fxml";
-            case "Szenarien" -> "szenarien-view.fxml";
-            default          -> "haupt-view.fxml";
-        };
+            try {
+                final Pane neuesPanel = FXMLLoader.load(
+                        Objects.requireNonNull(getClass().getResource("/userInterface/" + fxmlFile))
+                );
+                view.getHauptPane().getChildren().setAll(neuesPanel);
+            } catch (IOException e) {
+                StatusLog.addError("FXMLLoader konnte nicht geladen werden", e);
+            }
 
-        try {
-            Pane neuesPanel = FXMLLoader.load(
-                    Objects.requireNonNull(getClass().getResource("/userInterface/" + fxmlFile))
-            );
-            view.getHauptPane().getChildren().setAll(neuesPanel);
-        } catch (IOException e) {
-            StatusLog.addError("FXMLLoader konnte nicht geladen werden", e);
+            //TODO nur für Testen
+            StatusLog.addHinweis("Hinweis");
+            StatusLog.addError("Error");
+            StatusLog.addMetadaten("Meta");
+            //TODO dieser Aufruf muss in jeden changed (oder# einen generischeren)
+            //TODO nur durchführen, wenn der Statusbereich sichtbar ist
+            updateStatusLog();
         }
-
-        //TODO nur für Testen
-        StatusLog.addHinweis("Hinweis");
-        StatusLog.addError("Error");
-        StatusLog.addMetadaten("Meta");
-        //TODO dieser Aufruf muss in jeden changed (oder# einen generischeren)
-        //TODO nur durchführen, wenn der Statusbereich sichtbar ist
-        updateStatusLog();
     }
 
     private void updateStatusLog() {
         try {
-            List<Meldung> newMessages = model.getStatusbereich()
+            final List<Meldung> newMessages = model.getStatusbereich()
                     .getNewMessages(view.getStatusLogVBox()
                             .getChildren().isEmpty()
                             ? null : UUID.fromString(view.getStatusLogVBox()
                             .getChildren().getFirst().getUserData().toString()));
             newMessages.stream()
                     .map(meldung -> {
-                        Label label = new Label(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
+                        final Label label = new Label(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
                         label.setUserData(meldung.getMeldungsId());
                         label.setStyle(meldung.getMeldungsTyp()
                                 .equals(Meldungstyp.FEHLER.getBezeichnung()) ? "-fx-text-fill: #cc0000"
