@@ -1,4 +1,4 @@
-package data.services.gvk;
+package data.services.objektServices;
 
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Szenario;

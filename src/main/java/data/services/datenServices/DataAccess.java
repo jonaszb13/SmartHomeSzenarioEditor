@@ -5,9 +5,9 @@ import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import data.services.GeraetTypHandler;
-import data.services.gvk.GeraetObjektService;
-import data.services.gvk.RaumObjektService;
-import data.services.gvk.SzenarioObjektService;
+import data.services.objektServices.GeraetObjektService;
+import data.services.objektServices.RaumObjektService;
+import data.services.objektServices.SzenarioObjektService;
 import util.customExceptions.NoGeraetProvidedException;
 import util.statusmeldungen.StatusLog;
 
