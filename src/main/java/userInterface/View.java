@@ -45,6 +45,10 @@ public class View {
         uebersichtTree.getSelectionModel().selectedItemProperty().addListener(listener);
     }
 
+    public TreeView<String> getUebersichtTree() {
+        return uebersichtTree;
+    }
+
     private TreeItem<String> createTreeModel() {
         TreeItem<String> root = new TreeItem<>("Root");
         root.setExpanded(true);

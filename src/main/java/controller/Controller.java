@@ -33,12 +33,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                         TreeItem<String> oldValue, TreeItem<String> newValue) {
 
         if (newValue != null) {
-            final String fxmlFile = switch (newValue.getValue().strip()) {
-                case "Räume" -> "raum-view.fxml";
-                case "Geräte" -> "geraete-view.fxml";
-                case "Szenarien" -> "szenarien-view.fxml";
-                default -> "haupt-view.fxml";
-            };
+            final String fxmlFile = getFxmlFile(newValue);
 
             try {
                 final Pane neuesPanel = FXMLLoader.load(
@@ -57,6 +52,32 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             //TODO nur durchführen, wenn der Statusbereich sichtbar ist
             updateStatusLog();
         }
+    }
+
+    private String getFxmlFile(TreeItem<String> newValue) {
+        TreeItem<String> root = view.getUebersichtTree().getRoot();
+        String fxmlFile = null;
+        if (newValue.getParent() == root){
+            fxmlFile = switch (newValue.getValue().strip()) {
+                case "Räume" -> "raume-view.fxml";
+                case "Geräte" -> "geraete-view.fxml";
+                case "Szenarien" -> "szenarien-view.fxml";
+                default -> throw new IllegalStateException("Unexpected value: " + newValue.getValue().strip());
+            };
+        //Gerät
+        } else if (newValue.getParent() == root.getChildren().get(0)) {
+            fxmlFile = "haupt-view.fxml";
+        //Raum
+        } else if (newValue.getParent() == root.getChildren().get(1)) {
+            fxmlFile = "haupt-view.fxml";
+        //Szenario
+        } else if (newValue.getParent() == root.getChildren().get(2)) {
+            fxmlFile = "haupt-view.fxml";
+        } else {
+            fxmlFile = "haupt-view.fxml";
+        }
+        StatusLog.addHinweis(fxmlFile);
+        return fxmlFile;
     }
 
     private void updateStatusLog() {
