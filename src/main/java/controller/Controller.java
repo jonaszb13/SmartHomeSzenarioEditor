@@ -66,13 +66,13 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             };
         //Gerät
         } else if (newValue.getParent() == root.getChildren().get(0)) {
-            fxmlFile = "haupt-view.fxml";
+            fxmlFile = "raum-view.fxml";
         //Raum
         } else if (newValue.getParent() == root.getChildren().get(1)) {
-            fxmlFile = "haupt-view.fxml";
+            fxmlFile = "geraet-view.fxml";
         //Szenario
         } else if (newValue.getParent() == root.getChildren().get(2)) {
-            fxmlFile = "haupt-view.fxml";
+            fxmlFile = "szenario-view.fxml";
         } else {
             fxmlFile = "haupt-view.fxml";
         }
