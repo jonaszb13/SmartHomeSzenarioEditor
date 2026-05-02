@@ -53,16 +53,12 @@ public class View {
         TreeItem<String> raeume = new TreeItem<>("Räume");
         TreeItem<String> geraete = new TreeItem<>("Geräte");
         TreeItem<String> szenarien = new TreeItem<>("Szenarien");
-        root.getChildren().addAll(
-                raeume,
-                geraete,
-                szenarien
-        );
+        root.getChildren().addAll(List.of(raeume, geraete, szenarien));
 
         try {
             //Räume Einfügen
             List<TreeItem<String>> l = new ArrayList<>();
-            DoubleMap<UUID, TreeItem<String>> map = RaumObjektService.getInstance().getRaumItemMap();
+            DoubleMap<UUID, TreeItem<String>> map = RaumObjektService.getInstance().getRaumTreeMap();
             for (Raum r : RaumObjektService.getInstance().getRaumMap().values()) {
                 TreeItem<String> item = new TreeItem<>(r.getName());
                 l.add(item);

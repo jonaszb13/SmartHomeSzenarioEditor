@@ -62,6 +62,7 @@ public final class SzenarioObjektService {
         }
         if (szenarioDataService.addSzenario(szenario)) {
             szenarioMap.put(uuid, szenario);
+            szenarioTreeMap.put(uuid, new TreeItem<>(name));
             StatusLog.addHinweis(szenarioString + szenario.getId() + " wurde erfolgreich erstellt.");
             erfolgreich = true;
         } else {
@@ -111,6 +112,7 @@ public final class SzenarioObjektService {
         boolean erfolgreich = false;
         if (szenarioDataService.deleteSzenario(szenario)) {
             szenarioMap.remove(szenario.getId());
+            szenarioTreeMap.removeByA(szenario.getId());
             StatusLog.addHinweis(szenarioString + szenario.getId() + " wurde erfolgreich gelöscht.");
             erfolgreich = true;
         } else {

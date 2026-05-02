@@ -18,12 +18,12 @@ public final class RaumObjektService {
     private static RaumObjektService instance;
     private final RaumDataService raumDataService;
     private final Map<UUID, Raum> raumMap;
-    private final DoubleMap<UUID, TreeItem<String>> raumItemMap;
+    private final DoubleMap<UUID, TreeItem<String>> raumTreeMap;
 
     private RaumObjektService(final RaumDataService raumDataService, final Map<UUID, Raum> raumMap) {
         this.raumDataService = raumDataService;
         this.raumMap = raumMap;
-        this.raumItemMap = new DoubleMap<>();
+        this.raumTreeMap = new DoubleMap<>();
     }
 
     public static RaumObjektService getInstance() throws SQLException {
@@ -39,8 +39,8 @@ public final class RaumObjektService {
         return raumMap;
     }
 
-    public DoubleMap<UUID, TreeItem<String>> getRaumItemMap() {
-        return raumItemMap;
+    public DoubleMap<UUID, TreeItem<String>> getRaumTreeMap() {
+        return raumTreeMap;
     }
 
     public boolean addRaum(final String name) {
@@ -52,6 +52,7 @@ public final class RaumObjektService {
         final Raum raum = new Raum(uuid, name);
         if (raumDataService.addRaum(raum)) {
             raumMap.put(uuid, raum);
+            raumTreeMap.put(uuid, new TreeItem<>(name));
             StatusLog.addHinweis("Raum angelegt: " + raum.getName() + " ID: " + uuid);
             erfolgreich = true;
         } else {
@@ -76,6 +77,7 @@ public final class RaumObjektService {
         boolean erfolgreich = false;
         if (raumDataService.deleteRaum(id)) {
             raumMap.remove(id);
+            raumTreeMap.removeByA(id);
             StatusLog.addHinweis("Raum " + id + " wurde gelöscht.");
             erfolgreich = true;
         } else {

@@ -6,24 +6,36 @@ import java.util.HashMap;
  * Hilfsklasse zum bidirectional mappen von Objekten
  */
 public class DoubleMap <A, B> {
-    private final HashMap<A, B> MapA;
-    private final HashMap<B, A> MapB;
+    private final HashMap<A, B> mapA;
+    private final HashMap<B, A> mapB;
 
     public DoubleMap() {
-        MapA = new HashMap<>();
-        MapB = new HashMap<>();
+        mapA = new HashMap<>();
+        mapB = new HashMap<>();
     }
 
     public void put(A a, B b) {
-        MapA.put(a, b);
-        MapB.put(b, a);
+        mapA.put(a, b);
+        mapB.put(b, a);
     }
 
     public B getB(A a) {
-        return MapA.get(a);
+        return mapA.get(a);
     }
 
     public A getA(B b) {
-        return MapB.get(b);
+        return mapB.get(b);
+    }
+
+    public void removeByA(A a) {
+        B b = mapA.get(a);
+        mapA.remove(a);
+        mapB.remove(b);
+    }
+
+    public void removeByB(B b) {
+        A a = mapB.get(b);
+        mapB.remove(b);
+        mapA.remove(a);
     }
 }

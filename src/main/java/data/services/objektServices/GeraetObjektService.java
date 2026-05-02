@@ -55,6 +55,7 @@ public final class GeraetObjektService {
             final Geraet geraet = GeraetFactory.getInstance().createGeraet(id, name, raum, art);
             if (geraetDataService.addGeraet(geraet, art, attributeMap)) {
                 geraetMap.put(id, geraet);
+                geraetTreeMap.put(id, new TreeItem<>(name));
                 StatusLog.addHinweis("Neues Gerät hinzugefügt. ID: " + geraet.getId());
                 erfolgreich = true;
             } else {
@@ -71,6 +72,7 @@ public final class GeraetObjektService {
         boolean erfolgreich = false;
         if (geraetDataService.deleteGeraet(geraetMap.get(id))) {
             geraetMap.remove(id);
+            geraetTreeMap.removeByA(id);
             StatusLog.addHinweis("Gerät mit id " + id + " erfolgreich gelöscht");
             erfolgreich = true;
         } else {
