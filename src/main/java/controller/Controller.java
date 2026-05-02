@@ -55,9 +55,10 @@ public class Controller implements ChangeListener<TreeItem<String>> {
     }
 
     private String getFxmlFile(TreeItem<String> newValue) {
-        TreeItem<String> root = view.getUebersichtTree().getRoot();
-        String fxmlFile = null;
-        if (newValue.getParent() == root){
+        final TreeItem<String> root = view.getUebersichtTree().getRoot();
+        final String fxmlFile;
+        final TreeItem<String> parent = newValue.getParent();
+        if (parent == root){
             fxmlFile = switch (newValue.getValue().strip()) {
                 case "Räume" -> "raume-view.fxml";
                 case "Geräte" -> "geraete-view.fxml";
@@ -65,13 +66,13 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                 default -> throw new IllegalStateException("Unexpected value: " + newValue.getValue().strip());
             };
         //Gerät
-        } else if (newValue.getParent() == root.getChildren().get(0)) {
+        } else if (parent == root.getChildren().get(0)) {
             fxmlFile = "raum-view.fxml";
         //Raum
-        } else if (newValue.getParent() == root.getChildren().get(1)) {
+        } else if (parent == root.getChildren().get(1)) {
             fxmlFile = "geraet-view.fxml";
         //Szenario
-        } else if (newValue.getParent() == root.getChildren().get(2)) {
+        } else if (parent == root.getChildren().get(2)) {
             fxmlFile = "szenario-view.fxml";
         } else {
             fxmlFile = "haupt-view.fxml";

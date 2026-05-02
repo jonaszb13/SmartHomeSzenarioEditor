@@ -76,19 +76,7 @@ public final class StatusLog {
             if (filePathWithName == null) {
                 fehler = true;
             } else {
-                try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePathWithName))) {
-                    final List<Meldung> meldungen = getInstance().getStatusLogEintraege();
-                    for (final Meldung meldung : meldungen) {
-                        System.err.println(meldung.getMeldungstext());
-                        writer.write(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
-                        if (meldung.getStackTrace() != null) {
-                            System.err.println(Arrays.toString(meldung.getStackTrace()));
-                            writer.write(Arrays.toString(meldung.getStackTrace()));
-                        }
-                    }
-                } catch (IOException eIO) {
-                    fehler = true;
-                }
+                fehler = outputErrors(filePathWithName, fehler);
             }
             if (fehler) {
                 addError("Es konnte kein Fehlerbericht erstellt werden");
@@ -97,5 +85,22 @@ public final class StatusLog {
             }
         }
         addMetadaten("Das Programm wurde kontrolliert beendet");
+    }
+
+    private static boolean outputErrors(String filePathWithName, boolean fehler) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePathWithName))) {
+            final List<Meldung> meldungen = getInstance().getStatusLogEintraege();
+            for (final Meldung meldung : meldungen) {
+                System.err.println(meldung.getMeldungstext());
+                writer.write(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
+                if (meldung.getStackTrace() != null) {
+                    System.err.println(Arrays.toString(meldung.getStackTrace()));
+                    writer.write(Arrays.toString(meldung.getStackTrace()));
+                }
+            }
+        } catch (IOException eIO) {
+            fehler = true;
+        }
+        return fehler;
     }
 }

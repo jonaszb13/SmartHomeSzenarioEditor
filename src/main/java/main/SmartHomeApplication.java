@@ -25,7 +25,8 @@ public class SmartHomeApplication extends Application {
 
         View view = loader.getController();
         //TODO hier müssen die ganzen Daten reingeladen werden
-        //  -> vielleicht auch direkte Methoden im Modell, wodurch das keine Parameter mehr sein müssen
+        //  -> vielleicht auch direkte Methoden im Modell,
+        //     wodurch das keine Parameter mehr sein müssen
         Model model = new Model(null, null, null);
         new Controller(view, model);
 

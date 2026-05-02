@@ -9,7 +9,10 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Klasse die übergebene Objekte in SQL Statements für die persistente datenhaltung umwandelt
+ * Klasse, die übergebene Objekte in SQL Statements
+ * für die persistente Datenhaltung umwandelt
+ *
+ * @author Ben Knirsch
  */
 @Singleton
 public final class SzenarioDataService {

@@ -1,20 +1,25 @@
 package data.models.fachobjekte;
 
 import data.services.GeraetTypHandler;
-import util.statusmeldungen.StatusLog;
+import jakarta.inject.Singleton;
 import util.customExceptions.NoGeraetProvidedException;
+import util.statusmeldungen.StatusLog;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Factory-Klasse die das dynamische erstellen von Objekten,
  * welche von Geraet erben, ermöglicht
+ *
  * @author Ben Knirsch
  */
+@Singleton
 public final class GeraetFactory {
 
     private static GeraetFactory instance;
@@ -45,7 +50,7 @@ public final class GeraetFactory {
         } catch (ClassCastException eCC) {
             StatusLog.addError("Es befindet sich eine Klasse im Gerätetypen-Ordner die nicht von Gerät erbt", eCC);
         } catch (NullPointerException eNP) {
-            StatusLog.addError("In der Datenbank vorhandene Klasse konnte nicht im Paket gefunden werden",eNP);
+            StatusLog.addError("In der Datenbank vorhandene Klasse konnte nicht im Paket gefunden werden", eNP);
         }
         return geraet;
     }

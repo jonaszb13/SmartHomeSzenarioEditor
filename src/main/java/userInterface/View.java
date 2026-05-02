@@ -50,20 +50,20 @@ public class View {
     }
 
     private TreeItem<String> createTreeModel() {
-        TreeItem<String> root = new TreeItem<>("Root");
+        final TreeItem<String> root = new TreeItem<>("Root");
         root.setExpanded(true);
 
         //TODO Erstellung der Kinderknoten aller drei Kategorien
-        TreeItem<String> raeume = new TreeItem<>("Räume");
-        TreeItem<String> geraete = new TreeItem<>("Geräte");
-        TreeItem<String> szenarien = new TreeItem<>("Szenarien");
+        final TreeItem<String> raeume = new TreeItem<>("Räume");
+        final TreeItem<String> geraete = new TreeItem<>("Geräte");
+        final TreeItem<String> szenarien = new TreeItem<>("Szenarien");
         root.getChildren().addAll(List.of(raeume, geraete, szenarien));
 
         try {
             //Räume Einfügen
             List<TreeItem<String>> l = new ArrayList<>();
             DoubleMap<UUID, TreeItem<String>> map = RaumObjektService.getInstance().getRaumTreeMap();
-            for (Raum r : RaumObjektService.getInstance().getRaumMap().values()) {
+            for (final Raum r : RaumObjektService.getInstance().getRaumMap().values()) {
                 TreeItem<String> item = new TreeItem<>(r.getName());
                 l.add(item);
                 map.put(r.getId(), item);
@@ -73,7 +73,7 @@ public class View {
             //Geräte Einfügen
             l = new ArrayList<>();
             map = GeraetObjektService.getInstance().getGeraetTreeMap();
-            for (Geraet g : GeraetObjektService.getInstance().getGeraetMap().values()) {
+            for (final Geraet g : GeraetObjektService.getInstance().getGeraetMap().values()) {
                 TreeItem<String> item = new TreeItem<>(g.getName());
                 l.add(item);
                 map.put(g.getId(), item);
@@ -83,8 +83,8 @@ public class View {
             //Szenarien einfügen
             l = new ArrayList<>();
             map = SzenarioObjektService.getInstance().getSzenarioTreeMap();
-            for (Szenario sz : SzenarioObjektService.getInstance().getSzenarioMap().values()) {
-                TreeItem<String> item = new TreeItem<>(sz.getName());
+            for (final Szenario sz : SzenarioObjektService.getInstance().getSzenarioMap().values()) {
+                final TreeItem<String> item = new TreeItem<>(sz.getName());
                 l.add(item);
                 map.put(sz.getId(), item);
             }
