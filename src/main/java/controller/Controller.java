@@ -44,10 +44,6 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                 StatusLog.addError("FXMLLoader konnte nicht geladen werden", e);
             }
 
-            //TODO nur für Testen
-            StatusLog.addHinweis("Hinweis");
-            StatusLog.addError("Error");
-            StatusLog.addMetadaten("Meta");
             //TODO dieser Aufruf muss in jeden changed (oder# einen generischeren)
             //TODO nur durchführen, wenn der Statusbereich sichtbar ist
             updateStatusLog();
