@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.smarthome.controller.InfoRaumController"
+            AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+            AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+    <top>
+        <VBox spacing="4">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Label text="Einzelansicht" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+            <Label fx:id="raumNameLabel" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+            <Separator/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="16">
+            <padding><Insets top="16" right="10" bottom="10" left="10"/></padding>
+
+            <VBox spacing="4">
+                <Label text="Raumname"/>
+                <TextField fx:id="raumNameField" editable="false" prefWidth="300"
+                           style="-fx-background-color: #f0f0f0;"/>
+            </VBox>
+
+            <VBox spacing="4">
+                <Label text="Zugewiesene Geräte"/>
+                <ListView fx:id="geraeteListView" prefHeight="150" prefWidth="300"
+                          style="-fx-background-color: #f0f0f0;" mouseTransparent="true" focusTraversable="false"/>
+            </VBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox>
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Button text="Bearbeiten" prefWidth="190" prefHeight="45" onAction="#handleBearbeiten"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Schließen" prefWidth="190" prefHeight="45" onAction="#handleSchliessen"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.smarthome.controller.NewRaumController"
+            AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+            AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+    <top>
+        <VBox spacing="20">
+            <padding><Insets top="20" right="20" bottom="0" left="20"/></padding>
+            <Label text="Neuen Raum anlegen" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="16">
+            <padding><Insets top="16" right="10" bottom="10" left="10"/></padding>
+
+            <VBox spacing="4">
+                <Label text="Raumname"/>
+                <TextField fx:id="raumNameField" promptText="Raumname hier eingeben" prefWidth="300"/>
+            </VBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox>
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Button text="Abbrechen" prefWidth="190" prefHeight="45" onAction="#handleAbbrechen"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Raum anlegen" prefWidth="190" prefHeight="45" onAction="#handleRaumAnlegen"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
