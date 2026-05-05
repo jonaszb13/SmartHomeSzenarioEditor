@@ -4,5 +4,5 @@
 <?import javafx.scene.layout.StackPane?>
 
 <StackPane>
-    <Label text="Geräteübersicht"/>
+    <Label text="Gerät"/>
 </StackPane>

@@ -34,10 +34,12 @@ public final class GeraetTypHandler {
                 .getResourceAsStream(GERAETE_PAKET.replaceAll("[.]", "/"));
         if (stream == null) throw new NoGeraetProvidedException("Es wurde keine Geräte Klasse gefunden");
         final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-        return reader.lines()
+        List<Class<?>> classes = reader.lines()
                 .filter(line -> line.endsWith(".class"))
                 .map(GeraetTypHandler::getClass)
                 .collect(Collectors.<Class<?>>toList());
+        StatusLog.addHinweis("Geräteklassen erfolgreich geladen");
+        return classes;
     }
 
     /**

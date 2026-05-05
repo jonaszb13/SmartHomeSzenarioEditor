@@ -1,7 +1,7 @@
 package util.customExceptions;
 
 public class MessageMissing extends RuntimeException {
-    public MessageMissing(String message) {
+    public MessageMissing(final String message) {
         super(message);
     }
 }
