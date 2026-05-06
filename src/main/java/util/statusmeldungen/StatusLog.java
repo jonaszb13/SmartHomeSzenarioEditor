@@ -15,22 +15,24 @@ import java.util.Locale;
 @Singleton
 public final class StatusLog {
 
-    private static StatusLog instance;
-
     private final List<Meldung> statusLogEintraege = new ArrayList<>();
 
-    private StatusLog() {
+    private StatusLog() {}
+
+    private static final class TempLock {
+        private static final StatusLog instance = new StatusLog();
     }
 
     public static StatusLog getInstance() {
-        if (instance == null) {
-            instance = new StatusLog();
-        }
-        return instance;
+        return TempLock.instance;
     }
 
     public List<Meldung> getStatusLogEintraege() {
         return statusLogEintraege;
+    }
+
+    public static void clear() {
+        getInstance().statusLogEintraege.clear();
     }
 
     public static void addError(final String error) {

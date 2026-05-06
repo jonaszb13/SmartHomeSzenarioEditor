@@ -12,6 +12,8 @@ import util.customExceptions.NoGeraetProvidedException;
 import util.statusmeldungen.StatusLog;
 
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +42,13 @@ public class DataAccess {
 
     public static DataAccess getInstance() throws SQLException {
         if (instance == null) {
-            instance = new DataAccess("./data/mydb", "sa", "");
+            try {
+                Path dbDir = Path.of(System.getProperty("user.home"), ".smarthomeszenarioeditor");
+                Files.createDirectories(dbDir);
+                instance = new DataAccess(dbDir.resolve("mydb").toString(), "sa", "");
+            } catch (java.io.IOException e) {
+                throw new SQLException("Datenbankverzeichnis konnte nicht erstellt werden", e);
+            }
         }
         return instance;
     }

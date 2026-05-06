@@ -1,0 +1,6 @@
+Heizung.class
+Lampe.class
+Luefter.class
+Rollladen.class
+Sensor.class
+Steckdose.class

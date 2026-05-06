@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public final class GeraetTypHandler {
 
     private static final String GERAETE_PAKET = "data.models.fachobjekte.geraeteArten";
+    private static final String GERAETE_LISTE = GERAETE_PAKET.replaceAll("[.]", "/") + "/geraete.txt";
 
     private GeraetTypHandler() {
     }
@@ -30,8 +31,11 @@ public final class GeraetTypHandler {
      */
     public static List<Class<?>> getGeraeteKlassen() throws NoGeraetProvidedException {
         StatusLog.addHinweis("Beginne Geräteklassen zu laden");
-        final InputStream stream = ClassLoader.getSystemClassLoader()
-                .getResourceAsStream(GERAETE_PAKET.replaceAll("[.]", "/"));
+        InputStream stream = GeraetTypHandler.class.getClassLoader().getResourceAsStream(GERAETE_LISTE);
+        // Fallback: wenn die Anwendung aus einer Standalone Version gestartet wird
+        if (stream == null) {
+            stream = ClassLoader.getSystemClassLoader().getResourceAsStream(GERAETE_PAKET.replaceAll("[.]", "/"));
+        }
         if (stream == null) throw new NoGeraetProvidedException("Es wurde keine Geräte Klasse gefunden");
         final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
         List<Class<?>> classes = reader.lines()

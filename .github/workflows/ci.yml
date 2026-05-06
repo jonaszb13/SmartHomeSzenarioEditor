@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 23
+        uses: actions/setup-java@v4
+        with:
+          java-version: '23'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Install virtual display
+        run: sudo apt-get install -y xvfb
+
+      - name: Compile
+        run: xvfb-run ./mvnw compile
+
+      - name: JUnit Tests
+        run: xvfb-run ./mvnw test
+
+      - name: PMD Static Analysis
+        run: xvfb-run ./mvnw pmd:check
+
+      - name: Package & jpackage
+        run: xvfb-run ./mvnw verify -DskipTests
+
+      - name: Upload App Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: SmartHomeSzenarioEditor-linux-${{ github.sha }}
+          path: target/SmartHomeSzenarioEditor
+          if-no-files-found: warn
