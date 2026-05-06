@@ -17,7 +17,8 @@ public final class StatusLog {
 
     private final List<Meldung> statusLogEintraege = new ArrayList<>();
 
-    private StatusLog() {}
+    private StatusLog() {
+    }
 
     private static final class TempLock {
         private static final StatusLog INSTANCE = new StatusLog();
@@ -77,8 +78,8 @@ public final class StatusLog {
             final String filePathWithName = FileHandler.generateFile(filePath, "DebugLog", "txt");
             if (filePathWithName == null) {
                 fehler = true;
-            } else {
-                fehler = outputErrors(filePathWithName);
+            } else if (outputErrors(filePathWithName)) {
+                fehler = true;
             }
             if (fehler) {
                 addError("Es konnte kein Fehlerbericht erstellt werden");

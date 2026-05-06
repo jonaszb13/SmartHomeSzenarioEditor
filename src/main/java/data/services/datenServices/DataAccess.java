@@ -4,10 +4,6 @@ import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
-import data.services.GeraetTypHandler;
-import data.services.objektServices.GeraetObjektService;
-import data.services.objektServices.RaumObjektService;
-import data.services.objektServices.SzenarioObjektService;
 import util.customExceptions.NoGeraetProvidedException;
 import util.statusmeldungen.StatusLog;
 
@@ -16,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,6 +23,7 @@ import java.util.UUID;
 public class DataAccess {
     private final Connection conn;
     private static DataAccess instance;
+    private static boolean test = false;
 
     /**
      * @param url      Pfad, in dem Datenbank angelegt werden soll
@@ -37,7 +33,7 @@ public class DataAccess {
      *                      und Verbindung nicht hergestellt werden kann
      */
     public DataAccess(final String url, final String user, final String password) throws SQLException {
-        this.conn = DriverManager.getConnection("jdbc:h2:file:" + url + ";AUTO_SERVER=TRUE", user, password);
+        this.conn = DriverManager.getConnection(url, user, password);
     }
 
     public static DataAccess getInstance() throws SQLException {
@@ -45,7 +41,11 @@ public class DataAccess {
             try {
                 Path dbDir = Path.of(System.getProperty("user.home"), ".smarthomeszenarioeditor");
                 Files.createDirectories(dbDir);
-                instance = new DataAccess(dbDir.resolve("mydb").toString(), "sa", "");
+                if (test) {
+                    instance = new DataAccess("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL", "sa", "");
+                } else {
+                    instance = new DataAccess("jdbc:h2:file:" + dbDir.resolve("mydb") + ";AUTO_SERVER=TRUE", "sa", "");
+                }
             } catch (java.io.IOException e) {
                 throw new SQLException("Datenbankverzeichnis konnte nicht erstellt werden", e);
             }
@@ -53,25 +53,8 @@ public class DataAccess {
         return instance;
     }
 
-    //Nur für @Ben zum Testen
-    public static void main(String[] args) {
-        final String url = "./data/mydb";
-        final String user = "sa";
-        final String password = "";
-        try {
-            DatabaseCreationService.createDatabase();
-            final Map<UUID, Raum> raumHashMap = RaumObjektService.getInstance().getRaumMap();
-            final Map<UUID, Geraet> geraetHashMap = GeraetObjektService.getInstance().getGeraetMap();
-            final Map<UUID, Szenario> szenarioHashMap = SzenarioObjektService.getInstance().getSzenarioMap();
-            final DataAccess dataAccess = new DataAccess(url, user, password);
-
-            List<Class<?>> geraeteKlassen = GeraetTypHandler.getGeraeteKlassen();
-        } catch (SQLException | NoGeraetProvidedException e) {
-            e.printStackTrace();
-            StatusLog.addError(e);
-            StatusLog.createErrorFile();
-        }
-        System.out.println("");
+    public static void setTest(boolean test) {
+        DataAccess.test = test;
     }
 
     /* package */
@@ -80,6 +63,15 @@ public class DataAccess {
         stmt.executeUpdate(sql);
         stmt.close();
     }
+
+    public int getTestValue(final String sql) throws SQLException {
+
+        final Statement stmt = conn.createStatement();
+        final ResultSet rs = stmt.executeQuery(sql);
+        rs.next();
+        return rs.getInt(1);
+    }
+
 
     //nicht aufrufen → Map aus RaumObjektService entnehmen
     public void mapAllRaeume(final Map<UUID, Raum> raumMap) throws SQLException {
