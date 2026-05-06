@@ -30,6 +30,7 @@ public final class RaumObjektService {
         if (instance == null) {
             final DataAccess dataAccess = DataAccess.getInstance();
             instance = new RaumObjektService(RaumDataService.getInstance(dataAccess), new HashMap<>());
+            //TODO kein MAPPEN IM GETINSTANCE() ALTER
             dataAccess.mapAllRaeume(instance.getRaumMap());
         }
         return instance;
