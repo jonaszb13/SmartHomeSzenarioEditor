@@ -2,14 +2,17 @@ package main;
 
 import controller.Controller;
 import data.models.Model;
+import data.services.datenServices.DatabaseCreationService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import userInterface.View;
+import util.statusmeldungen.StatusLog;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class SmartHomeApplication extends Application {
@@ -20,6 +23,13 @@ public class SmartHomeApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        try {
+            DatabaseCreationService.createDatabase();
+        } catch (SQLException e) {
+            StatusLog.addError("Fehler bei Datenbankerstellung", e);
+        }
+
+
         final FXMLLoader loader = new FXMLLoader(SmartHomeApplication.class.getResource("/userInterface/main-view.fxml"));
         loader.load();
 
