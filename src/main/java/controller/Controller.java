@@ -48,6 +48,8 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             //TODO nur durchführen, wenn der Statusbereich sichtbar ist
             updateStatusLog();
         }
+        //TODO Linebreak alle 50 Zeichen
+        StatusLog.addError("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
     }
 
     private String getFxmlFile(TreeItem<String> newValue) {
