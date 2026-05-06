@@ -20,11 +20,11 @@ public final class StatusLog {
     private StatusLog() {}
 
     private static final class TempLock {
-        private static final StatusLog instance = new StatusLog();
+        private static final StatusLog INSTANCE = new StatusLog();
     }
 
     public static StatusLog getInstance() {
-        return TempLock.instance;
+        return TempLock.INSTANCE;
     }
 
     public List<Meldung> getStatusLogEintraege() {
@@ -78,7 +78,7 @@ public final class StatusLog {
             if (filePathWithName == null) {
                 fehler = true;
             } else {
-                fehler = outputErrors(filePathWithName, fehler);
+                fehler = outputErrors(filePathWithName);
             }
             if (fehler) {
                 addError("Es konnte kein Fehlerbericht erstellt werden");
@@ -89,7 +89,8 @@ public final class StatusLog {
         addMetadaten("Das Programm wurde kontrolliert beendet");
     }
 
-    private static boolean outputErrors(String filePathWithName, boolean fehler) {
+    private static boolean outputErrors(String filePathWithName) {
+        boolean fehler = false;
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePathWithName))) {
             final List<Meldung> meldungen = getInstance().getStatusLogEintraege();
             for (final Meldung meldung : meldungen) {
