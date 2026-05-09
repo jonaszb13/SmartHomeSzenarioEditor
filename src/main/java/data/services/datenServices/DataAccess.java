@@ -64,15 +64,6 @@ public class DataAccess {
         stmt.close();
     }
 
-    public int getTestValue(final String sql) throws SQLException {
-
-        final Statement stmt = conn.createStatement();
-        final ResultSet rs = stmt.executeQuery(sql);
-        rs.next();
-        return rs.getInt(1);
-    }
-
-
     //nicht aufrufen → Map aus RaumObjektService entnehmen
     public void mapAllRaeume(final Map<UUID, Raum> raumMap) throws SQLException {
         final Statement stmt = conn.createStatement();
@@ -290,5 +281,12 @@ public class DataAccess {
         pStmt.setInt(4, position);
         pStmt.setObject(5, id);
         pStmt.executeUpdate();
+    }
+
+    public int getTestValue(final String sql) throws SQLException {
+        final Statement stmt = conn.createStatement();
+        final ResultSet rs = stmt.executeQuery(sql);
+        rs.next();
+        return rs.getInt(1);
     }
 }

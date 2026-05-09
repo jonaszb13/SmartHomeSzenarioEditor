@@ -5,23 +5,38 @@ import data.models.ansichten.Uebersicht;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
+import util.DoubleMap;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class Model {
-        private final Uebersicht uebersicht;
-        private final Statusbereich statusbereich;
+    private final Uebersicht uebersicht;
+    private final Statusbereich statusbereich;
+    private final Daten daten;
 
-        public Model(List<Raum> raeume, List<Geraet> geraete, List<Szenario> szenarien) {
-            this.uebersicht = new Uebersicht(raeume, geraete, szenarien);
-            this.statusbereich = new Statusbereich();
-        }
+    public Model() {
+        this.uebersicht = new Uebersicht(new DoubleMap<>(), new DoubleMap<>(), new DoubleMap<>());
+        this.statusbereich = new Statusbereich();
+        this.daten = new Daten(new HashMap<>(), new HashMap<>(), new HashMap<>());
+    }
 
-        public Uebersicht getUebersicht() {
-            return uebersicht;
-        }
+    public Uebersicht getUebersicht() {
+        return uebersicht;
+    }
 
-        public Statusbereich getStatusbereich() {
-            return statusbereich;
-        }
+    public Statusbereich getStatusbereich() {
+        return statusbereich;
+    }
+
+    public Daten getDaten() {
+        return daten;
+    }
+
+    public void load() {
+
+    }
+
+    public record Daten (Map<UUID, Raum> raumMap, Map<UUID, Geraet> geraetMap, Map<UUID, Szenario> szenarioMap){}
 }

@@ -1,19 +1,18 @@
 package data.models.ansichten;
 
-import data.models.fachobjekte.Geraet;
-import data.models.fachobjekte.Raum;
-import data.models.fachobjekte.Szenario;
+import javafx.scene.control.TreeItem;
+import util.DoubleMap;
 
-import java.util.List;
+import java.util.UUID;
 
 public class Uebersicht {
-    private final List<Raum> raeume;
-    private final List<Geraet> geraete;
-    private final List<Szenario> szenarien;
+    private final DoubleMap<UUID, TreeItem<String>> raumTreeMap;
+    private final DoubleMap<UUID, TreeItem<String>> geraetTreeMap;
+    private final DoubleMap<UUID, TreeItem<String>> szenarioTreeMap;
 
-    public Uebersicht(List<Raum> raeume, List<Geraet> geraete, List<Szenario> szenarien) {
-        this.raeume = raeume;
-        this.geraete = geraete;
-        this.szenarien = szenarien;
+    public Uebersicht(DoubleMap<UUID, TreeItem<String>> raumTreeMap, DoubleMap<UUID, TreeItem<String>> geraetTreeMap, DoubleMap<UUID, TreeItem<String>> szenarioTreeMap) {
+        this.raumTreeMap = raumTreeMap;
+        this.geraetTreeMap = geraetTreeMap;
+        this.szenarioTreeMap = szenarioTreeMap;
     }
 }

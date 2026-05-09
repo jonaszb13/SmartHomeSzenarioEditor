@@ -37,7 +37,7 @@ public class SmartHomeApplication extends Application {
         //TODO hier müssen die ganzen Daten reingeladen werden
         //  -> vielleicht auch direkte Methoden im Modell,
         //     wodurch das keine Parameter mehr sein müssen
-        Model model = new Model(null, null, null);
+        Model model = new Model();
         new Controller(view, model);
 
         Pane defaultPanel = FXMLLoader.load(
