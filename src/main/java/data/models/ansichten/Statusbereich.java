@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
+
+//Bereitstellung von Daten speziell fuer den Statusbereich
 public class Statusbereich {
 
-    public List<Meldung> getNewMessages(final UUID userDataLetzterNode) throws MessageMissing {
+    public static List<Meldung> getNewMessages(final UUID userDataLetzterNode) throws MessageMissing {
         final List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
         if (userDataLetzterNode == null) {
             return meldungen;

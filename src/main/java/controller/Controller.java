@@ -1,6 +1,7 @@
 package controller;
 
 import data.models.Model;
+import data.models.ansichten.Statusbereich;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
@@ -26,6 +27,11 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         this.view = view;
         this.view.addUebersichtTreeSelectionListener(this);
         this.model = model;
+    }
+
+    public void start(Pane defaultPanel) {
+        view.updateTreeModel();
+        view.getHauptPane().getChildren().setAll(defaultPanel);
     }
 
     @Override
@@ -79,8 +85,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
 
     private void updateStatusLog() {
         try {
-            final List<Meldung> newMessages = model.getStatusbereich()
-                    .getNewMessages(view.getStatusLogVBox()
+            final List<Meldung> newMessages = Statusbereich.getNewMessages(view.getStatusLogVBox()
                             .getChildren().isEmpty()
                             ? null : UUID.fromString(view.getStatusLogVBox()
                             .getChildren().getFirst().getUserData().toString()));

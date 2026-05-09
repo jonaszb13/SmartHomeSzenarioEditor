@@ -1,12 +1,8 @@
 package data.models;
-
-import data.models.ansichten.Statusbereich;
-import data.models.ansichten.Uebersicht;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import data.services.datenServices.DataAccess;
-import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
@@ -16,19 +12,6 @@ import java.util.UUID;
 
 //Singleton
 public final class Model {
-
-
-    //TODO Umbau Struktur: Model beinhaltet die drei Grunddatentypen für die allgemeinen Datenhaltung; im Model sind zudem die Ansichten (View-Model), die direkte Objekte beinhalten, die dem Nutzer angezeigt werden sollen (und nur diese Informatione)
-    //TODO Das Model wiederum verwendet die Daten, um die VIewModel zu erstellen. Der Controller ruft danach die jeweiligen ViewModel auf, um Informationen in die View zu schieben. Nur das Model direkt macht Datenbankaufrufe (über die drei Grundklassen Geraet, Raum, Szenario)
-
-
-    //TODO könnte sein, dass Viewmodels nicht ganz dem MVC Pattern entsprechen --> vielleicht doch lieber harte Trennung für die Erzegung der GUI-Objekte (und dann ggf. Unterklassen der View)
-
-
-    //View-Models
-    //TODO kann auch gut sein, dass die Viewmodels nicht im Model liegen müssen --> wenn alles Singleton ist, dann müssen die nur auf die getInstance() zugreifen
-    private final Uebersicht uebersicht;
-    private final Statusbereich statusbereich;
 
 
     //Logik-Daten
@@ -43,12 +26,6 @@ public final class Model {
     private Model() {
         //TODO Daten in MOdel laden (Logikdaten) --> Anzeigedaten sind für jedes Viewmodel unterschiedlich
         //Zuweisung Logik-Daten
-        mappeDatenInModel();
-
-        //Erstellung View-Models
-        this.uebersicht = Uebersicht.getInstance();
-        this.statusbereich = new Statusbereich();
-
     }
 
     public static Model getInstance() {
@@ -70,29 +47,15 @@ public final class Model {
         return geraeteMap;
     }
 
-    public Uebersicht getUebersicht() {
-        return Uebersicht.getInstance();
-    }
 
-    public Statusbereich getStatusbereich() {
-        return statusbereich;
-    }
-
-    private void mappeDatenInModel() {
+    public void setData() throws SQLException {
+        //TODO Datenzugriff nicht direkt über den Data Access, sondern Zugriff über Grundmodels (Gerät, Raum, Szenario)
+        //TODO ggf. Exception schon tiefer abgefangen
         try {
+            DataAccess.getInstance();
             geraeteMap = new HashMap<>();
-            //TODO das Befüllend er Referenzen sollte nicht über Parameter stattfinden
-            DataAccess.getInstance().mapAllGeraete();
-        } catch (SQLException sqlE) {
+        } catch( SQLException sqlE) {
             StatusLog.addError("Fehler beim initialen Laden der Daten", sqlE);
         }
-    }
-
-    public void load() throws SQLException {
-        DataAccess dataAccess = DataAccess.getInstance();
-        geraeteMap = new HashMap<>();
-    }
-
-    public record Daten(Map<UUID, Raum> raumMap, Map<UUID, Geraet> geraetMap, Map<UUID, Szenario> szenarioMap) {
     }
 }

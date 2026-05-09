@@ -29,28 +29,30 @@ public class SmartHomeApplication extends Application {
             StatusLog.addError("Fehler bei Datenbankerstellung", e);
         }
 
-
         final FXMLLoader loader = new FXMLLoader(SmartHomeApplication.class.getResource("/userInterface/main-view.fxml"));
+
         loader.load();
+
+        Pane defaultPanel = FXMLLoader.load(
+                Objects.requireNonNull(getClass().getResource("/userInterface/haupt-view.fxml"))
+        );
 
         View view = loader.getController();
 
         Model model = Model.getInstance();
         try {
-            model.load();
+            model.setData();
         } catch (SQLException eSQL) {
             //TODO Besserer Error
-            StatusLog.addError("Fehler bei Datenbankerstellung", eSQL);
+            StatusLog.addError("Fehler bei initialem Datenbankzugriff", eSQL);
         }
 
-        //TODO auch keine klare Trennung nach dem MVC-Pattern
+        Controller controller = new Controller(view, model);
+
+        controller.start(defaultPanel);
+
+        //TODO auch keine klare Trennung nach dem MVC-Pattern --> start-Funktion des Controllers sollte aufgerufen werden
         view.updateTreeModel();
-
-        new Controller(view, model);
-
-        Pane defaultPanel = FXMLLoader.load(
-                Objects.requireNonNull(getClass().getResource("/userInterface/haupt-view.fxml"))
-        );
         view.getHauptPane().getChildren().setAll(defaultPanel);
 
         Scene scene = new Scene(loader.getRoot());
