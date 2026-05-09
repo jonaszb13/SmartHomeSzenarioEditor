@@ -42,6 +42,7 @@ public class SmartHomeApplication extends Application {
             //TODO Besserer Error
             StatusLog.addError("Fehler bei Datenbankerstellung", eSQL);
         }
+        view.updateTreeModel();
 
         new Controller(view, model);
 

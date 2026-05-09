@@ -31,6 +31,7 @@ public class View {
     public void initialize() {
         uebersichtTree.setShowRoot(false);
         uebersichtTree.setRoot(createTreeModel());
+        updateTreeModel();
     }
 
     public Pane getHauptPane() {
@@ -52,8 +53,12 @@ public class View {
     private TreeItem<String> createTreeModel() {
         final TreeItem<String> root = new TreeItem<>("Root");
         root.setExpanded(true);
+        return root;
+    }
 
-        //TODO Erstellung der Kinderknoten aller drei Kategorien
+    public void updateTreeModel() {
+        TreeItem<String> root = uebersichtTree.getRoot();
+        root.getChildren().clear();
         final TreeItem<String> raeume = new TreeItem<>("Räume");
         final TreeItem<String> geraete = new TreeItem<>("Geräte");
         final TreeItem<String> szenarien = new TreeItem<>("Szenarien");
@@ -93,7 +98,6 @@ public class View {
         } catch (Exception e) {
             StatusLog.addError(e);
         }
-        return root;
     }
 
 
