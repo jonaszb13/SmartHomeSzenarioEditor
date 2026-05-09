@@ -21,6 +21,10 @@ public final class Model {
     //TODO Umbau Struktur: Model beinhaltet die drei Grunddatentypen für die allgemeinen Datenhaltung; im Model sind zudem die Ansichten (View-Model), die direkte Objekte beinhalten, die dem Nutzer angezeigt werden sollen (und nur diese Informatione)
     //TODO Das Model wiederum verwendet die Daten, um die VIewModel zu erstellen. Der Controller ruft danach die jeweiligen ViewModel auf, um Informationen in die View zu schieben. Nur das Model direkt macht Datenbankaufrufe (über die drei Grundklassen Geraet, Raum, Szenario)
 
+
+    //TODO könnte sein, dass Viewmodels nicht ganz dem MVC Pattern entsprechen --> vielleicht doch lieber harte Trennung für die Erzegung der GUI-Objekte (und dann ggf. Unterklassen der View)
+
+
     //View-Models
     //TODO kann auch gut sein, dass die Viewmodels nicht im Model liegen müssen --> wenn alles Singleton ist, dann müssen die nur auf die getInstance() zugreifen
     private final Uebersicht uebersicht;
