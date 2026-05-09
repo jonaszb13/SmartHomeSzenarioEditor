@@ -56,6 +56,7 @@ public class View {
         return root;
     }
 
+    //TODO könnte für die View etwas viel Logik beinhalten --> Zusammenstellen des Trees in Controller oder wenn das etwas viel Logik ist, dann ein extra Viewmodel dafür schaffen, um die einzelnen TreeElemente bereitzustellen und das Objekt zusammenzubauen (VIewmodel Uebersicht)
     public void updateTreeModel() {
         TreeItem<String> root = uebersichtTree.getRoot();
         root.getChildren().clear();
@@ -67,6 +68,7 @@ public class View {
         try {
             //Räume Einfügen
             List<TreeItem<String>> l = new ArrayList<>();
+            //TODO diese Aufrufe im Model erledigen und dann an das updateTreeModel() übergeben --> updateTreeModel() im generischen stateChanged() des Controllers
             DoubleMap<UUID, TreeItem<String>> map = RaumObjektService.getInstance().getRaumTreeMap();
             for (final Raum r : RaumObjektService.getInstance().getRaumMap().values()) {
                 TreeItem<String> item = new TreeItem<>(r.getName());

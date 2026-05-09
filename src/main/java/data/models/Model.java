@@ -7,6 +7,7 @@ import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import data.services.datenServices.DataAccess;
 import util.DoubleMap;
+import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -14,9 +15,23 @@ import java.util.Map;
 import java.util.UUID;
 
 public final class Model {
+
+
+    //TODO Umbau Struktur: Model beinhaltet die drei Grunddatentypen für die allgemeinen Datenhaltung; im Model sind zudem die Ansichten (View-Model), die direkte Objekte beinhalten, die dem Nutzer angezeigt werden sollen (und nur diese Informatione)
+    //TODO Das Model wiederum verwendet die Daten, um die VIewModel zu erstellen. Der Controller ruft danach die jeweiligen ViewModel auf, um Informationen in die View zu schieben. Nur das Model direkt macht Datenbankaufrufe (über die drei Grundklassen Geraet, Raum, Szenario)
+
+    //View-Models
     private final Uebersicht uebersicht;
     private final Statusbereich statusbereich;
-    private final Daten daten;
+
+    //Logik-Daten
+    private Map<UUID, Geraet> geraeteMap;
+    private Map<UUID, Raum> raeumeMap;
+    private  Map<UUID, Szenario> szenarienMap;
+
+
+    //View-Daten
+
     private static Model instance;
 
     public static Model getInstance() {
@@ -27,9 +42,14 @@ public final class Model {
     }
 
     private Model() {
-        this.uebersicht = new Uebersicht(new DoubleMap<>(), new DoubleMap<>(), new DoubleMap<>());
+        //TODO Daten in MOdel laden (Logikdaten) --> Anzeigedaten sind für jedes Viewmodel unterschiedlich
+        //Zuweisung Logik-Daten
+        mappeDatenInModel();
+
+        //Erstellung View-Models
+        this.uebersicht = Uebersicht.getInstance();
         this.statusbereich = new Statusbereich();
-        this.daten = new Daten(new HashMap<>(), new HashMap<>(), new HashMap<>());
+
     }
 
     public Uebersicht getUebersicht() {
@@ -40,15 +60,19 @@ public final class Model {
         return statusbereich;
     }
 
-    public Daten getDaten() {
-        return daten;
+    private void mappeDatenInModel() {
+        try {
+            geraeteMap = new HashMap<>();
+            //TODO das Befüllend er Referenzen sollte nicht über Parameter stattfinden
+            DataAccess.getInstance().mapAllGeraete();
+        } catch (SQLException sqlE) {
+            StatusLog.addError("Fehler beim initialen Laden der Daten", sqlE);
+        }
     }
 
     public void load() throws SQLException {
         DataAccess dataAccess = DataAccess.getInstance();
-        dataAccess.mapAllRaeume(getDaten().raumMap);
-        dataAccess.mapAllGeraete(getDaten().raumMap, getDaten().geraetMap);
-        dataAccess.mapAllSzenarien(getDaten().geraetMap, getDaten().szenarioMap);
+        geraeteMap = new HashMap<>();
     }
 
     public record Daten(Map<UUID, Raum> raumMap, Map<UUID, Geraet> geraetMap, Map<UUID, Szenario> szenarioMap) {

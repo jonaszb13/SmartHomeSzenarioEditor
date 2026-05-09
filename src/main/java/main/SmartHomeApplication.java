@@ -42,6 +42,8 @@ public class SmartHomeApplication extends Application {
             //TODO Besserer Error
             StatusLog.addError("Fehler bei Datenbankerstellung", eSQL);
         }
+
+        //TODO auch keine klare Trennung nach dem MVC-Pattern
         view.updateTreeModel();
 
         new Controller(view, model);

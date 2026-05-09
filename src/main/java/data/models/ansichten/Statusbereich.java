@@ -19,7 +19,7 @@ public class Statusbereich {
         int indexNeueMeldung = IntStream.range(0, meldungen.size())
                 .filter(i -> meldungen.get(i).getMeldungsId().equals(userDataLetzterNode))
                 .findFirst()
-                .orElseThrow(() -> new MessageMissing("Es liegt eine inkonsistente Datenbasis vor: Eine Meldung konnte nicht im Statuslog gefunden werden.")) + 1;
+                .orElseThrow(() -> new MessageMissing("Es liegt eine inkonsistente Datenbasis vor: Eine Meldung konnte nicht im StatusLog gefunden werden.")) + 1;
         if (indexNeueMeldung == 0) {
             StatusLog.addError("Gespeicherte Meldung kann nicht mehr im StatusLog abgerufen werden.");
             return new ArrayList<>();
