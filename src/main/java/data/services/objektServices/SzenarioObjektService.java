@@ -1,5 +1,6 @@
 package data.services.objektServices;
 
+import data.models.Model;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Szenario;
 import data.services.datenServices.DataAccess;
@@ -10,7 +11,6 @@ import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,17 +22,17 @@ public final class SzenarioObjektService {
     private final DoubleMap<UUID, TreeItem<String>> szenarioTreeMap;
     private static final String SZENARIO_STRING = "Szenario ";
 
-    private SzenarioObjektService(final SzenarioDataService szenarioDataService, final Map<UUID, Szenario> szenarioMap) {
+    private SzenarioObjektService(final SzenarioDataService szenarioDataService, final Map<UUID, Szenario> szenarioMap, final DoubleMap<UUID, TreeItem<String>> szenarioTreeMap) {
         this.szenarioDataService = szenarioDataService;
         this.szenarioMap = szenarioMap;
-        this.szenarioTreeMap = new DoubleMap<>();
+        this.szenarioTreeMap = szenarioTreeMap;
     }
 
     public static SzenarioObjektService getInstance() throws SQLException {
         if (instance == null) {
+            Model model = Model.getInstance();
             final DataAccess dataAccess = DataAccess.getInstance();
-            instance = new SzenarioObjektService(SzenarioDataService.getInstance(dataAccess), new HashMap<>());
-            dataAccess.mapAllSzenarien(GeraetObjektService.getInstance().getGeraetMap(), instance.szenarioMap);
+            instance = new SzenarioObjektService(SzenarioDataService.getInstance(dataAccess), model.getDaten().szenarioMap(), model.getUebersicht().szenarioTreeMap());
         }
         return instance;
     }

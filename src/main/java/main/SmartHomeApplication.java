@@ -37,7 +37,14 @@ public class SmartHomeApplication extends Application {
         //TODO hier müssen die ganzen Daten reingeladen werden
         //  -> vielleicht auch direkte Methoden im Modell,
         //     wodurch das keine Parameter mehr sein müssen
-        Model model = new Model();
+        Model model = Model.getInstance();
+        try {
+            model.load();
+        } catch (SQLException e) {
+            //TODO Besserer Error
+            StatusLog.addError("Fehler bei Datenbankerstellung", e);
+        }
+
         new Controller(view, model);
 
         Pane defaultPanel = FXMLLoader.load(

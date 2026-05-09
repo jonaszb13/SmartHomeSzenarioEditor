@@ -1,5 +1,6 @@
 package data.services.objektServices;
 
+import data.models.Model;
 import data.models.fachobjekte.Raum;
 import data.services.datenServices.DataAccess;
 import data.services.datenServices.RaumDataService;
@@ -9,7 +10,6 @@ import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,18 +20,17 @@ public final class RaumObjektService {
     private final Map<UUID, Raum> raumMap;
     private final DoubleMap<UUID, TreeItem<String>> raumTreeMap;
 
-    private RaumObjektService(final RaumDataService raumDataService, final Map<UUID, Raum> raumMap) {
+    private RaumObjektService(final RaumDataService raumDataService, final Map<UUID, Raum> raumMap, final DoubleMap<UUID, TreeItem<String>> raumTreeMap) {
         this.raumDataService = raumDataService;
         this.raumMap = raumMap;
-        this.raumTreeMap = new DoubleMap<>();
+        this.raumTreeMap = raumTreeMap;
     }
 
     public static RaumObjektService getInstance() throws SQLException {
         if (instance == null) {
+            Model model = Model.getInstance();
             final DataAccess dataAccess = DataAccess.getInstance();
-            instance = new RaumObjektService(RaumDataService.getInstance(dataAccess), new HashMap<>());
-            //TODO kein MAPPEN IM GETINSTANCE() ALTER
-            dataAccess.mapAllRaeume(instance.getRaumMap());
+            instance = new RaumObjektService(RaumDataService.getInstance(dataAccess), model.getDaten().raumMap(), model.getUebersicht().raumTreeMap());
         }
         return instance;
     }

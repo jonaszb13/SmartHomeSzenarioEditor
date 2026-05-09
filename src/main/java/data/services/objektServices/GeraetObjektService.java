@@ -1,9 +1,9 @@
 package data.services.objektServices;
 
+import data.models.Model;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
-import data.services.datenServices.DataAccess;
 import data.services.datenServices.GeraetDataService;
 import jakarta.inject.Singleton;
 import javafx.scene.control.TreeItem;
@@ -12,7 +12,6 @@ import util.statusmeldungen.StatusLog;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,16 +22,16 @@ public final class GeraetObjektService {
     private final Map<UUID, Geraet> geraetMap;
     private final DoubleMap<UUID, TreeItem<String>> geraetTreeMap;
 
-    private GeraetObjektService(final GeraetDataService geraetDataService, final Map<UUID, Geraet> geraetMap) {
+    private GeraetObjektService(final GeraetDataService geraetDataService, final Map<UUID, Geraet> geraetMap, final DoubleMap<UUID, TreeItem<String>> geraetTreeMap) {
         this.geraetDataService = geraetDataService;
         this.geraetMap = geraetMap;
-        this.geraetTreeMap = new DoubleMap<>();
+        this.geraetTreeMap = geraetTreeMap;
     }
 
     public static GeraetObjektService getInstance() throws SQLException {
         if (instance == null) {
-            instance = new GeraetObjektService(GeraetDataService.getInstance(), new HashMap<>());
-            DataAccess.getInstance().mapAllGeraete(RaumObjektService.getInstance().getRaumMap(), instance.getGeraetMap());
+            Model model = Model.getInstance();
+            instance = new GeraetObjektService(GeraetDataService.getInstance(), model.getDaten().geraetMap(), model.getUebersicht().geraetTreeMap());
         }
         return instance;
     }
