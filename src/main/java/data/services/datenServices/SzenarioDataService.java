@@ -23,9 +23,9 @@ public final class SzenarioDataService {
         this.dataAccess = dataAccess;
     }
 
-    public static SzenarioDataService getInstance(final DataAccess dataAccess) {
+    public static SzenarioDataService getInstance() throws SQLException {
         if (instance == null) {
-            instance = new SzenarioDataService(dataAccess);
+            instance = new SzenarioDataService(DataAccess.getInstance());
         }
         return instance;
     }

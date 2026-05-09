@@ -2,7 +2,6 @@ package data.services.objektServices;
 
 import data.models.Model;
 import data.models.fachobjekte.Raum;
-import data.services.datenServices.DataAccess;
 import data.services.datenServices.RaumDataService;
 import jakarta.inject.Singleton;
 import javafx.scene.control.TreeItem;
@@ -29,8 +28,7 @@ public final class RaumObjektService {
     public static RaumObjektService getInstance() throws SQLException {
         if (instance == null) {
             Model model = Model.getInstance();
-            final DataAccess dataAccess = DataAccess.getInstance();
-            instance = new RaumObjektService(RaumDataService.getInstance(dataAccess), model.getDaten().raumMap(), model.getUebersicht().raumTreeMap());
+            instance = new RaumObjektService(RaumDataService.getInstance(), model.getDaten().raumMap(), model.getUebersicht().raumTreeMap());
         }
         return instance;
     }

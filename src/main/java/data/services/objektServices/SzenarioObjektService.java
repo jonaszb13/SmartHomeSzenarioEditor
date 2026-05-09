@@ -3,7 +3,6 @@ package data.services.objektServices;
 import data.models.Model;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Szenario;
-import data.services.datenServices.DataAccess;
 import data.services.datenServices.SzenarioDataService;
 import jakarta.inject.Singleton;
 import javafx.scene.control.TreeItem;
@@ -31,8 +30,7 @@ public final class SzenarioObjektService {
     public static SzenarioObjektService getInstance() throws SQLException {
         if (instance == null) {
             Model model = Model.getInstance();
-            final DataAccess dataAccess = DataAccess.getInstance();
-            instance = new SzenarioObjektService(SzenarioDataService.getInstance(dataAccess), model.getDaten().szenarioMap(), model.getUebersicht().szenarioTreeMap());
+            instance = new SzenarioObjektService(SzenarioDataService.getInstance(), model.getDaten().szenarioMap(), model.getUebersicht().szenarioTreeMap());
         }
         return instance;
     }

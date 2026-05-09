@@ -17,7 +17,7 @@ public final class RaumDataService {
         this.dataAccess = dataAccess;
     }
 
-    public static RaumDataService getInstance(DataAccess dataAccess) throws SQLException {
+    public static RaumDataService getInstance() throws SQLException {
         if (instance == null) {
             instance = new RaumDataService(DataAccess.getInstance());
         }

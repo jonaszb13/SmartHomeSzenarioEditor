@@ -34,15 +34,13 @@ public class SmartHomeApplication extends Application {
         loader.load();
 
         View view = loader.getController();
-        //TODO hier müssen die ganzen Daten reingeladen werden
-        //  -> vielleicht auch direkte Methoden im Modell,
-        //     wodurch das keine Parameter mehr sein müssen
+
         Model model = Model.getInstance();
         try {
             model.load();
-        } catch (SQLException e) {
+        } catch (SQLException eSQL) {
             //TODO Besserer Error
-            StatusLog.addError("Fehler bei Datenbankerstellung", e);
+            StatusLog.addError("Fehler bei Datenbankerstellung", eSQL);
         }
 
         new Controller(view, model);
