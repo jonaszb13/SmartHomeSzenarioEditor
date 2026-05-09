@@ -7,6 +7,8 @@ import data.models.fachobjekte.Szenario;
 import util.customExceptions.NoGeraetProvidedException;
 import util.statusmeldungen.StatusLog;
 
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -283,10 +285,16 @@ public class DataAccess {
         pStmt.executeUpdate();
     }
 
-    public int getTestValue(final String sql) throws SQLException {
+    public CachedRowSet getTestRowSet(final String sql) throws SQLException {
+        CachedRowSet rowSet = RowSetProvider.newFactory().createCachedRowSet();
         final Statement stmt = conn.createStatement();
         final ResultSet rs = stmt.executeQuery(sql);
-        rs.next();
-        return rs.getInt(1);
+        rowSet.populate(rs);
+        return rowSet;
+    }
+
+    public void executeTestUpdate(final String sql) throws SQLException {
+        final Statement stmt = conn.createStatement();
+        stmt.executeUpdate(sql);
     }
 }

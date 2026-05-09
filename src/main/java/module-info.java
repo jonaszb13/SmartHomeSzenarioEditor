@@ -6,9 +6,9 @@ module org.example.ui {
     requires org.kordamp.bootstrapfx.core;
     requires jakarta.inject;
     requires org.apache.commons.lang3;
-    requires java.sql;
     requires java.desktop;
     requires javafx.graphics;
+    requires java.sql.rowset;
 
     opens main to javafx.fxml;
     opens userInterface to javafx.fxml;

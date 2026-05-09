@@ -5,9 +5,10 @@ import data.services.datenServices.DatabaseCreationService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DatabaseCreationServiceTest {
 
@@ -19,12 +20,14 @@ public class DatabaseCreationServiceTest {
     @Test
     void testCreateDatabase() throws SQLException {
         DatabaseCreationService.createDatabase();
-        int anzahlTabellen = DataAccess.getInstance().getTestValue("""
+        CachedRowSet crs = DataAccess.getInstance().getTestRowSet("""
                 SELECT COUNT(*)
                 FROM INFORMATION_SCHEMA.TABLES
                 WHERE TABLE_SCHEMA = 'PUBLIC'
                 """);
+        crs.next();
+        int anzahlTabellen = crs.getInt(1);
         assertEquals(5, anzahlTabellen);
     }
-
+    //TODO Mehr Tests
 }
