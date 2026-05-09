@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Model {
+public final class Model {
     private final Uebersicht uebersicht;
     private final Statusbereich statusbereich;
     private final Daten daten;

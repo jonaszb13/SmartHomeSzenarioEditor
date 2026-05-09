@@ -25,7 +25,7 @@ import java.util.UUID;
 public class DataAccess {
     private final Connection conn;
     private static DataAccess instance;
-    private static boolean test = false;
+    private static boolean test;
 
     /**
      * @param url      Pfad, in dem Datenbank angelegt werden soll
