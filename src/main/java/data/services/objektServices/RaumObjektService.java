@@ -1,6 +1,7 @@
 package data.services.objektServices;
 
 import data.models.Model;
+import data.models.ansichten.Uebersicht;
 import data.models.fachobjekte.Raum;
 import data.services.datenServices.RaumDataService;
 import jakarta.inject.Singleton;
@@ -28,7 +29,7 @@ public final class RaumObjektService {
     public static RaumObjektService getInstance() throws SQLException {
         if (instance == null) {
             Model model = Model.getInstance();
-            instance = new RaumObjektService(RaumDataService.getInstance(), model.getDaten().raumMap(), model.getUebersicht().raumTreeMap());
+            instance = new RaumObjektService(RaumDataService.getInstance(), model.getRaeumeMap(), Uebersicht.getInstance().getRaumTreeMap());
         }
         return instance;
     }

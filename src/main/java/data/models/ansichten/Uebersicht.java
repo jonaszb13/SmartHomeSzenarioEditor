@@ -1,6 +1,7 @@
 
 package data.models.ansichten;
 
+import data.models.Model;
 import javafx.scene.control.TreeItem;
 
 import java.util.HashMap;
@@ -8,18 +9,21 @@ import java.util.Map;
 import java.util.UUID;
 
 //Klasse soll nur die Daten bereitstellen --> im Controller soll
+
+//Singleton
 public class Uebersicht {
 
-    private final Map<UUID, TreeItem<String>> raumTreeMap;
-    private final Map<UUID, TreeItem<String>> geraetTreeMap;
-    private final Map<UUID, TreeItem<String>> szenarioTreeMap;
+    //nicht final, da nur GUI-Elemente
+    private Map<UUID, TreeItem<String>> raumTreeMap;
+    private Map<UUID, TreeItem<String>> geraetTreeMap;
+    private Map<UUID, TreeItem<String>> szenarioTreeMap;
 
     private static Uebersicht instance;
 
     private Uebersicht(){
-        this.raumTreeMap = new HashMap<>();
-        this.geraetTreeMap = new HashMap<>();
-        this.szenarioTreeMap = new HashMap<>();
+       // raumTreeMap = mappeRaumTree();
+       // geraetTreeMap = mappeGeraetTree();
+       // szenarioTreeMap = mappeSzenarioTree();
     }
 
     public static Uebersicht getInstance() {
@@ -29,9 +33,23 @@ public class Uebersicht {
         return instance;
     }
 
-    private void mappeDatenFuerGui() {
+    public Map<UUID, TreeItem<String>> getRaumTreeMap() {
+        return raumTreeMap;
+    }
+    /*
+    private Map<UUID, TreeItem<String>> mappeRaumTree() {
+        Model.getInstance().getRaeumeMap().values();
+    }
+
+    private Map<UUID, TreeItem<String>> mappeGeraetTree() {
 
     }
+
+    private Map<UUID, TreeItem<String>> mappeSzenarioTree() {
+
+    }
+
+     */
 }
 
 

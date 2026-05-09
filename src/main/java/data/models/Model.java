@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+//Singleton
 public final class Model {
 
 
@@ -21,25 +22,19 @@ public final class Model {
     //TODO Das Model wiederum verwendet die Daten, um die VIewModel zu erstellen. Der Controller ruft danach die jeweiligen ViewModel auf, um Informationen in die View zu schieben. Nur das Model direkt macht Datenbankaufrufe (über die drei Grundklassen Geraet, Raum, Szenario)
 
     //View-Models
+    //TODO kann auch gut sein, dass die Viewmodels nicht im Model liegen müssen --> wenn alles Singleton ist, dann müssen die nur auf die getInstance() zugreifen
     private final Uebersicht uebersicht;
     private final Statusbereich statusbereich;
 
+
     //Logik-Daten
+    //TODO mapping direkt im Konstruktor, damit das wieder final kann
     private Map<UUID, Geraet> geraeteMap;
     private Map<UUID, Raum> raeumeMap;
-    private  Map<UUID, Szenario> szenarienMap;
+    private Map<UUID, Szenario> szenarienMap;
 
-
-    //View-Daten
-
+    //Singleton-Instanz
     private static Model instance;
-
-    public static Model getInstance() {
-        if (instance == null) {
-            instance = new Model();
-        }
-        return instance;
-    }
 
     private Model() {
         //TODO Daten in MOdel laden (Logikdaten) --> Anzeigedaten sind für jedes Viewmodel unterschiedlich
@@ -52,8 +47,27 @@ public final class Model {
 
     }
 
+    public static Model getInstance() {
+        if (instance == null) {
+            instance = new Model();
+        }
+        return instance;
+    }
+
+    public Map<UUID, Raum> getRaeumeMap() {
+        return raeumeMap;
+    }
+
+    public Map<UUID, Szenario> getSzenarienMap() {
+        return szenarienMap;
+    }
+
+    public Map<UUID, Geraet> getGeraeteMap() {
+        return geraeteMap;
+    }
+
     public Uebersicht getUebersicht() {
-        return uebersicht;
+        return Uebersicht.getInstance();
     }
 
     public Statusbereich getStatusbereich() {
