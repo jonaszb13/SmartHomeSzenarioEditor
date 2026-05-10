@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
+import main.SmartHomeApplication;
 import userInterface.View;
 import util.customExceptions.MessageMissing;
 import util.statusmeldungen.Meldung;
@@ -19,18 +20,28 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+//Singleton
 public class Controller implements ChangeListener<TreeItem<String>> {
     private final View view;
-    private final Model model;
+    private final Model model = Model.getInstance();
 
-    public Controller(View view, Model model) {
-        this.view = view;
-        this.view.addUebersichtTreeSelectionListener(this);
-        this.model = model;
+    private static Controller instance;
+
+    private Controller() {
+        view = SmartHomeApplication.getView();
+        view.addUebersichtTreeSelectionListener(this);
+    }
+
+    public static Controller getInstance() {
+        if (instance == null) {
+            instance = new Controller();
+        }
+        return instance;
     }
 
     public void start(Pane defaultPanel) {
-        view.updateTreeModel();
+        //TODO Übergabe der Modeldaten
+        view.updateTreeModel(null, null, null);
         view.getHauptPane().getChildren().setAll(defaultPanel);
     }
 
@@ -54,7 +65,6 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             //TODO nur durchführen, wenn der Statusbereich sichtbar ist
             updateStatusLog();
         }
-        //TODO Linebreak alle 50 Zeichen
     }
 
     private String getFxmlFile(TreeItem<String> newValue) {
@@ -100,6 +110,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                         return label;
                     })
                     .forEach(view.getStatusLogVBox().getChildren()::addFirst);
+                    //TODO Linebreak alle 50 Zeichen
         } catch (MessageMissing e) {
             StatusLog.addError(e.getMessage(), e);
         }

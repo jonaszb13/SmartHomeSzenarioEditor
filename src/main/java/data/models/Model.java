@@ -3,6 +3,8 @@ import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import data.services.datenServices.DataAccess;
+import main.SmartHomeApplication;
+import userInterface.View;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
@@ -12,7 +14,7 @@ import java.util.UUID;
 
 //Singleton
 public final class Model {
-
+    private final View view;
 
     //Logik-Daten
     //TODO mapping direkt im Konstruktor, damit das wieder final kann
@@ -23,14 +25,15 @@ public final class Model {
     //Singleton-Instanz
     private static Model instance;
 
-    private Model() {
+    private Model(View view) {
         //TODO Daten in MOdel laden (Logikdaten) --> Anzeigedaten sind für jedes Viewmodel unterschiedlich
         //Zuweisung Logik-Daten
+        this.view = view;
     }
 
     public static Model getInstance() {
         if (instance == null) {
-            instance = new Model();
+            instance = new Model(SmartHomeApplication.getView());
         }
         return instance;
     }

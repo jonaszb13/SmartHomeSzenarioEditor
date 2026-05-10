@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 public class SmartHomeApplication extends Application {
+    private static View view;
 
     public static void main(String[] args) {
         launch(args);
@@ -30,35 +31,31 @@ public class SmartHomeApplication extends Application {
         }
 
         final FXMLLoader loader = new FXMLLoader(SmartHomeApplication.class.getResource("/userInterface/main-view.fxml"));
-
         loader.load();
 
         Pane defaultPanel = FXMLLoader.load(
                 Objects.requireNonNull(getClass().getResource("/userInterface/haupt-view.fxml"))
         );
 
-        View view = loader.getController();
+        view = loader.getController();
 
-        Model model = Model.getInstance();
         try {
-            model.setData();
+            Model.getInstance().setData();
         } catch (SQLException eSQL) {
             //TODO Besserer Error
             StatusLog.addError("Fehler bei initialem Datenbankzugriff", eSQL);
         }
 
-        Controller controller = new Controller(view, model);
-
-        controller.start(defaultPanel);
-
-        //TODO auch keine klare Trennung nach dem MVC-Pattern --> start-Funktion des Controllers sollte aufgerufen werden
-        view.updateTreeModel();
-        view.getHauptPane().getChildren().setAll(defaultPanel);
+        Controller.getInstance().start(defaultPanel);
 
         Scene scene = new Scene(loader.getRoot());
         stage.setTitle("Smart Home");
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();
+    }
+
+    public static View getView() {
+        return view;
     }
 }

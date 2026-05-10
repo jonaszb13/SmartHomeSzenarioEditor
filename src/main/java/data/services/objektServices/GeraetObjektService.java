@@ -22,6 +22,7 @@ public final class GeraetObjektService {
     private final Map<UUID, Geraet> geraetMap;
     private final DoubleMap<UUID, TreeItem<String>> geraetTreeMap;
 
+    //TODO hier den Konstruktor mal umbauen, da die Services keine TreeItems (GUI-Elemente besitzen sollten)
     private GeraetObjektService(final GeraetDataService geraetDataService, final Map<UUID, Geraet> geraetMap, final DoubleMap<UUID, TreeItem<String>> geraetTreeMap) {
         this.geraetDataService = geraetDataService;
         this.geraetMap = geraetMap;
@@ -31,7 +32,7 @@ public final class GeraetObjektService {
     public static GeraetObjektService getInstance() throws SQLException {
         if (instance == null) {
             Model model = Model.getInstance();
-            instance = new GeraetObjektService(GeraetDataService.getInstance(), model.getDaten().geraetMap(), model.getUebersicht().geraetTreeMap());
+            instance = new GeraetObjektService(GeraetDataService.getInstance(), null, null);
         }
         return instance;
     }

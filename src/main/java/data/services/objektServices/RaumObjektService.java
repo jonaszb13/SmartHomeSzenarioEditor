@@ -1,7 +1,6 @@
 package data.services.objektServices;
 
 import data.models.Model;
-import data.models.ansichten.Uebersicht;
 import data.models.fachobjekte.Raum;
 import data.services.datenServices.RaumDataService;
 import jakarta.inject.Singleton;
@@ -20,6 +19,7 @@ public final class RaumObjektService {
     private final Map<UUID, Raum> raumMap;
     private final DoubleMap<UUID, TreeItem<String>> raumTreeMap;
 
+    //TODO Umbau Services, sodass keine GUI-Elemente mehr übergeben werden
     private RaumObjektService(final RaumDataService raumDataService, final Map<UUID, Raum> raumMap, final DoubleMap<UUID, TreeItem<String>> raumTreeMap) {
         this.raumDataService = raumDataService;
         this.raumMap = raumMap;
@@ -29,7 +29,7 @@ public final class RaumObjektService {
     public static RaumObjektService getInstance() throws SQLException {
         if (instance == null) {
             Model model = Model.getInstance();
-            instance = new RaumObjektService(RaumDataService.getInstance(), model.getRaeumeMap(), Uebersicht.getInstance().getRaumTreeMap());
+            instance = new RaumObjektService(RaumDataService.getInstance(), model.getRaeumeMap(), null);
         }
         return instance;
     }

@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
 
-@Singleton
+//Singleton
 public final class SzenarioObjektService {
     private static SzenarioObjektService instance;
     private final SzenarioDataService szenarioDataService;
@@ -30,7 +30,7 @@ public final class SzenarioObjektService {
     public static SzenarioObjektService getInstance() throws SQLException {
         if (instance == null) {
             Model model = Model.getInstance();
-            instance = new SzenarioObjektService(SzenarioDataService.getInstance(), model.getDaten().szenarioMap(), model.getUebersicht().szenarioTreeMap());
+            instance = new SzenarioObjektService(SzenarioDataService.getInstance(), null, null);
         }
         return instance;
     }

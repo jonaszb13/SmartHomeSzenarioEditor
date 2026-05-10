@@ -17,9 +17,10 @@ import util.statusmeldungen.StatusLog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-public class View {
+public final class View {
     @FXML
     private TreeView<String> uebersichtTree;
     @FXML
@@ -31,7 +32,7 @@ public class View {
     public void initialize() {
         uebersichtTree.setShowRoot(false);
         uebersichtTree.setRoot(createTreeModel());
-        updateTreeModel();
+        updateTreeModel(null, null, null);
     }
 
     public Pane getHauptPane() {
@@ -56,8 +57,8 @@ public class View {
         return root;
     }
 
-    //TODO könnte für die View etwas viel Logik beinhalten --> Zusammenstellen des Trees in Controller oder wenn das etwas viel Logik ist, dann ein extra Viewmodel dafür schaffen, um die einzelnen TreeElemente bereitzustellen und das Objekt zusammenzubauen (VIewmodel Uebersicht)
-    public void updateTreeModel() {
+    //TODO Serviceaufrufe nicht hier, sondern über das Model --> sollte als Parameter übergeben werden
+    public void updateTreeModel(Map<UUID, Raum> raumTreeMap, Map<UUID, Geraet> geraetreeMap, Map<UUID, Szenario> szenarioTreeMap) {
         TreeItem<String> root = uebersichtTree.getRoot();
         root.getChildren().clear();
         final TreeItem<String> raeume = new TreeItem<>("Räume");
@@ -67,36 +68,38 @@ public class View {
 
         try {
             //Räume Einfügen
-            List<TreeItem<String>> l = new ArrayList<>();
-            //TODO diese Aufrufe im Model erledigen und dann an das updateTreeModel() übergeben --> updateTreeModel() im generischen stateChanged() des Controllers
+            List<TreeItem<String>> raumTreeList = new ArrayList<>();
+            //TODO diese Aufrufe mit AUrufen zum Wandeln von Datenmaps zu TreeItemsMaps wechseln
             DoubleMap<UUID, TreeItem<String>> map = RaumObjektService.getInstance().getRaumTreeMap();
             for (final Raum r : RaumObjektService.getInstance().getRaumMap().values()) {
                 TreeItem<String> item = new TreeItem<>(r.getName());
-                l.add(item);
+                raumTreeList.add(item);
                 map.put(r.getId(), item);
+
             }
-            raeume.getChildren().addAll(l);
+            raeume.getChildren().addAll(raumTreeList);
 
             //Geräte Einfügen
-            l = new ArrayList<>();
+            List<TreeItem<String>> geraetTreeList = new ArrayList<>();
             map = GeraetObjektService.getInstance().getGeraetTreeMap();
             for (final Geraet g : GeraetObjektService.getInstance().getGeraetMap().values()) {
                 TreeItem<String> item = new TreeItem<>(g.getName());
-                l.add(item);
+                geraetTreeList.add(item);
                 map.put(g.getId(), item);
             }
-            geraete.getChildren().addAll(l);
+            geraete.getChildren().addAll(geraetTreeList);
 
             //Szenarien einfügen
-            l = new ArrayList<>();
+            List<TreeItem<String>> szenarioTreeList = new ArrayList<>();
             map = SzenarioObjektService.getInstance().getSzenarioTreeMap();
             for (final Szenario sz : SzenarioObjektService.getInstance().getSzenarioMap().values()) {
                 final TreeItem<String> item = new TreeItem<>(sz.getName());
-                l.add(item);
+                szenarioTreeList.add(item);
                 map.put(sz.getId(), item);
             }
-            szenarien.getChildren().addAll(l);
+            szenarien.getChildren().addAll(szenarioTreeList);
 
+            //TODO detailliertes Exception-Handling
         } catch (Exception e) {
             StatusLog.addError(e);
         }
