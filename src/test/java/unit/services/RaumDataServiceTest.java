@@ -15,6 +15,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RaumDataServiceTest {
+    static DataAccess dataAccess;
     public static final String ANZAHL_FEHLER = "Anzahl der Räume stimmt nicht";
     //language=SQL
     private static String raumMenge = """
@@ -27,6 +28,7 @@ class RaumDataServiceTest {
         DataAccess.setTest(true);
         try {
             DatabaseCreationService.createDatabase();
+            dataAccess = DataAccess.getInstance();
         } catch (SQLException e) {
             assert false;
         }
@@ -36,7 +38,7 @@ class RaumDataServiceTest {
     void setUp() {
         try {
             //language=SQL
-            DataAccess.getInstance().executeTestUpdate("DELETE FROM RAEUME");
+            dataAccess.executeTestUpdate("DELETE FROM RAEUME");
             DatabaseCreationService.createDatabase();
         } catch (SQLException e) {
             assert false;
@@ -47,7 +49,7 @@ class RaumDataServiceTest {
     void testGetRaum() {
         try {
             //language=SQL
-            CachedRowSet crs = DataAccess.getInstance().getTestRowSet(raumMenge);
+            CachedRowSet crs = dataAccess.getTestRowSet(raumMenge);
             crs.next();
             int anzahlRaume = crs.getInt(1);
             assertEquals(0, anzahlRaume, ANZAHL_FEHLER);
@@ -60,7 +62,6 @@ class RaumDataServiceTest {
     void testAddRaum() {
         try {
             RaumDataService raumDataService = RaumDataService.getInstance();
-            DataAccess dataAccess = DataAccess.getInstance();
 
             Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
             Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), "Raum 2");
@@ -70,7 +71,7 @@ class RaumDataServiceTest {
             CachedRowSet crs = dataAccess.getTestRowSet(raumMenge);
             crs.next();
             int anzahlRaume = crs.getInt(1);
-            assertEquals(2, anzahlRaume,ANZAHL_FEHLER);
+            assertEquals(2, anzahlRaume, ANZAHL_FEHLER);
 
             //language=SQL
             crs = dataAccess.getTestRowSet("""
@@ -93,7 +94,6 @@ class RaumDataServiceTest {
     void testUpdateRaumName() {
         try {
             RaumDataService raumDataService = RaumDataService.getInstance();
-            DataAccess dataAccess = DataAccess.getInstance();
 
             Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
             raumDataService.addRaum(raum1);
@@ -102,7 +102,7 @@ class RaumDataServiceTest {
             CachedRowSet crs = dataAccess.getTestRowSet(raumMenge);
             crs.next();
             int anzahlRaume = crs.getInt(1);
-            assertEquals(1, anzahlRaume,ANZAHL_FEHLER);
+            assertEquals(1, anzahlRaume, ANZAHL_FEHLER);
 
             //language=SQL
             crs = dataAccess.getTestRowSet("""
@@ -122,7 +122,6 @@ class RaumDataServiceTest {
     void testDeleteRaum() {
         try {
             RaumDataService raumDataService = RaumDataService.getInstance();
-            DataAccess dataAccess = DataAccess.getInstance();
 
             Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
             Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), "Raum 2");
@@ -132,19 +131,19 @@ class RaumDataServiceTest {
             CachedRowSet crs = dataAccess.getTestRowSet(raumMenge);
             crs.next();
             int anzahlRaume = crs.getInt(1);
-            assertEquals(2, anzahlRaume,ANZAHL_FEHLER);
+            assertEquals(2, anzahlRaume, ANZAHL_FEHLER);
 
             raumDataService.deleteRaum(raum1.getId());
             crs = dataAccess.getTestRowSet(raumMenge);
             crs.next();
             anzahlRaume = crs.getInt(1);
-            assertEquals(1, anzahlRaume,ANZAHL_FEHLER);
+            assertEquals(1, anzahlRaume, ANZAHL_FEHLER);
 
             raumDataService.deleteRaum(raum2.getId());
             crs = dataAccess.getTestRowSet(raumMenge);
             crs.next();
             anzahlRaume = crs.getInt(1);
-            assertEquals(0, anzahlRaume,ANZAHL_FEHLER);
+            assertEquals(0, anzahlRaume, ANZAHL_FEHLER);
         } catch (SQLException eSQL) {
             assert false;
         }
