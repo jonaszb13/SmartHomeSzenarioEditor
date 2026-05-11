@@ -1,5 +1,6 @@
 package unit.services;
 
+import data.services.datenServices.DataAccess;
 import data.services.objektServices.RaumObjektService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ public class RaumObjektServiceTest {
 
     @BeforeAll
     public static void setUp() {
+        DataAccess.setTest(true);
         try {
             raumObjektService = RaumObjektService.getInstance();
         } catch (SQLException e) {

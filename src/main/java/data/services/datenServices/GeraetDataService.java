@@ -112,9 +112,9 @@ public final class GeraetDataService {
         //language=SQL
         final String sql = """
                 UPDATE GERAETE_WERTE
-                SET wert = ?
-                WHERE id = ?
-                AND schluessel = ?
+                SET WERT = ?
+                WHERE GERAET = ?
+                AND SCHLUESSEL = ?
                 """;
         try {
             dataAccess.updateGeratWert(sql, geraet.getId(), schluessel, wert);

@@ -1,5 +1,6 @@
 package unit.services;
 
+import data.services.datenServices.DataAccess;
 import data.services.objektServices.SzenarioObjektService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ public class SzenarioObjektServiceTest {
 
     @BeforeAll
     public static void setUp() {
+        DataAccess.setTest(true);
         try {
             szenarioObjektService = SzenarioObjektService.getInstance();
         } catch (SQLException e) {

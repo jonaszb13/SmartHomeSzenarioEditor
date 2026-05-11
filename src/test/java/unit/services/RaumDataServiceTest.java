@@ -4,8 +4,8 @@ import data.models.fachobjekte.Raum;
 import data.services.datenServices.DataAccess;
 import data.services.datenServices.DatabaseCreationService;
 import data.services.datenServices.RaumDataService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.rowset.CachedRowSet;
@@ -19,7 +19,7 @@ class RaumDataServiceTest {
     static RaumDataService raumDataService;
     public static final String ANZAHL_FEHLER = "Anzahl der Räume stimmt nicht";
     //language=SQL
-    private static String raumMenge = """
+    private static final String raumMenge = """
             SELECT COUNT(*)
             FROM RAEUME
             """;
@@ -31,17 +31,6 @@ class RaumDataServiceTest {
             DatabaseCreationService.createDatabase();
             dataAccess = DataAccess.getInstance();
             raumDataService = RaumDataService.getInstance();
-        } catch (SQLException e) {
-            assert false;
-        }
-    }
-
-    @BeforeEach
-    void setUp() {
-        try {
-            //language=SQL
-            dataAccess.executeTestUpdate("DELETE FROM RAEUME");
-            DatabaseCreationService.createDatabase();
         } catch (SQLException e) {
             assert false;
         }
@@ -141,6 +130,16 @@ class RaumDataServiceTest {
             anzahlRaume = crs.getInt(1);
             assertEquals(0, anzahlRaume, ANZAHL_FEHLER);
         } catch (SQLException eSQL) {
+            assert false;
+        }
+    }
+
+    @AfterEach
+    void setUp() {
+        try {
+            //language=SQL
+            dataAccess.executeTestUpdate("DELETE FROM RAEUME");
+        } catch (SQLException e) {
             assert false;
         }
     }

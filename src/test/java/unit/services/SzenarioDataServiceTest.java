@@ -29,8 +29,11 @@ public class SzenarioDataServiceTest {
     void setUp() {
         try {
             //language=SQL
-            DataAccess.getInstance().executeTestUpdate("DELETE FROM SZENARIEN");
-            DatabaseCreationService.createDatabase();
+            dataAccess.executeTestUpdate("DELETE FROM SZENARIEN");
+            //language=SQL
+            dataAccess.executeTestUpdate("DELETE FROM GERAETE_WERTE");
+            //language=SQL
+            dataAccess.executeTestUpdate("DELETE FROM GERAETE");
         } catch (SQLException e) {
             assert false;
         }
