@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RaumDataServiceTest {
     static DataAccess dataAccess;
+    static RaumDataService raumDataService;
     public static final String ANZAHL_FEHLER = "Anzahl der Räume stimmt nicht";
     //language=SQL
     private static String raumMenge = """
@@ -29,6 +30,7 @@ class RaumDataServiceTest {
         try {
             DatabaseCreationService.createDatabase();
             dataAccess = DataAccess.getInstance();
+            raumDataService = RaumDataService.getInstance();
         } catch (SQLException e) {
             assert false;
         }
@@ -61,8 +63,6 @@ class RaumDataServiceTest {
     @Test
     void testAddRaum() {
         try {
-            RaumDataService raumDataService = RaumDataService.getInstance();
-
             Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
             Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), "Raum 2");
             raumDataService.addRaum(raum1);
@@ -93,8 +93,6 @@ class RaumDataServiceTest {
     @Test
     void testUpdateRaumName() {
         try {
-            RaumDataService raumDataService = RaumDataService.getInstance();
-
             Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
             raumDataService.addRaum(raum1);
             raumDataService.updateRaumName(raum1.getId(), "Raum 2");
@@ -121,8 +119,6 @@ class RaumDataServiceTest {
     @Test
     void testDeleteRaum() {
         try {
-            RaumDataService raumDataService = RaumDataService.getInstance();
-
             Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
             Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), "Raum 2");
             raumDataService.addRaum(raum1);

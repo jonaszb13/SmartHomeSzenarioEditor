@@ -2,6 +2,7 @@ package unit.services;
 
 import data.services.datenServices.DataAccess;
 import data.services.datenServices.DatabaseCreationService;
+import data.services.datenServices.SzenarioDataService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 
 public class SzenarioDataServiceTest {
     static DataAccess dataAccess;
+    static SzenarioDataService szenarioDataService;
 
     @BeforeAll
     static void setup() {
@@ -17,6 +19,7 @@ public class SzenarioDataServiceTest {
         try {
             DatabaseCreationService.createDatabase();
             dataAccess = DataAccess.getInstance();
+            szenarioDataService = SzenarioDataService.getInstance();
         } catch (SQLException e) {
             assert false;
         }
@@ -34,7 +37,27 @@ public class SzenarioDataServiceTest {
     }
 
     @Test
-    void testGetSzenario() {
+    void testAddSzenario() {
+        //TODO
+    }
 
+    @Test
+    void testDeleteSzenario() {
+        //TODO
+    }
+
+    @Test
+    void testAddSzenarioInhalt() {
+        //TODO
+    }
+
+    @Test
+    void testUpdateSzenarioInhalt() {
+        //TODO
+    }
+
+    @Test
+    void testDeleteSzenarioInhalt() {
+        //TODO
     }
 }
