@@ -110,6 +110,80 @@ public class SzenarioDataServiceTest {
     }
 
     @Test
+    void updateSzenario() {
+        try {
+            //Anlegen Test-Objekte
+            Raum raum = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
+            Sensor sensor = (Sensor) geraetFactory.createGeraet(UUID.fromString("c216e129-1541-4455-804c-411b17dd015b"),
+                    "Sensor 1", raum, "Sensor");
+            Szenario szenario = new Szenario(UUID.fromString("c06ecee9-65c3-4444-aa82-e1148badfc0d"), "Szenario 1");
+            szenario.setBeschreibung("Szenario 1");
+            szenario.getAenderungen().put(1, new Szenario.Aenderung(
+                    UUID.fromString("e41cbbba-759f-4e11-9de8-04d5e941da5b"), sensor, "Sensor an", "eingeschaltet", "true"));
+
+            //Testen, dass leer
+            CachedRowSet crs = dataAccess.getTestRowSet(szenarioMenge);
+            crs.next();
+            int anzahlSzenarien = crs.getInt(1);
+            assertEquals(0, anzahlSzenarien);
+
+            //Einfügen
+            raumDataService.addRaum(raum);
+            geraetDataService.addGeraet(sensor, "Sensor", new HashMap<>());
+            szenarioDataService.addSzenario(szenario);
+
+            //Testen
+            crs = dataAccess.getTestRowSet(szenarioMenge);
+            crs.next();
+            anzahlSzenarien = crs.getInt(1);
+            assertEquals(1, anzahlSzenarien);
+
+            //language=SQL
+            crs = dataAccess.getTestRowSet("""
+                    SELECT SZENARIEN.ID, NAME, SZENARIEN_INHALT.ID, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
+                    FROM SZENARIEN
+                    JOIN SZENARIEN_INHALT
+                    ON SZENARIEN.ID = SZENARIEN_INHALT.SZENARIO
+                    ORDER BY SZENARIEN.ID
+                    """);
+
+            crs.next();
+            assertEquals(crs.getObject(1), szenario.getId());
+            assertEquals(crs.getString(2), szenario.getBeschreibung());
+            assertEquals(crs.getObject(3), szenario.getAenderungen().get(crs.getInt(8)).id());
+            assertEquals(crs.getString(4), szenario.getAenderungen().get(crs.getInt(8)).beschreibung());
+            assertEquals(crs.getObject(5), szenario.getAenderungen().get(crs.getInt(8)).geraet().getId());
+            assertEquals(crs.getString(6), szenario.getAenderungen().get(crs.getInt(8)).schluessel());
+            assertEquals(crs.getString(7), szenario.getAenderungen().get(crs.getInt(8)).wert());
+
+            //Aktualisierung
+            szenario.setName("Szenario 1 Neu");
+            szenario.setBeschreibung("Szenario 1 Neu");
+            szenarioDataService.updateSzenario(szenario);
+
+            //language=SQL
+            crs = dataAccess.getTestRowSet("""
+                    SELECT SZENARIEN.ID, NAME, SZENARIEN_INHALT.ID, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
+                    FROM SZENARIEN
+                    JOIN SZENARIEN_INHALT
+                    ON SZENARIEN.ID = SZENARIEN_INHALT.SZENARIO
+                    ORDER BY SZENARIEN.ID
+                    """);
+
+            crs.next();
+            assertEquals(crs.getObject(1), szenario.getId());
+            assertEquals(crs.getString(2), szenario.getBeschreibung());
+            assertEquals(crs.getObject(3), szenario.getAenderungen().get(crs.getInt(8)).id());
+            assertEquals(crs.getString(4), szenario.getAenderungen().get(crs.getInt(8)).beschreibung());
+            assertEquals(crs.getObject(5), szenario.getAenderungen().get(crs.getInt(8)).geraet().getId());
+            assertEquals(crs.getString(6), szenario.getAenderungen().get(crs.getInt(8)).schluessel());
+            assertEquals(crs.getString(7), szenario.getAenderungen().get(crs.getInt(8)).wert());
+        } catch (Exception e) {
+            assert false;
+        }
+    }
+
+    @Test
     void testDeleteSzenario() {
         try {
             //Anlegen Test-Objekte
@@ -227,7 +301,6 @@ public class SzenarioDataServiceTest {
 
     @Test
     void testUpdateSzenarioInhalt() {
-        //TODO
         try {
             //Anlegen Test-Objekte
             Raum raum = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
