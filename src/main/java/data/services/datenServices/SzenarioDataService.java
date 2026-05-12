@@ -77,9 +77,8 @@ public final class SzenarioDataService {
             for (final Map.Entry<Integer, Szenario.Aenderung> e : szenario.getAenderungen().entrySet()) {
                 if (!deleteSzenarioInhalt(e.getValue().id())) erfolgreich = false;
             }
-            if (!erfolgreich) {
+            if (erfolgreich) {
                 dataAccess.deleteSzenarioOrSzenarioInhalt(sql, szenario.getId());
-                erfolgreich = true;
             }
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
@@ -95,7 +94,7 @@ public final class SzenarioDataService {
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 """;
         try {
-            dataAccess.putSzenarioInhalte(sql, UUID.randomUUID(), aenderung.beschreibung(), szenario.getId(),
+            dataAccess.putSzenarioInhalte(sql, aenderung.id(), aenderung.beschreibung(), szenario.getId(),
                     aenderung.geraet().getId(), aenderung.schluessel(), aenderung.wert(), position);
             erfolgreich = true;
         } catch (SQLException eSQL) {
