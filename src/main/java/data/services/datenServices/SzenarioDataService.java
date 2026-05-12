@@ -66,6 +66,27 @@ public final class SzenarioDataService {
         return erfolgreich;
     }
 
+    public boolean updateSzenarioStatus(final Szenario szenario, final boolean status) {
+        boolean erfolgreich = false;
+        //language=SQL
+        final String sql = """
+                UPDATE SZENARIEN
+                SET STATUS = ?
+                WHERE ID = ?
+                """;
+        try {
+            if (status) {
+                dataAccess.updateOneValue(sql, szenario.getId(), "true");
+            } else {
+                dataAccess.updateOneValue(sql, szenario.getId(), "false");
+            }
+            erfolgreich = true;
+        } catch (SQLException eSQL) {
+            StatusLog.addError(eSQL);
+        }
+        return erfolgreich;
+    }
+
     public boolean deleteSzenario(final Szenario szenario) {
         boolean erfolgreich = true;
         //language=SQL

@@ -119,6 +119,17 @@ public final class SzenarioObjektService {
         return erfolgreich;
     }
 
+    public boolean updateSzenarioStatus(final Szenario szenario, final boolean status) {
+        boolean erfolgreich = false;
+        if (szenarioDataService.updateSzenarioStatus(szenario, status)) {
+            StatusLog.addHinweis(SZENARIO_STRING + szenario.getId() + " wurde erfolgreich aktualisiert.");
+            erfolgreich = true;
+        } else {
+            StatusLog.addError(SZENARIO_STRING + szenario.getId() + " konnte nicht aktualisiert werden.");
+        }
+        return erfolgreich;
+    }
+
     public boolean addSzenarioInhalt(final Szenario szenario, final Szenario.Aenderung aenderung, final int position) {
         boolean erfolgreich = false;
         if (szenarioDataService.addSzenarioInhalt(szenario, aenderung, position)) {

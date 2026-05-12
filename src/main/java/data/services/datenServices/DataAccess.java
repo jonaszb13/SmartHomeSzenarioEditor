@@ -129,7 +129,7 @@ public class DataAccess {
         final Statement stmt = conn.createStatement();
         StatusLog.addHinweis("Beginne SzenarienMap zu laden");
         final ResultSet rs = stmt.executeQuery("""
-                SELECT SZENARIEN.ID, NAME, RYTHMUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION, SZENARIEN_INHALT.ID AS SIID
+                SELECT SZENARIEN.ID, NAME, STATUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION, SZENARIEN_INHALT.ID AS SIID
                 FROM SZENARIEN
                 JOIN SZENARIEN_INHALT
                 ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
@@ -145,6 +145,7 @@ public class DataAccess {
                 final String name = rs.getString("name");
                 aktuellesSzenario = new Szenario(id, name);
                 aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
+                aktuellesSzenario.setStatus(Boolean.parseBoolean(rs.getString("status")));
                 szenarioMap.put(id, aktuellesSzenario);
                 lastId = id;
             }
@@ -168,7 +169,7 @@ public class DataAccess {
     }
 
     /* package */
-    void updateRaum(final String sql, final UUID id, final String name) throws SQLException {
+    void updateOneValue(final String sql, final UUID id, final String name) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setString(1, name);
         pStmt.setObject(2, id);

@@ -47,7 +47,7 @@ public final class RaumDataService {
                 UPDATE RAEUME SET NAME = ?
                 WHERE ID = ?;""";
         try {
-            dataAccess.updateRaum(sql, id, name);
+            dataAccess.updateOneValue(sql, id, name);
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);

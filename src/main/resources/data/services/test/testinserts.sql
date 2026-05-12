@@ -16,9 +16,9 @@ VALUES (random_uuid(),'c216e129-1541-4455-804c-411b17dd015b', 'eingeschaltet', '
        (random_uuid(),'fe4dacb0-7ef9-405f-be51-b739a4b6cd29', 'haelligkeit', '99.7'),
        (random_uuid(),'fe4dacb0-7ef9-405f-be51-b739a4b6cd29', 'farbe', '#00FF88'),
        (random_uuid(),'fe4dacb0-7ef9-405f-be51-b739a4b6cd29', 'eingeschaltet', 'true');
-INSERT INTO SZENARIEN (ID, NAME, BESCHREIBUNG)
-VALUES ('c06ecee9-65c3-4444-aa82-e1148badfc0d','Szenario 1', 'Testszenario'),
-       ('22710be6-8c78-404f-b89e-3d47b20c1db6','Szenario 2', 'Testszenario');
+INSERT INTO SZENARIEN (ID, NAME, BESCHREIBUNG, STATUS)
+VALUES ('c06ecee9-65c3-4444-aa82-e1148badfc0d','Szenario 1', 'Testszenario','false'),
+       ('22710be6-8c78-404f-b89e-3d47b20c1db6','Szenario 2', 'Testszenario','false');
 INSERT INTO SZENARIEN_INHALT (ID, AKTION, SZENARIO, GERAET, SCHLUESSEL, WERT, POSITION)
 VALUES (random_uuid(),'Sensor an', 'c06ecee9-65c3-4444-aa82-e1148badfc0d', 'c216e129-1541-4455-804c-411b17dd015b', 'eingeschaltet', 'true', 1),
        (random_uuid(),'Sensor an', 'c06ecee9-65c3-4444-aa82-e1148badfc0d', 'ffe1118c-440c-40d4-bfc4-dadbfa5db831', 'eingeschaltet', 'true', 2),

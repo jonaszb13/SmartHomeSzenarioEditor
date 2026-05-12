@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Szenario extends DAO {
+    private boolean status;
     private String beschreibung;
     private Timestamp naesteAusfuerung;
     private String rythmus;
@@ -14,6 +15,14 @@ public class Szenario extends DAO {
     public Szenario(final UUID id, final String name) {
         super(id, name);
         this.aenderungen = new HashMap<>();
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public String getRythmus() {
