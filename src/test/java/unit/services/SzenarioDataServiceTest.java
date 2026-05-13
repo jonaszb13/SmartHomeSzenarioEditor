@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -178,6 +179,76 @@ public class SzenarioDataServiceTest {
             assertEquals(crs.getObject(5), szenario.getAenderungen().get(crs.getInt(8)).geraet().getId());
             assertEquals(crs.getString(6), szenario.getAenderungen().get(crs.getInt(8)).schluessel());
             assertEquals(crs.getString(7), szenario.getAenderungen().get(crs.getInt(8)).wert());
+        } catch (Exception e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void updateSzenarioStatusTest() {
+        //TODO
+        try {
+            //Anlegen Test-Objekte
+            Raum raum = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
+            Sensor sensor = (Sensor) geraetFactory.createGeraet(UUID.fromString("c216e129-1541-4455-804c-411b17dd015b"),
+                    "Sensor 1", raum, "Sensor");
+            Map<String, String> sensorMap = new HashMap<>();
+            sensorMap.put("eingeschaltet", "false");
+            sensorMap.put("ausschlag", "false");
+            Szenario szenario = new Szenario(UUID.fromString("c06ecee9-65c3-4444-aa82-e1148badfc0d"), "Szenario 1");
+            szenario.setBeschreibung("Szenario 1");
+            szenario.getAenderungen().put(1, new Szenario.Aenderung(
+                    UUID.fromString("e41cbbba-759f-4e11-9de8-04d5e941da5b"), sensor, "Sensor an", "eingeschaltet", "true"));
+
+            //Testen, dass leer
+            CachedRowSet crs = dataAccess.getTestRowSet(szenarioMenge);
+            crs.next();
+            int anzahlSzenarien = crs.getInt(1);
+            assertEquals(0, anzahlSzenarien);
+
+            //Einfügen
+            raumDataService.addRaum(raum);
+            geraetDataService.addGeraet(sensor, "Sensor", sensorMap);
+            szenarioDataService.addSzenario(szenario);
+
+            //Testen des Ursprungszustands
+
+            //language=SQL
+            crs = dataAccess.getTestRowSet("""
+                    SELECT ID, NAME, STATUS
+                    FROM SZENARIEN
+                    """);
+            crs.next();
+            assertEquals(crs.getObject(1), szenario.getId());
+            assertEquals(crs.getString(2), szenario.getName());
+            assertEquals("false", crs.getString(3));
+
+            //Test 1
+            szenarioDataService.updateSzenarioStatus(szenario, true);
+
+            //Überprüfung
+            //language=SQL
+            crs = dataAccess.getTestRowSet("""
+                    SELECT ID, NAME, STATUS
+                    FROM SZENARIEN
+                    """);
+            crs.next();
+            assertEquals(crs.getObject(1), szenario.getId());
+            assertEquals(crs.getString(2), szenario.getName());
+            assertEquals("true", crs.getString(3));
+
+            //Test 2
+            szenarioDataService.updateSzenarioStatus(szenario, false);
+
+            //language=SQL
+            crs = dataAccess.getTestRowSet("""
+                    SELECT ID, NAME, STATUS
+                    FROM SZENARIEN
+                    """);
+            crs.next();
+            assertEquals(crs.getObject(1), szenario.getId());
+            assertEquals(crs.getString(2), szenario.getName());
+            assertEquals("false", crs.getString(3));
         } catch (Exception e) {
             assert false;
         }

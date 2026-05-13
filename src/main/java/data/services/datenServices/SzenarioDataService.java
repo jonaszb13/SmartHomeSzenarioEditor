@@ -34,11 +34,14 @@ public final class SzenarioDataService {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
-                INSERT INTO Szenarien ("ID", "NAME", "BESCHREIBUNG")
-                VALUES (?, ?, ?)
+                INSERT INTO Szenarien ("ID", "NAME", "BESCHREIBUNG", "STATUS")
+                VALUES (?, ?, ?, ?)
                 """;
         try {
-            dataAccess.addSzenario(sql, szenario.getId(), szenario.getName(), szenario.getBeschreibung());
+            String status;
+            if (szenario.isStatus()) status = "true";
+            else status = "false";
+            dataAccess.addSzenario(sql, szenario.getId(), szenario.getName(), szenario.getBeschreibung(), status);
             erfolgreich = true;
             for (final Map.Entry<Integer, Szenario.Aenderung> e : szenario.getAenderungen().entrySet()) {
                 if (!addSzenarioInhalt(szenario, e.getValue(), e.getKey())) erfolgreich = false;

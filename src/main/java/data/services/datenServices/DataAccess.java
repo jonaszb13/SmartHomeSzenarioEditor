@@ -236,11 +236,12 @@ public class DataAccess {
     }
 
     /* package */
-    void addSzenario(final String sql, final UUID id, final String name, final String beschreibung) throws SQLException {
+    void addSzenario(final String sql, final UUID id, final String name, final String beschreibung, final String status) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
         pStmt.setString(2, name);
         pStmt.setString(3, beschreibung);
+        pStmt.setString(4, status);
         pStmt.executeUpdate();
     }
 
