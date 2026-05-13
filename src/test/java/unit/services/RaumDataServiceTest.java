@@ -40,7 +40,7 @@ class RaumDataServiceTest {
     void testGetRaum() {
         try {
             //language=SQL
-            CachedRowSet crs = dataAccess.getTestRowSet(raumMenge);
+            CachedRowSet crs = dataAccess.getData(raumMenge);
             crs.next();
             int anzahlRaume = crs.getInt(1);
             assertEquals(0, anzahlRaume, ANZAHL_FEHLER);
@@ -57,13 +57,13 @@ class RaumDataServiceTest {
             raumDataService.addRaum(raum1);
             raumDataService.addRaum(raum2);
 
-            CachedRowSet crs = dataAccess.getTestRowSet(raumMenge);
+            CachedRowSet crs = dataAccess.getData(raumMenge);
             crs.next();
             int anzahlRaume = crs.getInt(1);
             assertEquals(2, anzahlRaume, ANZAHL_FEHLER);
 
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT "ID", "NAME"
                     FROM RAEUME
                     ORDER BY NAME
@@ -86,13 +86,13 @@ class RaumDataServiceTest {
             raumDataService.addRaum(raum1);
             raumDataService.updateRaumName(raum1.getId(), "Raum 2");
 
-            CachedRowSet crs = dataAccess.getTestRowSet(raumMenge);
+            CachedRowSet crs = dataAccess.getData(raumMenge);
             crs.next();
             int anzahlRaume = crs.getInt(1);
             assertEquals(1, anzahlRaume, ANZAHL_FEHLER);
 
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT "ID", "NAME"
                     FROM RAEUME
                     ORDER BY NAME
@@ -113,19 +113,19 @@ class RaumDataServiceTest {
             raumDataService.addRaum(raum1);
             raumDataService.addRaum(raum2);
 
-            CachedRowSet crs = dataAccess.getTestRowSet(raumMenge);
+            CachedRowSet crs = dataAccess.getData(raumMenge);
             crs.next();
             int anzahlRaume = crs.getInt(1);
             assertEquals(2, anzahlRaume, ANZAHL_FEHLER);
 
             raumDataService.deleteRaum(raum1.getId());
-            crs = dataAccess.getTestRowSet(raumMenge);
+            crs = dataAccess.getData(raumMenge);
             crs.next();
             anzahlRaume = crs.getInt(1);
             assertEquals(1, anzahlRaume, ANZAHL_FEHLER);
 
             raumDataService.deleteRaum(raum2.getId());
-            crs = dataAccess.getTestRowSet(raumMenge);
+            crs = dataAccess.getData(raumMenge);
             crs.next();
             anzahlRaume = crs.getInt(1);
             assertEquals(0, anzahlRaume, ANZAHL_FEHLER);

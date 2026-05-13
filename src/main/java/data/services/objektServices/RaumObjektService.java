@@ -1,6 +1,5 @@
 package data.services.objektServices;
 
-import data.models.Model;
 import data.models.fachobjekte.Raum;
 import data.services.datenServices.RaumDataService;
 import jakarta.inject.Singleton;
@@ -8,7 +7,9 @@ import javafx.scene.control.TreeItem;
 import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
+import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,19 +17,17 @@ import java.util.UUID;
 public final class RaumObjektService {
     private static RaumObjektService instance;
     private final RaumDataService raumDataService;
-    private final Map<UUID, Raum> raumMap;
-    private final DoubleMap<UUID, TreeItem<String>> raumTreeMap;
+    private Map<UUID, Raum> raumMap;
+    private DoubleMap<UUID, TreeItem<String>> raumTreeMap;
 
-    private RaumObjektService(final RaumDataService raumDataService, final Map<UUID, Raum> raumMap, final DoubleMap<UUID, TreeItem<String>> raumTreeMap) {
+    private RaumObjektService(final RaumDataService raumDataService, final DoubleMap<UUID, TreeItem<String>> raumTreeMap) {
         this.raumDataService = raumDataService;
-        this.raumMap = raumMap;
         this.raumTreeMap = raumTreeMap;
     }
 
     public static RaumObjektService getInstance() throws SQLException {
         if (instance == null) {
-            Model model = Model.getInstance();
-            instance = new RaumObjektService(RaumDataService.getInstance(), model.getDaten().raumMap(), model.getUebersicht().raumTreeMap());
+            instance = new RaumObjektService(RaumDataService.getInstance(), new DoubleMap<>());
         }
         return instance;
     }
@@ -39,6 +38,21 @@ public final class RaumObjektService {
 
     public DoubleMap<UUID, TreeItem<String>> getRaumTreeMap() {
         return raumTreeMap;
+    }
+
+    public Map<UUID, Raum> getAllRaeume() throws SQLException {
+        StatusLog.addHinweis("Beginne RäumeMap zu laden");
+        Map<UUID, Raum> localRaumMap = new HashMap<>();
+        CachedRowSet crs = raumDataService.getAllRaeume();
+        while (crs.next()) {
+            final UUID id = UUID.fromString(crs.getString("id"));
+            final String name = crs.getString("name");
+            localRaumMap.put(id, new Raum(id, name));
+        }
+        StatusLog.addHinweis("RäumeMap erfolgreich geladen");
+        //TODO Abändern?
+        this.raumMap = localRaumMap;
+        return localRaumMap;
     }
 
     public boolean addRaum(final String name) {

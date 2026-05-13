@@ -64,7 +64,7 @@ public class GeraetDataServiceTest {
             sensorMap.put("ausschlag", "true");
 
             //Überprüfen, dass leer
-            CachedRowSet crs = dataAccess.getTestRowSet(geraetMenge);
+            CachedRowSet crs = dataAccess.getData(geraetMenge);
             crs.next();
             int anzahlGeraete = crs.getInt(1);
             assertEquals(0, anzahlGeraete);
@@ -76,13 +76,13 @@ public class GeraetDataServiceTest {
             geraetDataService.addGeraet(lampe, "Lampe", lampeMap);
 
             //Prüfen, dass 2 Geräte in Datenbank sind
-            crs = dataAccess.getTestRowSet(geraetMenge);
+            crs = dataAccess.getData(geraetMenge);
             crs.next();
             anzahlGeraete = crs.getInt(1);
             assertEquals(2, anzahlGeraete);
 
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT GERAETE.ID, NAME, RAUM, ART, SCHLUESSEL, WERT
                     FROM GERAETE
                     JOIN GERAETE_WERTE
@@ -129,7 +129,7 @@ public class GeraetDataServiceTest {
             sensorMap.put("ausschlag", "true");
 
             //Überprüfen, dass leer
-            CachedRowSet crs = dataAccess.getTestRowSet(geraetMenge);
+            CachedRowSet crs = dataAccess.getData(geraetMenge);
             crs.next();
             int anzahlGeraete = crs.getInt(1);
             assertEquals(0, anzahlGeraete);
@@ -141,7 +141,7 @@ public class GeraetDataServiceTest {
             geraetDataService.addGeraet(lampe, "Lampe", lampeMap);
 
             //Prüfen, dass 2 Geräte in Datenbank sind
-            crs = dataAccess.getTestRowSet(geraetMenge);
+            crs = dataAccess.getData(geraetMenge);
             crs.next();
             anzahlGeraete = crs.getInt(1);
             assertEquals(2, anzahlGeraete);
@@ -149,7 +149,7 @@ public class GeraetDataServiceTest {
             geraetDataService.deleteGeraet(lampe);
 
             //Prüfen, dass 1 Geräte in Datenbank ist
-            crs = dataAccess.getTestRowSet(geraetMenge);
+            crs = dataAccess.getData(geraetMenge);
             crs.next();
             anzahlGeraete = crs.getInt(1);
             assertEquals(1, anzahlGeraete);
@@ -157,7 +157,7 @@ public class GeraetDataServiceTest {
             geraetDataService.deleteGeraet(sensor);
 
             //Überprüfen, dass leer
-            crs = dataAccess.getTestRowSet(geraetMenge);
+            crs = dataAccess.getData(geraetMenge);
             crs.next();
             anzahlGeraete = crs.getInt(1);
             assertEquals(0, anzahlGeraete);
@@ -187,7 +187,7 @@ public class GeraetDataServiceTest {
 
 
             //Überprüfen, dass leer
-            CachedRowSet crs = dataAccess.getTestRowSet(geraetMenge);
+            CachedRowSet crs = dataAccess.getData(geraetMenge);
             crs.next();
             int anzahlGeraete = crs.getInt(1);
             assertEquals(0, anzahlGeraete);
@@ -198,7 +198,7 @@ public class GeraetDataServiceTest {
             geraetDataService.addGeraet(lampe, "Lampe", lampeMap);
 
             //Prüfen, dass 1 Geräte in Datenbank ist
-            crs = dataAccess.getTestRowSet(geraetMenge);
+            crs = dataAccess.getData(geraetMenge);
             crs.next();
             anzahlGeraete = crs.getInt(1);
             assertEquals(1, anzahlGeraete);
@@ -211,7 +211,7 @@ public class GeraetDataServiceTest {
                     ON GERAETE.ID = GERAETE_WERTE.GERAET
                     ORDER BY GERAETE.ID
                     """;
-            crs = dataAccess.getTestRowSet(sql);
+            crs = dataAccess.getData(sql);
             while (crs.next()) {
                 assertEquals(crs.getObject(1), lampe.getId());
                 assertEquals(crs.getString(2), lampe.getName());
@@ -224,7 +224,7 @@ public class GeraetDataServiceTest {
             geraetDataService.updateGeraetRaum(lampe, raum);
             geraetDataService.updateGeraetWerte(lampe, lampeMap2);
 
-            crs = dataAccess.getTestRowSet(sql);
+            crs = dataAccess.getData(sql);
             while (crs.next()) {
                 assertEquals(crs.getObject(1), lampe.getId());
                 assertEquals("Lampe 2", crs.getString(2));

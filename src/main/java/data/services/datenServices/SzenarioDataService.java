@@ -4,6 +4,7 @@ import data.models.fachobjekte.Szenario;
 import jakarta.inject.Singleton;
 import util.statusmeldungen.StatusLog;
 
+import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
@@ -28,6 +29,18 @@ public final class SzenarioDataService {
             instance = new SzenarioDataService(DataAccess.getInstance());
         }
         return instance;
+    }
+
+    public CachedRowSet getAllGeraete() throws SQLException {
+        //language=SQL
+        String sql = """
+                SELECT SZENARIEN.ID AS SID, NAME, STATUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION, SZENARIEN_INHALT.ID AS SIID
+                FROM SZENARIEN
+                JOIN SZENARIEN_INHALT
+                ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
+                ORDER BY SZENARIEN.ID, GERAET
+                """;
+        return dataAccess.getData(sql);
     }
 
     public boolean addSzenario(final Szenario szenario) {

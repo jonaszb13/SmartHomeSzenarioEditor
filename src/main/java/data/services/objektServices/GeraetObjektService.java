@@ -1,6 +1,5 @@
 package data.services.objektServices;
 
-import data.models.Model;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
@@ -10,8 +9,10 @@ import javafx.scene.control.TreeItem;
 import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
+import javax.sql.rowset.CachedRowSet;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -19,19 +20,17 @@ import java.util.UUID;
 public final class GeraetObjektService {
     private static GeraetObjektService instance;
     private final GeraetDataService geraetDataService;
-    private final Map<UUID, Geraet> geraetMap;
-    private final DoubleMap<UUID, TreeItem<String>> geraetTreeMap;
+    private Map<UUID, Geraet> geraetMap;
+    private DoubleMap<UUID, TreeItem<String>> geraetTreeMap;
 
-    private GeraetObjektService(final GeraetDataService geraetDataService, final Map<UUID, Geraet> geraetMap, final DoubleMap<UUID, TreeItem<String>> geraetTreeMap) {
+    private GeraetObjektService(final GeraetDataService geraetDataService, final DoubleMap<UUID, TreeItem<String>> geraetTreeMap) {
         this.geraetDataService = geraetDataService;
-        this.geraetMap = geraetMap;
         this.geraetTreeMap = geraetTreeMap;
     }
 
     public static GeraetObjektService getInstance() throws SQLException {
         if (instance == null) {
-            Model model = Model.getInstance();
-            instance = new GeraetObjektService(GeraetDataService.getInstance(), model.getDaten().geraetMap(), model.getUebersicht().geraetTreeMap());
+            instance = new GeraetObjektService(GeraetDataService.getInstance(), new DoubleMap<>());
         }
         return instance;
     }
@@ -42,6 +41,45 @@ public final class GeraetObjektService {
 
     public DoubleMap<UUID, TreeItem<String>> getGeraetTreeMap() {
         return geraetTreeMap;
+    }
+
+    public Map<UUID, Geraet> getAllGeraete(final Map<UUID, Raum> raumMap) throws SQLException {
+        StatusLog.addHinweis("Beginne GeräteMap zu laden");
+        Map<UUID, Geraet> localGeraetMap = new HashMap<>();
+        //TODO QUESTION: Sollen geräte ohne Attribute geladen werden?
+        CachedRowSet crs = geraetDataService.getAllGeraete();
+        Map<String, String> atributeHashMap = new HashMap<>();
+        UUID lastId = null;
+        Geraet aktuellesGeraet = null;
+        boolean erstesMal = true;
+        while (crs.next()) {
+            final UUID id = UUID.fromString(crs.getString("id"));
+            if (!id.equals(lastId)) {
+                if (erstesMal) erstesMal = false;
+                else {
+                    aktuellesGeraet.setValues(atributeHashMap);
+                    atributeHashMap = new HashMap<>();
+                }
+                final UUID raum = UUID.fromString(crs.getString("raum"));
+                try {
+                    aktuellesGeraet = GeraetFactory.getInstance().createGeraet(id, crs.getString("name"),
+                            raumMap.get(raum), crs.getString("art"));
+                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
+                         IllegalAccessException e) {
+                    StatusLog.addError("Bei der dynamischen Erstellung eines Geräts ist ein Fehler aufgetreten", e);
+                    //TODO was mit Null tun?
+                }
+                atributeHashMap.put(crs.getString("schluessel"), crs.getString("wert"));
+                localGeraetMap.put(id, aktuellesGeraet);
+                raumMap.get(raum).getGeraete().add(aktuellesGeraet);
+                lastId = id;
+            }
+            atributeHashMap.put(crs.getString("schluessel"), crs.getString("wert"));
+        }
+        if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
+        StatusLog.addHinweis("GeräteMap erfolgreich geladen");
+        geraetMap = localGeraetMap;
+        return localGeraetMap;
     }
 
     public boolean addGeraet(final String name, final String art, final Raum raum, final Map<String, String> attributeMap) {

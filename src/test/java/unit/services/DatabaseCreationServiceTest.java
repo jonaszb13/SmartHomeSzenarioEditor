@@ -20,7 +20,7 @@ class DatabaseCreationServiceTest {
     @Test
     void testCreateDatabase() throws SQLException {
         DatabaseCreationService.createDatabase();
-        CachedRowSet crs = DataAccess.getInstance().getTestRowSet("""
+        CachedRowSet crs = DataAccess.getInstance().getData("""
                 SELECT COUNT(*)
                 FROM INFORMATION_SCHEMA.TABLES
                 WHERE TABLE_SCHEMA = 'PUBLIC'

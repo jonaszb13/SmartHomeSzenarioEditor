@@ -66,98 +66,12 @@ public class DataAccess {
         stmt.close();
     }
 
-    //nicht aufrufen → Map aus RaumObjektService entnehmen
-    public void mapAllRaeume(final Map<UUID, Raum> raumMap) throws SQLException {
+    public CachedRowSet getData(final String sql) throws SQLException {
+        CachedRowSet rowSet = RowSetProvider.newFactory().createCachedRowSet();
         final Statement stmt = conn.createStatement();
-        //Laden der Räume
-        StatusLog.addHinweis("Beginne RäumeMap zu laden");
-        final ResultSet rs = stmt.executeQuery("SELECT * FROM RAEUME");
-        while (rs.next()) {
-            final UUID id = UUID.fromString(rs.getString("id"));
-            final String name = rs.getString("name");
-            raumMap.put(id, new Raum(id, name));
-        }
-        StatusLog.addHinweis("RäumeMap erfolgreich geladen");
-    }
-
-    //nicht aufrufen → Map aus GeraetObjektService entnehmen
-    public void mapAllGeraete(final Map<UUID, Raum> raumMap, final Map<UUID, Geraet> geraetMap) throws SQLException, NoGeraetProvidedException {
-        final Statement stmt = conn.createStatement();
-        StatusLog.addHinweis("Beginne GeräteMap zu laden");
-        final GeraetFactory gf = GeraetFactory.getInstance();
-        //TODO QUESTION: Sollen geräte ohne Attribute geladen werden?
-        final ResultSet rs = stmt.executeQuery("""
-                SELECT GERAETE.ID, GERAETE.NAME, GERAETE.RAUM, Geraete.ART, SCHLUESSEL, WERT
-                FROM Geraete
-                JOIN GERAETE_WERTE ON Geraete.ID = GERAETE_WERTE.Geraet
-                ORDER BY Geraete.ART, Geraete.ID
-                """);
-        Map<String, String> atributeHashMap = new HashMap<>();
-        UUID lastId = null;
-        Geraet aktuellesGeraet = null;
-        boolean erstesMal = true;
-        while (rs.next()) {
-            final UUID id = UUID.fromString(rs.getString("id"));
-            if (!id.equals(lastId)) {
-                if (erstesMal) erstesMal = false;
-                else {
-                    aktuellesGeraet.setValues(atributeHashMap);
-                    atributeHashMap = new HashMap<>();
-                }
-                final UUID raum = UUID.fromString(rs.getString("raum"));
-                try {
-                    aktuellesGeraet = gf.createGeraet(id, rs.getString("name"),
-                            raumMap.get(raum), rs.getString("art"));
-                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
-                         IllegalAccessException e) {
-                    StatusLog.addError("Bei der dynamischen Erstellung eines Geräts ist ein Fehler aufgetreten", e);
-                    //TODO was mit Null tun?
-                }
-                atributeHashMap.put(rs.getString("schluessel"), rs.getString("wert"));
-                geraetMap.put(id, aktuellesGeraet);
-                raumMap.get(raum).getGeraete().add(aktuellesGeraet);
-                lastId = id;
-            }
-            atributeHashMap.put(rs.getString("schluessel"), rs.getString("wert"));
-        }
-        if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
-        StatusLog.addHinweis("GeräteMap erfolgreich geladen");
-    }
-
-    //nicht aufrufen → Map aus SzenarioObjektService entnehmen
-    public void mapAllSzenarien(final Map<UUID, Geraet> geraetMap, final Map<UUID, Szenario> szenarioMap) throws SQLException {
-        final Statement stmt = conn.createStatement();
-        StatusLog.addHinweis("Beginne SzenarienMap zu laden");
-        final ResultSet rs = stmt.executeQuery("""
-                SELECT SZENARIEN.ID, NAME, STATUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION, SZENARIEN_INHALT.ID AS SIID
-                FROM SZENARIEN
-                JOIN SZENARIEN_INHALT
-                ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
-                ORDER BY SZENARIEN.ID, GERAET
-                """);
-        //Wert der definitiv nicht in Datenbank vorhanden ist
-        UUID lastId = null;
-        Szenario aktuellesSzenario = null;
-        while (rs.next()) {
-            final UUID id = UUID.fromString(rs.getString("id"));
-            //Beim ersten Szenario und jedem neuen Gerät Wahr
-            if (!id.equals(lastId)) {
-                final String name = rs.getString("name");
-                aktuellesSzenario = new Szenario(id, name);
-                aktuellesSzenario.setBeschreibung(rs.getString("beschreibung"));
-                aktuellesSzenario.setStatus(Boolean.parseBoolean(rs.getString("status")));
-                szenarioMap.put(id, aktuellesSzenario);
-                lastId = id;
-            }
-            aktuellesSzenario.getAenderungen().put(rs.getInt("position"), new Szenario.Aenderung(
-                    UUID.fromString(rs.getString("SIID")),
-                    geraetMap.get(UUID.fromString(rs.getString("geraet"))),
-                    rs.getString("Aktion"),
-                    rs.getString("schluessel"),
-                    rs.getString("wert")
-            ));
-        }
-        StatusLog.addHinweis("SzenarienMap erfolgreich geladen");
+        final ResultSet rs = stmt.executeQuery(sql);
+        rowSet.populate(rs);
+        return rowSet;
     }
 
     /* package */
@@ -285,14 +199,6 @@ public class DataAccess {
         pStmt.setInt(4, position);
         pStmt.setObject(5, id);
         pStmt.executeUpdate();
-    }
-
-    public CachedRowSet getTestRowSet(final String sql) throws SQLException {
-        CachedRowSet rowSet = RowSetProvider.newFactory().createCachedRowSet();
-        final Statement stmt = conn.createStatement();
-        final ResultSet rs = stmt.executeQuery(sql);
-        rowSet.populate(rs);
-        return rowSet;
     }
 
     public void executeTestUpdate(final String sql) throws SQLException {

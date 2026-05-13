@@ -6,7 +6,11 @@ import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import data.services.datenServices.DataAccess;
+import data.services.objektServices.GeraetObjektService;
+import data.services.objektServices.RaumObjektService;
+import data.services.objektServices.SzenarioObjektService;
 import util.DoubleMap;
+import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -29,7 +33,18 @@ public final class Model {
     private Model() {
         this.uebersicht = new Uebersicht(new DoubleMap<>(), new DoubleMap<>(), new DoubleMap<>());
         this.statusbereich = new Statusbereich();
-        this.daten = new Daten(new HashMap<>(), new HashMap<>(), new HashMap<>());
+        Map<UUID, Raum> raumMap = null;
+        Map<UUID, Geraet> geraetMap = null;
+        Map<UUID, Szenario> szenarioMap = null;
+        try {
+            raumMap = RaumObjektService.getInstance().getAllRaeume();
+            geraetMap = GeraetObjektService.getInstance().getAllGeraete(raumMap);
+            szenarioMap = SzenarioObjektService.getInstance().getAllSzenarien(geraetMap);
+        } catch (final SQLException e) {
+            //TODO umbauen
+            StatusLog.addHinweis("Fehler");
+        }
+        this.daten = new Daten(raumMap, geraetMap, szenarioMap);
     }
 
     public Uebersicht getUebersicht() {
@@ -42,13 +57,6 @@ public final class Model {
 
     public Daten getDaten() {
         return daten;
-    }
-
-    public void load() throws SQLException {
-        DataAccess dataAccess = DataAccess.getInstance();
-        dataAccess.mapAllRaeume(getDaten().raumMap);
-        dataAccess.mapAllGeraete(getDaten().raumMap, getDaten().geraetMap);
-        dataAccess.mapAllSzenarien(getDaten().geraetMap, getDaten().szenarioMap);
     }
 
     public record Daten(Map<UUID, Raum> raumMap, Map<UUID, Geraet> geraetMap, Map<UUID, Szenario> szenarioMap) {

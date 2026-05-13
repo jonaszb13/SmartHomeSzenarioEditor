@@ -4,6 +4,7 @@ import data.models.fachobjekte.Raum;
 import jakarta.inject.Singleton;
 import util.statusmeldungen.StatusLog;
 
+import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -22,6 +23,12 @@ public final class RaumDataService {
             instance = new RaumDataService(DataAccess.getInstance());
         }
         return instance;
+    }
+
+    public CachedRowSet getAllRaeume() throws SQLException {
+        //language=SQL
+        String sql = "SELECT * FROM RAEUME";
+        return dataAccess.getData(sql);
     }
 
     public boolean addRaum(final Raum raum) {

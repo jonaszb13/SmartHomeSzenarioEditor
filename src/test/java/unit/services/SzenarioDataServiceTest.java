@@ -62,7 +62,7 @@ public class SzenarioDataServiceTest {
                     UUID.fromString("81abcdf3-c6dd-4ee4-8deb-1dd0b96d55e7"), sensor, "Sensor aus", "eingeschaltet", "false"));
 
             //Testen, dass leer
-            CachedRowSet crs = dataAccess.getTestRowSet(szenarioMenge);
+            CachedRowSet crs = dataAccess.getData(szenarioMenge);
             crs.next();
             int anzahlSzenarien = crs.getInt(1);
             assertEquals(0, anzahlSzenarien);
@@ -74,13 +74,13 @@ public class SzenarioDataServiceTest {
             szenarioDataService.addSzenario(szenario2);
 
             //Testen
-            crs = dataAccess.getTestRowSet(szenarioMenge);
+            crs = dataAccess.getData(szenarioMenge);
             crs.next();
             anzahlSzenarien = crs.getInt(1);
             assertEquals(2, anzahlSzenarien);
 
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT SZENARIEN.ID, NAME, SZENARIEN_INHALT.ID, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                     FROM SZENARIEN
                     JOIN SZENARIEN_INHALT
@@ -123,7 +123,7 @@ public class SzenarioDataServiceTest {
                     UUID.fromString("e41cbbba-759f-4e11-9de8-04d5e941da5b"), sensor, "Sensor an", "eingeschaltet", "true"));
 
             //Testen, dass leer
-            CachedRowSet crs = dataAccess.getTestRowSet(szenarioMenge);
+            CachedRowSet crs = dataAccess.getData(szenarioMenge);
             crs.next();
             int anzahlSzenarien = crs.getInt(1);
             assertEquals(0, anzahlSzenarien);
@@ -134,13 +134,13 @@ public class SzenarioDataServiceTest {
             szenarioDataService.addSzenario(szenario);
 
             //Testen
-            crs = dataAccess.getTestRowSet(szenarioMenge);
+            crs = dataAccess.getData(szenarioMenge);
             crs.next();
             anzahlSzenarien = crs.getInt(1);
             assertEquals(1, anzahlSzenarien);
 
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT SZENARIEN.ID, NAME, SZENARIEN_INHALT.ID, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                     FROM SZENARIEN
                     JOIN SZENARIEN_INHALT
@@ -163,7 +163,7 @@ public class SzenarioDataServiceTest {
             szenarioDataService.updateSzenario(szenario);
 
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT SZENARIEN.ID, NAME, SZENARIEN_INHALT.ID, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                     FROM SZENARIEN
                     JOIN SZENARIEN_INHALT
@@ -201,7 +201,7 @@ public class SzenarioDataServiceTest {
                     UUID.fromString("e41cbbba-759f-4e11-9de8-04d5e941da5b"), sensor, "Sensor an", "eingeschaltet", "true"));
 
             //Testen, dass leer
-            CachedRowSet crs = dataAccess.getTestRowSet(szenarioMenge);
+            CachedRowSet crs = dataAccess.getData(szenarioMenge);
             crs.next();
             int anzahlSzenarien = crs.getInt(1);
             assertEquals(0, anzahlSzenarien);
@@ -214,7 +214,7 @@ public class SzenarioDataServiceTest {
             //Testen des Ursprungszustands
 
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT ID, NAME, STATUS
                     FROM SZENARIEN
                     """);
@@ -228,7 +228,7 @@ public class SzenarioDataServiceTest {
 
             //Überprüfung
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT ID, NAME, STATUS
                     FROM SZENARIEN
                     """);
@@ -241,7 +241,7 @@ public class SzenarioDataServiceTest {
             szenarioDataService.updateSzenarioStatus(szenario, false);
 
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT ID, NAME, STATUS
                     FROM SZENARIEN
                     """);
@@ -277,21 +277,21 @@ public class SzenarioDataServiceTest {
             szenarioDataService.addSzenario(szenario2);
 
             //Testen
-            CachedRowSet crs = dataAccess.getTestRowSet(szenarioMenge);
+            CachedRowSet crs = dataAccess.getData(szenarioMenge);
             crs.next();
             int anzahlSzenarien = crs.getInt(1);
             assertEquals(2, anzahlSzenarien);
 
             szenarioDataService.deleteSzenario(szenario1);
 
-            crs = dataAccess.getTestRowSet(szenarioMenge);
+            crs = dataAccess.getData(szenarioMenge);
             crs.next();
             anzahlSzenarien = crs.getInt(1);
             assertEquals(1, anzahlSzenarien);
 
             szenarioDataService.deleteSzenario(szenario2);
 
-            crs = dataAccess.getTestRowSet(szenarioMenge);
+            crs = dataAccess.getData(szenarioMenge);
             crs.next();
             anzahlSzenarien = crs.getInt(1);
             assertEquals(0, anzahlSzenarien);
@@ -316,7 +316,7 @@ public class SzenarioDataServiceTest {
 
 
             //Testen, dass leer
-            CachedRowSet crs = dataAccess.getTestRowSet(szenarioMenge);
+            CachedRowSet crs = dataAccess.getData(szenarioMenge);
             crs.next();
             int anzahlSzenarien = crs.getInt(1);
             assertEquals(0, anzahlSzenarien);
@@ -328,7 +328,7 @@ public class SzenarioDataServiceTest {
 
             //Testen
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT SZENARIEN.ID, NAME, SZENARIEN_INHALT.ID, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                     FROM SZENARIEN
                     JOIN SZENARIEN_INHALT
@@ -348,7 +348,7 @@ public class SzenarioDataServiceTest {
             szenario.getAenderungen().put(2, aenderung);
 
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT SZENARIEN.ID, NAME, SZENARIEN_INHALT.ID, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                     FROM SZENARIEN
                     JOIN SZENARIEN_INHALT
@@ -386,7 +386,7 @@ public class SzenarioDataServiceTest {
 
 
             //Testen, dass leer
-            CachedRowSet crs = dataAccess.getTestRowSet(szenarioMenge);
+            CachedRowSet crs = dataAccess.getData(szenarioMenge);
             crs.next();
             int anzahlSzenarien = crs.getInt(1);
             assertEquals(0, anzahlSzenarien);
@@ -398,7 +398,7 @@ public class SzenarioDataServiceTest {
 
             //Testen
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT SZENARIEN.ID, NAME, SZENARIEN_INHALT.ID, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                     FROM SZENARIEN
                     JOIN SZENARIEN_INHALT
@@ -417,7 +417,7 @@ public class SzenarioDataServiceTest {
             szenarioDataService.alterSzenarioInhalt(aenderungNeu, 1);
 
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT SZENARIEN.ID, NAME, SZENARIEN_INHALT.ID, AKTION, GERAET, SCHLUESSEL, WERT, POSITION
                     FROM SZENARIEN
                     JOIN SZENARIEN_INHALT
@@ -459,7 +459,7 @@ public class SzenarioDataServiceTest {
 
             //Vorbedingung
             //language=SQL
-            CachedRowSet crs = dataAccess.getTestRowSet("""
+            CachedRowSet crs = dataAccess.getData("""
                     SELECT COUNT(*)
                     FROM SZENARIEN_INHALT
                     """);
@@ -472,7 +472,7 @@ public class SzenarioDataServiceTest {
 
             //Testen
             //language=SQL
-            crs = dataAccess.getTestRowSet("""
+            crs = dataAccess.getData("""
                     SELECT COUNT(*)
                     FROM SZENARIEN_INHALT
                     """);

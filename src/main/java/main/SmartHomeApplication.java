@@ -36,12 +36,6 @@ public class SmartHomeApplication extends Application {
         View view = loader.getController();
 
         Model model = Model.getInstance();
-        try {
-            model.load();
-        } catch (SQLException eSQL) {
-            //TODO Besserer Error
-            StatusLog.addError("Fehler bei Datenbankerstellung", eSQL);
-        }
         view.updateTreeModel();
 
         new Controller(view, model);

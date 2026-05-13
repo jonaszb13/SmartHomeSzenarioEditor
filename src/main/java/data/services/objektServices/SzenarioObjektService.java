@@ -1,6 +1,5 @@
 package data.services.objektServices;
 
-import data.models.Model;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Szenario;
 import data.services.datenServices.SzenarioDataService;
@@ -9,7 +8,9 @@ import javafx.scene.control.TreeItem;
 import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
+import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,20 +18,18 @@ import java.util.UUID;
 public final class SzenarioObjektService {
     private static SzenarioObjektService instance;
     private final SzenarioDataService szenarioDataService;
-    private final Map<UUID, Szenario> szenarioMap;
-    private final DoubleMap<UUID, TreeItem<String>> szenarioTreeMap;
+    private Map<UUID, Szenario> szenarioMap;
+    private DoubleMap<UUID, TreeItem<String>> szenarioTreeMap;
     private static final String SZENARIO_STRING = "Szenario ";
 
-    private SzenarioObjektService(final SzenarioDataService szenarioDataService, final Map<UUID, Szenario> szenarioMap, final DoubleMap<UUID, TreeItem<String>> szenarioTreeMap) {
+    private SzenarioObjektService(final SzenarioDataService szenarioDataService, final DoubleMap<UUID, TreeItem<String>> szenarioTreeMap) {
         this.szenarioDataService = szenarioDataService;
-        this.szenarioMap = szenarioMap;
         this.szenarioTreeMap = szenarioTreeMap;
     }
 
     public static SzenarioObjektService getInstance() throws SQLException {
         if (instance == null) {
-            Model model = Model.getInstance();
-            instance = new SzenarioObjektService(SzenarioDataService.getInstance(), model.getDaten().szenarioMap(), model.getUebersicht().szenarioTreeMap());
+            instance = new SzenarioObjektService(SzenarioDataService.getInstance(), new DoubleMap<>());
         }
         return instance;
     }
@@ -45,6 +44,36 @@ public final class SzenarioObjektService {
 
     public Szenario.Aenderung getAenderung(final Geraet geraet, final String beschreibung, final String schluessel, final String wert) {
         return new Szenario.Aenderung(UUID.randomUUID(), geraet, beschreibung, schluessel, wert);
+    }
+
+    public Map<UUID, Szenario> getAllSzenarien(final Map<UUID, Geraet> geraetMap) throws SQLException {
+        StatusLog.addHinweis("Beginne SzenarienMap zu laden");
+        Map<UUID, Szenario> localSzenarienMap = new HashMap<UUID, Szenario>();
+        CachedRowSet crs = szenarioDataService.getAllGeraete();
+        UUID lastId = null;
+        Szenario aktuellesSzenario = null;
+        while (crs.next()) {
+            final UUID id = UUID.fromString(crs.getString(1));
+            //Beim ersten Szenario und jedem neuen Gerät Wahr
+            if (!id.equals(lastId)) {
+                final String name = crs.getString("name");
+                aktuellesSzenario = new Szenario(id, name);
+                aktuellesSzenario.setBeschreibung(crs.getString("beschreibung"));
+                aktuellesSzenario.setStatus(Boolean.parseBoolean(crs.getString("status")));
+                localSzenarienMap.put(id, aktuellesSzenario);
+                lastId = id;
+            }
+            aktuellesSzenario.getAenderungen().put(crs.getInt("position"), new Szenario.Aenderung(
+                    UUID.fromString(crs.getString(10)),
+                    geraetMap.get(UUID.fromString(crs.getString("geraet"))),
+                    crs.getString("Aktion"),
+                    crs.getString("schluessel"),
+                    crs.getString("wert")
+            ));
+        }
+        StatusLog.addHinweis("SzenarienMap erfolgreich geladen");
+        szenarioMap = localSzenarienMap;
+        return localSzenarienMap;
     }
 
     public boolean addSzenario(final String name, final String beschreibung, final Map<Integer, Szenario.Aenderung> aenderung) {

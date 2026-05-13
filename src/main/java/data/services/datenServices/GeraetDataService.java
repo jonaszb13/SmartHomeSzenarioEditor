@@ -5,6 +5,7 @@ import data.models.fachobjekte.Raum;
 import jakarta.inject.Singleton;
 import util.statusmeldungen.StatusLog;
 
+import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
@@ -24,6 +25,17 @@ public final class GeraetDataService {
             instance = new GeraetDataService(DataAccess.getInstance());
         }
         return instance;
+    }
+
+    public CachedRowSet getAllGeraete() throws SQLException {
+        //language=SQL
+        String sql = """
+                SELECT GERAETE.ID, GERAETE.NAME, GERAETE.RAUM, Geraete.ART, SCHLUESSEL, WERT
+                FROM Geraete
+                JOIN GERAETE_WERTE ON Geraete.ID = GERAETE_WERTE.Geraet
+                ORDER BY Geraete.ART, Geraete.ID
+                """;
+        return dataAccess.getData(sql);
     }
 
     public boolean addGeraet(final Geraet geraet, final String art, final Map<String, String> attributeMap) {
