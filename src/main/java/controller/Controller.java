@@ -22,7 +22,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
     private final View view;
     private final Model model;
 
-    public Controller(View view, Model model) {
+    public Controller(final View view, final Model model) {
         this.view = view;
         this.view.addUebersichtTreeSelectionListener(this);
         this.model = model;

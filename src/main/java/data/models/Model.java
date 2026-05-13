@@ -5,7 +5,6 @@ import data.models.ansichten.Uebersicht;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
-import data.services.datenServices.DataAccess;
 import data.services.objektServices.GeraetObjektService;
 import data.services.objektServices.RaumObjektService;
 import data.services.objektServices.SzenarioObjektService;
@@ -13,7 +12,6 @@ import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 

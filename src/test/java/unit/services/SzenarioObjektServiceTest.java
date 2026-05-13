@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
-public class SzenarioObjektServiceTest {
+class SzenarioObjektServiceTest {
     static SzenarioObjektService szenarioObjektService;
 
     @BeforeAll
-    public static void setUp() {
+    static void setUp() {
         DataAccess.setTest(true);
         try {
             szenarioObjektService = SzenarioObjektService.getInstance();

@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
-public class GeraetObjektServiceTest {
+class GeraetObjektServiceTest {
     static GeraetObjektService geraetObjektService;
 
     @BeforeAll
-    public static void setUp() {
+    static void setUp() {
         DataAccess.setTest(true);
         try {
             geraetObjektService = GeraetObjektService.getInstance();

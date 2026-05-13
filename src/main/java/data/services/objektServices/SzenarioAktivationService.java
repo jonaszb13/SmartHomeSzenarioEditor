@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SzenarioAktivationService {
+public final class SzenarioAktivationService {
     private static SzenarioAktivationService instance;
     private final SzenarioObjektService szenarioObjektService;
     private final GeraetObjektService geraetObjektService;
@@ -35,9 +35,7 @@ public class SzenarioAktivationService {
                 break;
             }
         }
-        if (erfolgreich) {
-            if (!szenarioObjektService.updateSzenarioStatus(szenario, true)) erfolgreich = false;
-        }
+        if (erfolgreich && !szenarioObjektService.updateSzenarioStatus(szenario, true)) erfolgreich = false;
         if (erfolgreich) {
             StatusLog.addHinweis("Szenario erfolgreich ausgeführt");
         } else {
