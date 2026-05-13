@@ -35,11 +35,11 @@ public final class RaumDataService {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
-                INSERT INTO RAEUME ("ID", "NAME")
+                INSERT INTO RAEUME (NAME, ID)
                 VALUES (?, ?)
                 """;
         try {
-            dataAccess.addRaum(sql, raum.getId(), raum.getName());
+            dataAccess.updateOneValue(sql, raum.getName(), raum.getId());
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
@@ -54,7 +54,7 @@ public final class RaumDataService {
                 UPDATE RAEUME SET NAME = ?
                 WHERE ID = ?;""";
         try {
-            dataAccess.updateOneValue(sql, id, name);
+            dataAccess.updateOneValue(sql, name, id);
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
@@ -70,7 +70,7 @@ public final class RaumDataService {
                 WHERE ID = ?;
                 """;
         try {
-            dataAccess.deleteRaum(sql, id);
+            dataAccess.deleteValue(sql, id);
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);

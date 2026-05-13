@@ -92,9 +92,9 @@ public final class SzenarioDataService {
                 """;
         try {
             if (status) {
-                dataAccess.updateOneValue(sql, szenario.getId(), "true");
+                dataAccess.updateOneValue(sql, "true", szenario.getId());
             } else {
-                dataAccess.updateOneValue(sql, szenario.getId(), "false");
+                dataAccess.updateOneValue(sql, "false", szenario.getId());
             }
             erfolgreich = true;
         } catch (SQLException eSQL) {
@@ -115,7 +115,7 @@ public final class SzenarioDataService {
                 if (!deleteSzenarioInhalt(e.getValue().id())) erfolgreich = false;
             }
             if (erfolgreich) {
-                dataAccess.deleteSzenarioOrSzenarioInhalt(sql, szenario.getId());
+                dataAccess.deleteValue(sql, szenario.getId());
             }
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
@@ -166,7 +166,7 @@ public final class SzenarioDataService {
                 WHERE ID = ?
                 """;
         try {
-            dataAccess.deleteSzenarioOrSzenarioInhalt(sql, id);
+            dataAccess.deleteValue(sql, id);
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);

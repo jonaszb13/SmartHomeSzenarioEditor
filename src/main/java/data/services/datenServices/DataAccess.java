@@ -1,20 +1,10 @@
 package data.services.datenServices;
 
-import data.models.fachobjekte.Geraet;
-import data.models.fachobjekte.GeraetFactory;
-import data.models.fachobjekte.Raum;
-import data.models.fachobjekte.Szenario;
-import util.customExceptions.NoGeraetProvidedException;
-import util.statusmeldungen.StatusLog;
-
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -66,6 +56,11 @@ public class DataAccess {
         stmt.close();
     }
 
+    public void executeTestUpdate(final String sql) throws SQLException {
+        final Statement stmt = conn.createStatement();
+        stmt.executeUpdate(sql);
+    }
+
     public CachedRowSet getData(final String sql) throws SQLException {
         CachedRowSet rowSet = RowSetProvider.newFactory().createCachedRowSet();
         final Statement stmt = conn.createStatement();
@@ -75,57 +70,14 @@ public class DataAccess {
     }
 
     /* package */
-    void addRaum(final String sql, final UUID id, final String name) throws SQLException {
-        final PreparedStatement pStmt = conn.prepareStatement(sql);
-        pStmt.setObject(1, id);
-        pStmt.setString(2, name);
-        pStmt.executeUpdate();
-    }
-
-    /* package */
-    void updateOneValue(final String sql, final UUID id, final String name) throws SQLException {
-        final PreparedStatement pStmt = conn.prepareStatement(sql);
-        pStmt.setString(1, name);
-        pStmt.setObject(2, id);
-        pStmt.executeUpdate();
-    }
-
-    /* package */
-    void deleteRaum(final String sql, final UUID id) throws SQLException {
+    void deleteValue(final String sql, final UUID id) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
         pStmt.executeUpdate();
     }
 
     /* package */
-    void addGeraet(final String sql, final UUID id, final String name, final String art, final UUID raum) throws SQLException {
-        final PreparedStatement pStmt = conn.prepareStatement(sql);
-        pStmt.setObject(1, id);
-        pStmt.setString(2, name);
-        pStmt.setString(3, art);
-        pStmt.setObject(4, raum);
-        pStmt.executeUpdate();
-    }
-
-    /* package */
-    void addGeraetWert(final String sql, final UUID id, final UUID geraet, final String schluessel, final String wert) throws SQLException {
-        final PreparedStatement pStmt = conn.prepareStatement(sql);
-        pStmt.setObject(1, id);
-        pStmt.setObject(2, geraet);
-        pStmt.setString(3, schluessel);
-        pStmt.setString(4, wert);
-        pStmt.executeUpdate();
-    }
-
-    /* package */
-    void deleteGeraetOrWert(final String sql, final UUID id) throws SQLException {
-        final PreparedStatement pStmt = conn.prepareStatement(sql);
-        pStmt.setObject(1, id);
-        pStmt.executeUpdate();
-    }
-
-    /* package */
-    void updateGeraetName(final String sql, final UUID id, final String name) throws SQLException {
+    void updateOneValue(final String sql, final String name, final UUID id) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setString(1, name);
         pStmt.setObject(2, id);
@@ -141,11 +93,21 @@ public class DataAccess {
     }
 
     /* package */
-    void updateGeratWert(final String sql, final UUID geraet, final String schluessel, final String wert) throws SQLException {
+    void updateSzenario(final String sql, final String name, final String beschreibung, final UUID id) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
-        pStmt.setString(1, wert);
-        pStmt.setObject(2, geraet);
-        pStmt.setString(3, schluessel);
+        pStmt.setString(1, name);
+        pStmt.setString(2, beschreibung);
+        pStmt.setObject(3, id);
+        pStmt.executeUpdate();
+    }
+
+    /* package */
+    void insertId2SId(final String sql, final UUID id, final String name, final String art, final UUID raum) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setObject(1, id);
+        pStmt.setString(2, name);
+        pStmt.setString(3, art);
+        pStmt.setObject(4, raum);
         pStmt.executeUpdate();
     }
 
@@ -156,6 +118,17 @@ public class DataAccess {
         pStmt.setString(2, name);
         pStmt.setString(3, beschreibung);
         pStmt.setString(4, status);
+        pStmt.executeUpdate();
+    }
+
+    /* package */
+    void alterSzenarioInhalt(final String sql, final String aktion, final String schluessel, final String wert, final int position, final UUID id) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setString(1, aktion);
+        pStmt.setString(2, schluessel);
+        pStmt.setString(3, wert);
+        pStmt.setInt(4, position);
+        pStmt.setObject(5, id);
         pStmt.executeUpdate();
     }
 
@@ -172,37 +145,5 @@ public class DataAccess {
         pStmt.setString(6, wert);
         pStmt.setInt(7, position);
         pStmt.executeUpdate();
-    }
-
-    /* package */
-    void updateSzenario(final String sql, final String name, final String beschreibung, final UUID id) throws SQLException {
-        final PreparedStatement pStmt = conn.prepareStatement(sql);
-        pStmt.setString(1, name);
-        pStmt.setString(2, beschreibung);
-        pStmt.setObject(3, id);
-        pStmt.executeUpdate();
-    }
-
-    /* package */
-    void deleteSzenarioOrSzenarioInhalt(final String sql, final UUID id) throws SQLException {
-        final PreparedStatement pStmt = conn.prepareStatement(sql);
-        pStmt.setObject(1, id);
-        pStmt.executeUpdate();
-    }
-
-    /* package */
-    void alterSzenarioInhalt(final String sql, final String aktion, final String schluessel, final String wert, final int position, final UUID id) throws SQLException {
-        final PreparedStatement pStmt = conn.prepareStatement(sql);
-        pStmt.setString(1, aktion);
-        pStmt.setString(2, schluessel);
-        pStmt.setString(3, wert);
-        pStmt.setInt(4, position);
-        pStmt.setObject(5, id);
-        pStmt.executeUpdate();
-    }
-
-    public void executeTestUpdate(final String sql) throws SQLException {
-        final Statement stmt = conn.createStatement();
-        stmt.executeUpdate(sql);
     }
 }

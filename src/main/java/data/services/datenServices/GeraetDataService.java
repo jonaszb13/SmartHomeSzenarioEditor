@@ -46,13 +46,13 @@ public final class GeraetDataService {
                 VALUES (?, ?, ?, ?)
                 ;""";
         try {
-            dataAccess.addGeraet(sql, geraet.getId(), geraet.getName(), art, geraet.getRaum().getId());
+            dataAccess.insertId2SId(sql, geraet.getId(), geraet.getName(), art, geraet.getRaum().getId());
             for (final Map.Entry<String, String> entry : attributeMap.entrySet()) {
                 sql = """
-                        INSERT INTO GERAETE_WERTE (id, geraet, schluessel, wert)
+                        INSERT INTO GERAETE_WERTE (id, schluessel, wert, geraet)
                         VALUES (?, ?, ?, ?)
                         """;
-                dataAccess.addGeraetWert(sql, UUID.randomUUID(), geraet.getId(), entry.getKey(), entry.getValue());
+                dataAccess.insertId2SId(sql, UUID.randomUUID(), entry.getKey(), entry.getValue(), geraet.getId());
             }
             erfolgreich = true;
         } catch (SQLException eSQL) {
@@ -72,12 +72,12 @@ public final class GeraetDataService {
                 WHERE geraet = ?
                 """;
         try {
-            dataAccess.deleteGeraetOrWert(sql, geraet.getId());
+            dataAccess.deleteValue(sql, geraet.getId());
             sql = """
                     DELETE FROM GERAETE
                     WHERE id = ?
                     """;
-            dataAccess.deleteGeraetOrWert(sql, geraet.getId());
+            dataAccess.deleteValue(sql, geraet.getId());
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
@@ -94,7 +94,7 @@ public final class GeraetDataService {
                 WHERE id = ?
                 """;
         try {
-            dataAccess.updateGeraetName(sql, geraet.getId(), newName);
+            dataAccess.updateOneValue(sql, newName, geraet.getId());
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
@@ -125,11 +125,11 @@ public final class GeraetDataService {
         final String sql = """
                 UPDATE GERAETE_WERTE
                 SET WERT = ?
-                WHERE GERAET = ?
-                AND SCHLUESSEL = ?
+                WHERE SCHLUESSEL = ?
+                AND GERAET = ?
                 """;
         try {
-            dataAccess.updateGeratWert(sql, geraet.getId(), schluessel, wert);
+            dataAccess.updateSzenario(sql, wert, schluessel, geraet.getId());
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);
