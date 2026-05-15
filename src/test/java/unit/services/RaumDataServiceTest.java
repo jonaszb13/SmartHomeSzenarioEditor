@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,130 +20,100 @@ class RaumDataServiceTest {
     public static final String RAUM_2 = "Raum 2";
     static DataAccess dataAccess;
     static RaumDataService raumDataService;
-    static final String ANZAHL_FEHLER = "Anzahl der Räume stimmt nicht";
-    //language=SQL
-    private static final String RAUM_MENGE = """
-            SELECT COUNT(*)
-            FROM RAEUME
-            """;
 
     @BeforeAll
-    static void setup() {
+    static void setup() throws SQLException {
         DataAccess.setTest(true);
-        try {
-            DatabaseCreationService.createDatabase();
-            dataAccess = DataAccess.getInstance();
-            raumDataService = RaumDataService.getInstance();
-        } catch (SQLException e) {
-            assert false;
-        }
+        DatabaseCreationService.createDatabase();
+        dataAccess = DataAccess.getInstance();
+        raumDataService = RaumDataService.getInstance();
     }
 
     @Test
-    void testGetRaum() {
-        try {
-            //language=SQL
-            CachedRowSet crs = dataAccess.getData(RAUM_MENGE);
-            crs.next();
-            int anzahlRaume = crs.getInt(1);
-            assertEquals(0, anzahlRaume, ANZAHL_FEHLER);
-        } catch (SQLException eSQL) {
-            assert false;
+    void testGetAllRaeume() throws Exception {
+        Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
+        Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), RAUM_2);
+        raumDataService.addRaum(raum1);
+        raumDataService.addRaum(raum2);
+
+        CachedRowSet crs = raumDataService.getAllRaeume();
+        Map<UUID, String> result = new HashMap<>();
+        while (crs.next()) {
+            result.put(UUID.fromString(crs.getString("id")), crs.getString("name"));
         }
+
+        assertEquals(2, result.size());
+        assertEquals("Raum 1", result.get(raum1.getId()));
+        assertEquals(RAUM_2, result.get(raum2.getId()));
     }
 
     @Test
-    void testAddRaum() {
-        try {
-            Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
-            Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), RAUM_2);
-            raumDataService.addRaum(raum1);
-            raumDataService.addRaum(raum2);
+    void testAddRaum() throws Exception {
+        Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
+        Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), RAUM_2);
+        raumDataService.addRaum(raum1);
+        raumDataService.addRaum(raum2);
 
-            CachedRowSet crs = dataAccess.getData(RAUM_MENGE);
-            crs.next();
-            int anzahlRaume = crs.getInt(1);
-            assertEquals(2, anzahlRaume, ANZAHL_FEHLER);
+        //language=SQL
+        CachedRowSet crs = dataAccess.getData("""
+                SELECT COUNT(*) FROM RAEUME
+                """);
+        crs.next();
+        assertEquals(2, crs.getInt(1));
 
-            //language=SQL
-            crs = dataAccess.getData("""
-                    SELECT "ID", "NAME"
-                    FROM RAEUME
-                    ORDER BY NAME
-                    """);
-            crs.next();
-            assertEquals(raum1.getId(), crs.getObject(1));
-            assertEquals(raum1.getName(), crs.getString(2));
-            crs.next();
-            assertEquals(raum2.getId(), crs.getObject(1));
-            assertEquals(raum2.getName(), crs.getString(2));
-        } catch (SQLException eSQL) {
-            assert false;
-        }
+        //language=SQL
+        crs = dataAccess.getData("""
+                SELECT "ID", "NAME"
+                FROM RAEUME
+                ORDER BY NAME
+                """);
+        crs.next();
+        assertEquals(raum1.getId(), crs.getObject(1));
+        assertEquals(raum1.getName(), crs.getString(2));
+        crs.next();
+        assertEquals(raum2.getId(), crs.getObject(1));
+        assertEquals(raum2.getName(), crs.getString(2));
     }
 
     @Test
-    void testUpdateRaumName() {
-        try {
-            Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
-            raumDataService.addRaum(raum1);
-            raumDataService.updateRaumName(raum1.getId(), RAUM_2);
+    void testUpdateRaumName() throws Exception {
+        Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
+        raumDataService.addRaum(raum1);
+        raumDataService.updateRaumName(raum1.getId(), RAUM_2);
 
-            CachedRowSet crs = dataAccess.getData(RAUM_MENGE);
-            crs.next();
-            int anzahlRaume = crs.getInt(1);
-            assertEquals(1, anzahlRaume, ANZAHL_FEHLER);
-
-            //language=SQL
-            crs = dataAccess.getData("""
-                    SELECT "ID", "NAME"
-                    FROM RAEUME
-                    ORDER BY NAME
-                    """);
-            crs.next();
-            assertEquals(raum1.getId(), crs.getObject(1));
-            assertEquals(RAUM_2, crs.getString(2));
-        } catch (SQLException eSQL) {
-            assert false;
-        }
+        //language=SQL
+        CachedRowSet crs = dataAccess.getData("""
+                SELECT "ID", "NAME"
+                FROM RAEUME
+                ORDER BY NAME
+                """);
+        crs.next();
+        assertEquals(raum1.getId(), crs.getObject(1));
+        assertEquals(RAUM_2, crs.getString(2));
     }
 
     @Test
-    void testDeleteRaum() {
-        try {
-            Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
-            Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), RAUM_2);
-            raumDataService.addRaum(raum1);
-            raumDataService.addRaum(raum2);
+    void testDeleteRaum() throws Exception {
+        Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
+        Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), RAUM_2);
+        raumDataService.addRaum(raum1);
+        raumDataService.addRaum(raum2);
 
-            CachedRowSet crs = dataAccess.getData(RAUM_MENGE);
-            crs.next();
-            int anzahlRaume = crs.getInt(1);
-            assertEquals(2, anzahlRaume, ANZAHL_FEHLER);
+        raumDataService.deleteRaum(raum1.getId());
+        //language=SQL
+        CachedRowSet crs = dataAccess.getData("SELECT COUNT(*) FROM RAEUME");
+        crs.next();
+        assertEquals(1, crs.getInt(1));
 
-            raumDataService.deleteRaum(raum1.getId());
-            crs = dataAccess.getData(RAUM_MENGE);
-            crs.next();
-            anzahlRaume = crs.getInt(1);
-            assertEquals(1, anzahlRaume, ANZAHL_FEHLER);
-
-            raumDataService.deleteRaum(raum2.getId());
-            crs = dataAccess.getData(RAUM_MENGE);
-            crs.next();
-            anzahlRaume = crs.getInt(1);
-            assertEquals(0, anzahlRaume, ANZAHL_FEHLER);
-        } catch (SQLException eSQL) {
-            assert false;
-        }
+        raumDataService.deleteRaum(raum2.getId());
+        crs = dataAccess.getData("SELECT COUNT(*) FROM RAEUME");
+        crs.next();
+        assertEquals(0, crs.getInt(1));
     }
 
     @AfterEach
-    void cleanUp() {
-        try {
-            //language=SQL
-            dataAccess.executeTestUpdate("DELETE FROM RAEUME");
-        } catch (SQLException e) {
-            assert false;
-        }
+    void cleanUp() throws SQLException {
+        //language=SQL
+        dataAccess.executeTestUpdate("DELETE FROM RAEUME");
     }
 }

@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DatabaseCreationServiceTest {
 
+    private static final int EXPECTED_TABLE_COUNT = 5;
+
     @BeforeAll
     static void setUp() {
         DataAccess.setTest(true);
@@ -26,8 +28,6 @@ class DatabaseCreationServiceTest {
                 WHERE TABLE_SCHEMA = 'PUBLIC'
                 """);
         crs.next();
-        int anzahlTabellen = crs.getInt(1);
-        assertEquals(5, anzahlTabellen);
+        assertEquals(EXPECTED_TABLE_COUNT, crs.getInt(1));
     }
-    //TODO Mehr Tests
 }
