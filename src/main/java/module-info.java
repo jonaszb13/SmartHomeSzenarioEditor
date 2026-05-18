@@ -12,7 +12,9 @@ module org.example.ui {
 
     opens main to javafx.fxml;
     opens userInterface to javafx.fxml;
+    opens controller to javafx.fxml;
     exports userInterface;
     exports controller;
     exports main;
+    exports data.models;
 }
