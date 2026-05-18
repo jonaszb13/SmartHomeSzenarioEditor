@@ -31,7 +31,7 @@ public class View {
     public void initialize() {
         uebersichtTree.setShowRoot(false);
         uebersichtTree.setRoot(createTreeModel());
-        updateTreeModel();
+        //updateTreeModel();
     }
 
     public Pane getHauptPane() {
