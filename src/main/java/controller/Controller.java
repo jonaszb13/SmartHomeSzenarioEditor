@@ -39,13 +39,15 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             try {
                 FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/userInterface/" + fxmlFile)));
                 final Pane neuesPanel = loader.load();
-                RaumController raumController = loader.getController();
-                try {
-                    RaumObjektService raumObjektService = RaumObjektService.getInstance();
-                    raumController.setRaum(raumObjektService.getRaumMap().get(raumObjektService.getRaumTreeMap().getA(newValue)));
+                if ("raum-view.fxml".equals(fxmlFile)) {
+                    RaumController raumController = loader.getController();
+                    try {
+                        RaumObjektService raumObjektService = RaumObjektService.getInstance();
+                        raumController.setRaum(raumObjektService.getRaumMap().get(raumObjektService.getRaumTreeMap().getA(newValue)));
 
-                } catch (SQLException eSQL) {
-                    StatusLog.addError(eSQL);
+                    } catch (SQLException eSQL) {
+                        StatusLog.addError(eSQL);
+                    }
                 }
                 view.getHauptPane().getChildren().setAll(neuesPanel);
             } catch (IOException e) {
