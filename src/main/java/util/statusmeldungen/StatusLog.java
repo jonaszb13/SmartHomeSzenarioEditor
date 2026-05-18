@@ -96,7 +96,7 @@ public final class StatusLog {
             final List<Meldung> meldungen = getInstance().getStatusLogEintraege();
             for (final Meldung meldung : meldungen) {
                 System.err.println(meldung.getMeldungstext());
-                writer.write(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
+                writer.write(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext() + "\n");
                 if (meldung.getStackTrace() != null) {
                     System.err.println(Arrays.toString(meldung.getStackTrace()));
                     writer.write(Arrays.toString(meldung.getStackTrace()));
