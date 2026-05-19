@@ -18,7 +18,7 @@ public final class RaumObjektService {
     private static RaumObjektService instance;
     private final RaumDataService raumDataService;
     private Map<UUID, Raum> raumMap;
-    private DoubleMap<UUID, TreeItem<String>> raumTreeMap;
+    private final DoubleMap<UUID, TreeItem<String>> raumTreeMap;
 
     private RaumObjektService(final RaumDataService raumDataService, final DoubleMap<UUID, TreeItem<String>> raumTreeMap) {
         this.raumDataService = raumDataService;

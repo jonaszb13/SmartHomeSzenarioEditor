@@ -24,11 +24,11 @@ class SzenarioObjektServiceTest {
     static final UUID SENSOR_ID = UUID.fromString("c216e129-1541-4455-804c-411b17dd015b");
     static final Raum TEST_RAUM = new Raum(RAUM_ID, "Testraum");
 
-    static SzenarioObjektService szenarioObjektService;
-    static DataAccess dataAccess;
-    static RaumDataService raumDataService;
-    static GeraetDataService geraetDataService;
-    static Sensor testSensor;
+    private static SzenarioObjektService szenarioObjektService;
+    private static DataAccess dataAccess;
+    private static RaumDataService raumDataService;
+    private static GeraetDataService geraetDataService;
+    private static Sensor testSensor;
 
     @BeforeAll
     static void setUp() throws Exception {

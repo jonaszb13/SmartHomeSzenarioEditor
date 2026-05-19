@@ -21,18 +21,18 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GeraetDataServiceTest {
-    public static final String LAMPE = "Lampe";
-    public static final String SENSOR = "Sensor";
-    public static final String HAELLIGKEIT = "haelligkeit";
-    public static final String FARBE = "farbe";
-    public static final String EINGESCHALTET = "eingeschaltet";
-    public static final String TRUE = "true";
-    static DataAccess dataAccess;
-    static RaumDataService raumDataService;
-    static GeraetDataService geraetDataService;
-    static GeraetFactory geraetFactory;
+    private static final String LAMPE = "Lampe";
+    private static final String SENSOR = "Sensor";
+    private static final String HAELLIGKEIT = "haelligkeit";
+    private static final String FARBE = "farbe";
+    private static final String EINGESCHALTET = "eingeschaltet";
+    private static final String TRUE = "true";
+    private static DataAccess dataAccess;
+    private static RaumDataService raumDataService;
+    private static GeraetDataService geraetDataService;
+    private static GeraetFactory geraetFactory;
     //language=SQL
-    static final String GERAET_MENGE = "SELECT COUNT(*) FROM GERAETE";
+    private static final String GERAET_MENGE = "SELECT COUNT(*) FROM GERAETE";
 
     @BeforeAll
     static void setup() throws SQLException {

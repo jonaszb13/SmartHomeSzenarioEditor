@@ -16,8 +16,8 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RaumObjektServiceTest {
-    static RaumObjektService raumObjektService;
-    static DataAccess dataAccess;
+    private static RaumObjektService raumObjektService;
+    private static DataAccess dataAccess;
 
     @BeforeAll
     static void setUp() throws SQLException {

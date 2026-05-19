@@ -21,7 +21,7 @@ public final class GeraetObjektService {
     private static GeraetObjektService instance;
     private final GeraetDataService geraetDataService;
     private Map<UUID, Geraet> geraetMap;
-    private DoubleMap<UUID, TreeItem<String>> geraetTreeMap;
+    private final DoubleMap<UUID, TreeItem<String>> geraetTreeMap;
 
     private GeraetObjektService(final GeraetDataService geraetDataService, final DoubleMap<UUID, TreeItem<String>> geraetTreeMap) {
         this.geraetDataService = geraetDataService;

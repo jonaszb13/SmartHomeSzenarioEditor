@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -95,8 +96,8 @@ public class View {
             }
             szenarien.getChildren().addAll(l);
 
-        } catch (Exception e) {
-            StatusLog.addError(e);
+        } catch (SQLException eSQL) {
+            StatusLog.addError(eSQL);
         }
     }
 

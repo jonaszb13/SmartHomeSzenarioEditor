@@ -17,9 +17,11 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RaumDataServiceTest {
-    public static final String RAUM_2 = "Raum 2";
-    static DataAccess dataAccess;
-    static RaumDataService raumDataService;
+    static final String RAUM_2 = "Raum 2";
+    static final String UUID_1 = "9bf21849-af67-4c50-ba0d-6e991850ceb4";
+    public static final String RAUM_1 = "Raum 1";
+    private static DataAccess dataAccess;
+    private static RaumDataService raumDataService;
 
     @BeforeAll
     static void setup() throws SQLException {
@@ -31,7 +33,7 @@ class RaumDataServiceTest {
 
     @Test
     void testGetAllRaeume() throws Exception {
-        Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
+        Raum raum1 = new Raum(UUID.fromString(UUID_1), RAUM_1);
         Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), RAUM_2);
         raumDataService.addRaum(raum1);
         raumDataService.addRaum(raum2);
@@ -43,13 +45,13 @@ class RaumDataServiceTest {
         }
 
         assertEquals(2, result.size());
-        assertEquals("Raum 1", result.get(raum1.getId()));
+        assertEquals(RAUM_1, result.get(raum1.getId()));
         assertEquals(RAUM_2, result.get(raum2.getId()));
     }
 
     @Test
     void testAddRaum() throws Exception {
-        Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
+        Raum raum1 = new Raum(UUID.fromString(UUID_1), RAUM_1);
         Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), RAUM_2);
         raumDataService.addRaum(raum1);
         raumDataService.addRaum(raum2);
@@ -77,7 +79,7 @@ class RaumDataServiceTest {
 
     @Test
     void testUpdateRaumName() throws Exception {
-        Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
+        Raum raum1 = new Raum(UUID.fromString(UUID_1), RAUM_1);
         raumDataService.addRaum(raum1);
         raumDataService.updateRaumName(raum1.getId(), RAUM_2);
 
@@ -94,7 +96,7 @@ class RaumDataServiceTest {
 
     @Test
     void testDeleteRaum() throws Exception {
-        Raum raum1 = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), "Raum 1");
+        Raum raum1 = new Raum(UUID.fromString(UUID_1), RAUM_1);
         Raum raum2 = new Raum(UUID.fromString("0d481ee5-8528-42e0-bf14-e224e3d84ab0"), RAUM_2);
         raumDataService.addRaum(raum1);
         raumDataService.addRaum(raum2);

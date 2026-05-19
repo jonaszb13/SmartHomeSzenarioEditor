@@ -19,7 +19,7 @@ public final class SzenarioObjektService {
     private static SzenarioObjektService instance;
     private final SzenarioDataService szenarioDataService;
     private Map<UUID, Szenario> szenarioMap;
-    private DoubleMap<UUID, TreeItem<String>> szenarioTreeMap;
+    private final DoubleMap<UUID, TreeItem<String>> szenarioTreeMap;
     private static final String SZENARIO_STRING = "Szenario ";
     public static final String WURDE_ERFOLGREICH_AKTUALISIERT = " wurde erfolgreich aktualisiert.";
     public static final String KONNTE_NICHT_AKTUALISIERT_WERDEN = " konnte nicht aktualisiert werden.";

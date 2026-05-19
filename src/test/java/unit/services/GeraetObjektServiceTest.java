@@ -25,9 +25,9 @@ class GeraetObjektServiceTest {
     static final Raum TEST_RAUM = new Raum(RAUM_ID, "Testraum");
     static final Raum TEST_RAUM_2 = new Raum(RAUM2_ID, "Testraum 2");
 
-    static GeraetObjektService geraetObjektService;
-    static DataAccess dataAccess;
-    static RaumDataService raumDataService;
+    private static GeraetObjektService geraetObjektService;
+    private static DataAccess dataAccess;
+    private static RaumDataService raumDataService;
 
     @BeforeAll
     static void setUp() throws SQLException {

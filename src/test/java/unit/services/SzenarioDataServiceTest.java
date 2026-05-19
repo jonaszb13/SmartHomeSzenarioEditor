@@ -13,27 +13,30 @@ import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class SzenarioDataServiceTest {
-    public static final String SENSOR = "Sensor";
-    public static final String SZENARIO_1 = "Szenario 1";
-    public static final String SZENARIO_2 = "Szenario 2";
-    public static final String SENSOR_AN = "Sensor an";
-    public static final String SENSOR_AUS = "Sensor aus";
-    public static final String EINGESCHALTET = "eingeschaltet";
-    public static final String TRUE = "true";
-    public static final String FALSE = "false";
-    public static final String RAUM_1 = "Raum 1";
-    public static final String SENSOR_1 = "Sensor 1";
-    static DataAccess dataAccess;
-    static RaumDataService raumDataService;
-    static GeraetDataService geraetDataService;
-    static SzenarioDataService szenarioDataService;
-    static GeraetFactory geraetFactory;
+    static final String SENSOR = "Sensor";
+    static final String SZENARIO_1 = "Szenario 1";
+    static final String SZENARIO_2 = "Szenario 2";
+    static final String SENSOR_AN = "Sensor an";
+    static final String SENSOR_AUS = "Sensor aus";
+    static final String EINGESCHALTET = "eingeschaltet";
+    static final String TRUE = "true";
+    static final String FALSE = "false";
+    static final String RAUM_1 = "Raum 1";
+    static final String SENSOR_1 = "Sensor 1";
+    static final String UUID_1 = "9bf21849-af67-4c50-ba0d-6e991850ceb4";
+    static final String UUID_2 = "c216e129-1541-4455-804c-411b17dd015b";
+    static final String UUID_3 = "c06ecee9-65c3-4444-aa82-e1148badfc0d";
+    static final String UUID_4 = "e41cbbba-759f-4e11-9de8-04d5e941da5b";
+    private static DataAccess dataAccess;
+    private static RaumDataService raumDataService;
+    private static GeraetDataService geraetDataService;
+    private static SzenarioDataService szenarioDataService;
+    private static GeraetFactory geraetFactory;
     //language=SQL
     static final String SZENARIO_MENGE = "SELECT COUNT(*) FROM SZENARIEN";
 
@@ -50,17 +53,17 @@ class SzenarioDataServiceTest {
 
     @Test
     void testAddSzenario() throws Exception {
-        Raum raum = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), RAUM_1);
-        Sensor sensor = (Sensor) geraetFactory.createGeraet(UUID.fromString("c216e129-1541-4455-804c-411b17dd015b"),
+        Raum raum = new Raum(java.util.UUID.fromString(UUID_1), RAUM_1);
+        Sensor sensor = (Sensor) geraetFactory.createGeraet(java.util.UUID.fromString(UUID_2),
                 SENSOR_1, raum, SENSOR);
-        Szenario szenario1 = new Szenario(UUID.fromString("c06ecee9-65c3-4444-aa82-e1148badfc0d"), SZENARIO_1);
+        Szenario szenario1 = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario1.setBeschreibung(SZENARIO_1);
-        Szenario szenario2 = new Szenario(UUID.fromString("22710be6-8c78-404f-b89e-3d47b20c1db6"), SZENARIO_2);
+        Szenario szenario2 = new Szenario(java.util.UUID.fromString("22710be6-8c78-404f-b89e-3d47b20c1db6"), SZENARIO_2);
         szenario2.setBeschreibung(SZENARIO_2);
         szenario1.getAenderungen().put(1, new Szenario.Aenderung(
-                UUID.fromString("e41cbbba-759f-4e11-9de8-04d5e941da5b"), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
         szenario2.getAenderungen().put(1, new Szenario.Aenderung(
-                UUID.fromString("81abcdf3-c6dd-4ee4-8deb-1dd0b96d55e7"), sensor, SENSOR_AUS, EINGESCHALTET, FALSE));
+                java.util.UUID.fromString("81abcdf3-c6dd-4ee4-8deb-1dd0b96d55e7"), sensor, SENSOR_AUS, EINGESCHALTET, FALSE));
 
         CachedRowSet crs = dataAccess.getData(SZENARIO_MENGE);
         crs.next();
@@ -104,13 +107,13 @@ class SzenarioDataServiceTest {
 
     @Test
     void testUpdateSzenario() throws Exception {
-        Raum raum = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), RAUM_1);
-        Sensor sensor = (Sensor) geraetFactory.createGeraet(UUID.fromString("c216e129-1541-4455-804c-411b17dd015b"),
+        Raum raum = new Raum(java.util.UUID.fromString(UUID_1), RAUM_1);
+        Sensor sensor = (Sensor) geraetFactory.createGeraet(java.util.UUID.fromString(UUID_2),
                 SENSOR_1, raum, SENSOR);
-        Szenario szenario = new Szenario(UUID.fromString("c06ecee9-65c3-4444-aa82-e1148badfc0d"), SZENARIO_1);
+        Szenario szenario = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario.setBeschreibung(SZENARIO_1);
         szenario.getAenderungen().put(1, new Szenario.Aenderung(
-                UUID.fromString("e41cbbba-759f-4e11-9de8-04d5e941da5b"), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
 
         raumDataService.addRaum(raum);
         geraetDataService.addGeraet(sensor, SENSOR, new HashMap<>());
@@ -135,16 +138,16 @@ class SzenarioDataServiceTest {
 
     @Test
     void testUpdateSzenarioStatus() throws Exception {
-        Raum raum = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), RAUM_1);
-        Sensor sensor = (Sensor) geraetFactory.createGeraet(UUID.fromString("c216e129-1541-4455-804c-411b17dd015b"),
+        Raum raum = new Raum(java.util.UUID.fromString(UUID_1), RAUM_1);
+        Sensor sensor = (Sensor) geraetFactory.createGeraet(java.util.UUID.fromString(UUID_2),
                 SENSOR_1, raum, SENSOR);
         Map<String, String> sensorMap = new HashMap<>();
         sensorMap.put(EINGESCHALTET, FALSE);
         sensorMap.put("ausschlag", FALSE);
-        Szenario szenario = new Szenario(UUID.fromString("c06ecee9-65c3-4444-aa82-e1148badfc0d"), SZENARIO_1);
+        Szenario szenario = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario.setBeschreibung(SZENARIO_1);
         szenario.getAenderungen().put(1, new Szenario.Aenderung(
-                UUID.fromString("e41cbbba-759f-4e11-9de8-04d5e941da5b"), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
 
         raumDataService.addRaum(raum);
         geraetDataService.addGeraet(sensor, SENSOR, sensorMap);
@@ -169,17 +172,17 @@ class SzenarioDataServiceTest {
 
     @Test
     void testDeleteSzenario() throws Exception {
-        Raum raum = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), RAUM_1);
-        Sensor sensor = (Sensor) geraetFactory.createGeraet(UUID.fromString("c216e129-1541-4455-804c-411b17dd015b"),
+        Raum raum = new Raum(java.util.UUID.fromString(UUID_1), RAUM_1);
+        Sensor sensor = (Sensor) geraetFactory.createGeraet(java.util.UUID.fromString(UUID_2),
                 SENSOR_1, raum, SENSOR);
-        Szenario szenario1 = new Szenario(UUID.fromString("c06ecee9-65c3-4444-aa82-e1148badfc0d"), SZENARIO_1);
+        Szenario szenario1 = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario1.setBeschreibung(SZENARIO_1);
-        Szenario szenario2 = new Szenario(UUID.fromString("22710be6-8c78-404f-b89e-3d47b20c1db6"), SZENARIO_2);
+        Szenario szenario2 = new Szenario(java.util.UUID.fromString("22710be6-8c78-404f-b89e-3d47b20c1db6"), SZENARIO_2);
         szenario2.setBeschreibung(SZENARIO_2);
         szenario1.getAenderungen().put(1, new Szenario.Aenderung(
-                UUID.fromString("e41cbbba-759f-4e11-9de8-04d5e941da5b"), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
         szenario2.getAenderungen().put(1, new Szenario.Aenderung(
-                UUID.fromString("81abcdf3-c6dd-4ee4-8deb-1dd0b96d55e7"), sensor, SENSOR_AUS, EINGESCHALTET, FALSE));
+                java.util.UUID.fromString("81abcdf3-c6dd-4ee4-8deb-1dd0b96d55e7"), sensor, SENSOR_AUS, EINGESCHALTET, FALSE));
 
         raumDataService.addRaum(raum);
         geraetDataService.addGeraet(sensor, SENSOR, new HashMap<>());
@@ -199,15 +202,15 @@ class SzenarioDataServiceTest {
 
     @Test
     void testAddSzenarioInhalt() throws Exception {
-        Raum raum = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), RAUM_1);
-        Sensor sensor = (Sensor) geraetFactory.createGeraet(UUID.fromString("c216e129-1541-4455-804c-411b17dd015b"),
+        Raum raum = new Raum(java.util.UUID.fromString(UUID_1), RAUM_1);
+        Sensor sensor = (Sensor) geraetFactory.createGeraet(java.util.UUID.fromString(UUID_2),
                 SENSOR_1, raum, SENSOR);
-        Szenario szenario = new Szenario(UUID.fromString("c06ecee9-65c3-4444-aa82-e1148badfc0d"), SZENARIO_1);
+        Szenario szenario = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario.setBeschreibung(SZENARIO_1);
         szenario.getAenderungen().put(1, new Szenario.Aenderung(
-                UUID.fromString("e41cbbba-759f-4e11-9de8-04d5e941da5b"), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
         Szenario.Aenderung neueAenderung = new Szenario.Aenderung(
-                UUID.fromString("b64095bb-25ea-4c60-ac63-d8a4c7f0158d"), sensor, SENSOR_AUS, EINGESCHALTET, FALSE);
+                java.util.UUID.fromString("b64095bb-25ea-4c60-ac63-d8a4c7f0158d"), sensor, SENSOR_AUS, EINGESCHALTET, FALSE);
 
         raumDataService.addRaum(raum);
         geraetDataService.addGeraet(sensor, SENSOR, new HashMap<>());
@@ -231,16 +234,16 @@ class SzenarioDataServiceTest {
 
     @Test
     void testUpdateSzenarioInhalt() throws Exception {
-        Raum raum = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), RAUM_1);
-        Sensor sensor = (Sensor) geraetFactory.createGeraet(UUID.fromString("c216e129-1541-4455-804c-411b17dd015b"),
+        Raum raum = new Raum(java.util.UUID.fromString(UUID_1), RAUM_1);
+        Sensor sensor = (Sensor) geraetFactory.createGeraet(java.util.UUID.fromString(UUID_2),
                 SENSOR_1, raum, SENSOR);
-        Szenario szenario = new Szenario(UUID.fromString("c06ecee9-65c3-4444-aa82-e1148badfc0d"), SZENARIO_1);
+        Szenario szenario = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario.setBeschreibung(SZENARIO_1);
         szenario.getAenderungen().put(1, new Szenario.Aenderung(
-                UUID.fromString("e41cbbba-759f-4e11-9de8-04d5e941da5b"), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
         // Gleiche ID, aber andere Beschreibung und anderer Wert
         Szenario.Aenderung aenderungNeu = new Szenario.Aenderung(
-                UUID.fromString("e41cbbba-759f-4e11-9de8-04d5e941da5b"), sensor, SENSOR_AUS, EINGESCHALTET, FALSE);
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AUS, EINGESCHALTET, FALSE);
 
         raumDataService.addRaum(raum);
         geraetDataService.addGeraet(sensor, SENSOR, new HashMap<>());
@@ -262,13 +265,13 @@ class SzenarioDataServiceTest {
 
     @Test
     void testDeleteSzenarioInhalt() throws Exception {
-        Raum raum = new Raum(UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4"), RAUM_1);
-        Sensor sensor = (Sensor) geraetFactory.createGeraet(UUID.fromString("c216e129-1541-4455-804c-411b17dd015b"),
+        Raum raum = new Raum(java.util.UUID.fromString(UUID_1), RAUM_1);
+        Sensor sensor = (Sensor) geraetFactory.createGeraet(java.util.UUID.fromString(UUID_2),
                 SENSOR_1, raum, SENSOR);
-        Szenario szenario = new Szenario(UUID.fromString("c06ecee9-65c3-4444-aa82-e1148badfc0d"), SZENARIO_1);
+        Szenario szenario = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario.setBeschreibung(SZENARIO_1);
         Szenario.Aenderung aenderung = new Szenario.Aenderung(
-                UUID.fromString("b64095bb-25ea-4c60-ac63-d8a4c7f0158d"), sensor, SENSOR_AN, EINGESCHALTET, TRUE);
+                java.util.UUID.fromString("b64095bb-25ea-4c60-ac63-d8a4c7f0158d"), sensor, SENSOR_AN, EINGESCHALTET, TRUE);
         szenario.getAenderungen().put(1, aenderung);
 
         raumDataService.addRaum(raum);
