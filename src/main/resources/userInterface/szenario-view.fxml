@@ -1,8 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.StackPane?>
 
-<StackPane>
-    <Label text="Szenario"/>
-</StackPane>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.SzenarioController"
+            AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+            AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+    <top>
+        <VBox spacing="4">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Label text="Szenario" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+            <Label fx:id="szenrioNameLabel" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+            <Separator/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="16">
+            <padding><Insets top="16" right="10" bottom="10" left="10"/></padding>
+
+            <VBox spacing="4">
+                <Label text="Szenarioname"/>
+                <TextField fx:id="szenarioNameField" editable="false" prefWidth="300"
+                           style="-fx-background-color: #f0f0f0;"/>
+            </VBox>
+
+            <VBox spacing="4">
+                <Label text="Szenario Inhalte"/>
+                <ListView fx:id="szenarioInhalt" prefHeight="150" prefWidth="300"
+                          style="-fx-background-color: #f0f0f0;" mouseTransparent="true" focusTraversable="false"/>
+            </VBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox>
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Button text="Bearbeiten" prefWidth="190" prefHeight="45" onAction="#handleBearbeiten"/>
+            <Region HBox.hgrow="ALWAYS"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

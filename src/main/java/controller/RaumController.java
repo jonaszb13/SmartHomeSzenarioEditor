@@ -12,16 +12,19 @@ import java.util.stream.Collectors;
 
 public class RaumController {
 
-    @FXML private Label raumNameLabel;
-    @FXML private TextField raumNameField;
-    @FXML private ListView<String> geraeteListView;
+    @FXML
+    private Label raumNameLabel;
+    @FXML
+    private TextField raumNameField;
+    @FXML
+    private ListView<String> geraeteListView;
 
     private Runnable onSchliessen;
     private static RaumController instance;
 
     public static RaumController getInstance() {
-        if (instance == null){
-            instance =  new RaumController();
+        if (instance == null) {
+            instance = new RaumController();
             instance.raumNameLabel = new Label();
             instance.raumNameField = new TextField();
             instance.geraeteListView = new ListView<>();

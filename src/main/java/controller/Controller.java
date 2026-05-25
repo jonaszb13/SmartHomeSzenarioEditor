@@ -2,6 +2,7 @@ package controller;
 
 import data.models.Model;
 import data.services.objektServices.RaumObjektService;
+import data.services.objektServices.SzenarioObjektService;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
@@ -44,8 +45,15 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                     try {
                         RaumObjektService raumObjektService = RaumObjektService.getInstance();
                         raumController.setRaum(raumObjektService.getRaumMap().get(raumObjektService.getRaumTreeMap().getA(newValue)));
-
                     } catch (SQLException eSQL) {
+                        StatusLog.addError(eSQL);
+                    }
+                } else if ("szenario-view.fxml".equals(fxmlFile)) {
+                    SzenarioController szenarioController = loader.getController();
+                    try {
+                        SzenarioObjektService szenarioObjektService = SzenarioObjektService.getInstance();
+                        szenarioController.setSzenario(szenarioObjektService.getSzenarioMap().get(szenarioObjektService.getSzenarioTreeMap().getA(newValue)));
+                    } catch (SQLException eSQL){
                         StatusLog.addError(eSQL);
                     }
                 }
