@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Hilfsklasse zum bidirectional mappen von Objekten
  */
-public class DoubleMap <A, B> {
+public class DoubleMap<A, B> {
     private final Map<A, B> mapA;
     private final Map<B, A> mapB;
 
@@ -38,5 +38,10 @@ public class DoubleMap <A, B> {
         final A a = mapB.get(b);
         mapB.remove(b);
         mapA.remove(a);
+    }
+
+    public void clear() {
+        mapA.clear();
+        mapB.clear();
     }
 }
