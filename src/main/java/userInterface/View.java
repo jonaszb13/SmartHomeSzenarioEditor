@@ -70,6 +70,10 @@ public class View {
         geraetTreeMap.clear();
         szenarioTreeMap.clear();
 
+        raeume.getChildren().clear();
+        geraete.getChildren().clear();
+        szenarien.getChildren().clear();
+
         raeumeMap.forEach((id, raum) -> {
             TreeItem<String> item = new TreeItem<>(raum.getName());
             raumTreeMap.put(id, item);
