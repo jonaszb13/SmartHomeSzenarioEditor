@@ -20,17 +20,6 @@ public class RaumController {
     private ListView<String> geraeteListView;
 
     private Runnable onSchliessen;
-    private static RaumController instance;
-
-    public static RaumController getInstance() {
-        if (instance == null) {
-            instance = new RaumController();
-            instance.raumNameLabel = new Label();
-            instance.raumNameField = new TextField();
-            instance.geraeteListView = new ListView<>();
-        }
-        return instance;
-    }
 
     public void setRaum(final Raum raum) {
         raumNameLabel.setText(raum.getName());

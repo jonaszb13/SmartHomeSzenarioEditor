@@ -5,8 +5,6 @@ import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
 import data.services.datenServices.GeraetDataService;
 import jakarta.inject.Singleton;
-import javafx.scene.control.TreeItem;
-import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
 import javax.sql.rowset.CachedRowSet;
@@ -21,26 +19,20 @@ public final class GeraetObjektService {
     private static GeraetObjektService instance;
     private final GeraetDataService geraetDataService;
     private Map<UUID, Geraet> geraetMap;
-    private final DoubleMap<UUID, TreeItem<String>> geraetTreeMap;
 
-    private GeraetObjektService(final GeraetDataService geraetDataService, final DoubleMap<UUID, TreeItem<String>> geraetTreeMap) {
+    private GeraetObjektService(final GeraetDataService geraetDataService) {
         this.geraetDataService = geraetDataService;
-        this.geraetTreeMap = geraetTreeMap;
     }
 
     public static GeraetObjektService getInstance() throws SQLException {
         if (instance == null) {
-            instance = new GeraetObjektService(GeraetDataService.getInstance(), new DoubleMap<>());
+            instance = new GeraetObjektService(GeraetDataService.getInstance());
         }
         return instance;
     }
 
     public Map<UUID, Geraet> getGeraetMap() {
         return geraetMap;
-    }
-
-    public DoubleMap<UUID, TreeItem<String>> getGeraetTreeMap() {
-        return geraetTreeMap;
     }
 
     public Map<UUID, Geraet> getAllGeraete(final Map<UUID, Raum> raumMap) throws SQLException {
@@ -92,7 +84,6 @@ public final class GeraetObjektService {
             final Geraet geraet = GeraetFactory.getInstance().createGeraet(id, name, raum, art);
             if (geraetDataService.addGeraet(geraet, art, attributeMap)) {
                 geraetMap.put(id, geraet);
-                geraetTreeMap.put(id, new TreeItem<>(name));
                 StatusLog.addHinweis("Neues Gerät hinzugefügt. ID: " + geraet.getId());
                 erfolgreich = true;
             } else {
@@ -109,7 +100,6 @@ public final class GeraetObjektService {
         boolean erfolgreich = false;
         if (geraetDataService.deleteGeraet(geraetMap.get(id))) {
             geraetMap.remove(id);
-            geraetTreeMap.removeByA(id);
             StatusLog.addHinweis("Gerät mit id " + id + " erfolgreich gelöscht");
             erfolgreich = true;
         } else {

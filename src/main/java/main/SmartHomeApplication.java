@@ -36,7 +36,7 @@ public class SmartHomeApplication extends Application {
         View view = loader.getController();
 
         Model model = Model.getInstance();
-        view.updateTreeModel();
+        view.updateTreeModel(model.getRaeume(), model.getGeraete(), model.getSzenarien());
 
         new Controller(view, model);
 

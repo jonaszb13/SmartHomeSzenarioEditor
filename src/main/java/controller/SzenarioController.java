@@ -17,18 +17,6 @@ public class SzenarioController {
     @FXML
     private Label szenrioNameLabel;
 
-    private static SzenarioController instance;
-
-    public static SzenarioController getInstance() {
-        if (instance == null) {
-            instance = new SzenarioController();
-            instance.szenarioNameField = new TextField();
-            instance.szenarioInhalt = new ListView<>();
-            instance.szenrioNameLabel = new Label();
-        }
-        return instance;
-    }
-
     public void setSzenario(final Szenario szenario) {
         szenarioNameField.setText(szenario.getName());
         szenrioNameLabel.setText(szenario.getName());

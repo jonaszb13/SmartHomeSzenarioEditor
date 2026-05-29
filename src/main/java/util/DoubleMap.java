@@ -39,4 +39,9 @@ public class DoubleMap <A, B> {
         mapB.remove(b);
         mapA.remove(a);
     }
+
+    public void clear() {
+        mapA.clear();
+        mapB.clear();
+    }
 }
