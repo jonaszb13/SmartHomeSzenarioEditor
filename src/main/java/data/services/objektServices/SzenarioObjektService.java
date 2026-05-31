@@ -4,8 +4,6 @@ import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Szenario;
 import data.services.datenServices.SzenarioDataService;
 import jakarta.inject.Singleton;
-import javafx.scene.control.TreeItem;
-import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
 import javax.sql.rowset.CachedRowSet;
@@ -19,29 +17,23 @@ public final class SzenarioObjektService {
     private static SzenarioObjektService instance;
     private final SzenarioDataService szenarioDataService;
     private Map<UUID, Szenario> szenarioMap;
-    private final DoubleMap<UUID, TreeItem<String>> szenarioTreeMap;
     private static final String SZENARIO_STRING = "Szenario ";
     public static final String WURDE_ERFOLGREICH_AKTUALISIERT = " wurde erfolgreich aktualisiert.";
     public static final String KONNTE_NICHT_AKTUALISIERT_WERDEN = " konnte nicht aktualisiert werden.";
 
-    private SzenarioObjektService(final SzenarioDataService szenarioDataService, final DoubleMap<UUID, TreeItem<String>> szenarioTreeMap) {
+    private SzenarioObjektService(final SzenarioDataService szenarioDataService) {
         this.szenarioDataService = szenarioDataService;
-        this.szenarioTreeMap = szenarioTreeMap;
     }
 
     public static SzenarioObjektService getInstance() throws SQLException {
         if (instance == null) {
-            instance = new SzenarioObjektService(SzenarioDataService.getInstance(), new DoubleMap<>());
+            instance = new SzenarioObjektService(SzenarioDataService.getInstance());
         }
         return instance;
     }
 
     public Map<UUID, Szenario> getSzenarioMap() {
         return szenarioMap;
-    }
-
-    public DoubleMap<UUID, TreeItem<String>> getSzenarioTreeMap() {
-        return szenarioTreeMap;
     }
 
     public Szenario.Aenderung getAenderung(final Geraet geraet, final String beschreibung, final String schluessel, final String wert) {
@@ -91,7 +83,6 @@ public final class SzenarioObjektService {
         }
         if (szenarioDataService.addSzenario(szenario)) {
             szenarioMap.put(uuid, szenario);
-            szenarioTreeMap.put(uuid, new TreeItem<>(name));
             StatusLog.addHinweis(SZENARIO_STRING + szenario.getId() + " wurde erfolgreich erstellt.");
             erfolgreich = true;
         } else {
@@ -141,7 +132,6 @@ public final class SzenarioObjektService {
         boolean erfolgreich = false;
         if (szenarioDataService.deleteSzenario(szenario)) {
             szenarioMap.remove(szenario.getId());
-            szenarioTreeMap.removeByA(szenario.getId());
             StatusLog.addHinweis(SZENARIO_STRING + szenario.getId() + " wurde erfolgreich gelöscht.");
             erfolgreich = true;
         } else {

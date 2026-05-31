@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+
 import java.util.stream.Collectors;
 
 public class SzenarioController {
@@ -16,18 +17,6 @@ public class SzenarioController {
     private ListView<String> szenarioInhalt;
     @FXML
     private Label szenrioNameLabel;
-
-    private static SzenarioController instance;
-
-    public static SzenarioController getInstance() {
-        if (instance == null) {
-            instance = new SzenarioController();
-            instance.szenarioNameField = new TextField();
-            instance.szenarioInhalt = new ListView<>();
-            instance.szenrioNameLabel = new Label();
-        }
-        return instance;
-    }
 
     public void setSzenario(final Szenario szenario) {
         szenarioNameField.setText(szenario.getName());

@@ -3,8 +3,6 @@ package data.services.objektServices;
 import data.models.fachobjekte.Raum;
 import data.services.datenServices.RaumDataService;
 import jakarta.inject.Singleton;
-import javafx.scene.control.TreeItem;
-import util.DoubleMap;
 import util.statusmeldungen.StatusLog;
 
 import javax.sql.rowset.CachedRowSet;
@@ -18,26 +16,20 @@ public final class RaumObjektService {
     private static RaumObjektService instance;
     private final RaumDataService raumDataService;
     private Map<UUID, Raum> raumMap;
-    private final DoubleMap<UUID, TreeItem<String>> raumTreeMap;
 
-    private RaumObjektService(final RaumDataService raumDataService, final DoubleMap<UUID, TreeItem<String>> raumTreeMap) {
+    private RaumObjektService(final RaumDataService raumDataService) {
         this.raumDataService = raumDataService;
-        this.raumTreeMap = raumTreeMap;
     }
 
     public static RaumObjektService getInstance() throws SQLException {
         if (instance == null) {
-            instance = new RaumObjektService(RaumDataService.getInstance(), new DoubleMap<>());
+            instance = new RaumObjektService(RaumDataService.getInstance());
         }
         return instance;
     }
 
     public Map<UUID, Raum> getRaumMap() {
         return raumMap;
-    }
-
-    public DoubleMap<UUID, TreeItem<String>> getRaumTreeMap() {
-        return raumTreeMap;
     }
 
     public Map<UUID, Raum> getAllRaeume() throws SQLException {
@@ -64,7 +56,6 @@ public final class RaumObjektService {
         final Raum raum = new Raum(uuid, name);
         if (raumDataService.addRaum(raum)) {
             raumMap.put(uuid, raum);
-            raumTreeMap.put(uuid, new TreeItem<>(name));
             StatusLog.addHinweis("Raum angelegt: " + raum.getName() + " ID: " + uuid);
             erfolgreich = true;
         } else {
@@ -89,7 +80,6 @@ public final class RaumObjektService {
         boolean erfolgreich = false;
         if (raumDataService.deleteRaum(id)) {
             raumMap.remove(id);
-            raumTreeMap.removeByA(id);
             StatusLog.addHinweis("Raum " + id + " wurde gelöscht.");
             erfolgreich = true;
         } else {

@@ -1,8 +1,6 @@
 package controller;
 
 import data.models.Model;
-import data.services.objektServices.RaumObjektService;
-import data.services.objektServices.SzenarioObjektService;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
@@ -16,7 +14,7 @@ import util.statusmeldungen.Meldungstyp;
 import util.statusmeldungen.StatusLog;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -32,34 +30,28 @@ public class Controller implements ChangeListener<TreeItem<String>> {
     }
 
     @Override
-    public void changed(ObservableValue<? extends TreeItem<String>> observable,
-                        TreeItem<String> oldValue, TreeItem<String> newValue) {
+    public void changed(final ObservableValue<? extends TreeItem<String>> observable,
+                        final TreeItem<String> oldValue, final TreeItem<String> newValue) {
 
         if (newValue != null) {
             final String fxmlFile = getFxmlFile(newValue);
             try {
                 FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/userInterface/" + fxmlFile)));
                 final Pane neuesPanel = loader.load();
-                if ("raum-view.fxml".equals(fxmlFile)) {
-                    RaumController raumController = loader.getController();
-                    try {
-                        RaumObjektService raumObjektService = RaumObjektService.getInstance();
-                        raumController.setRaum(raumObjektService.getRaumMap().get(raumObjektService.getRaumTreeMap().getA(newValue)));
-                    } catch (SQLException eSQL) {
-                        StatusLog.addError(eSQL);
+                switch (view.getTreeItemType(newValue)) {
+                    case RAUM -> {
+                        final RaumController raumController = loader.getController();
+                        raumController.setRaum(model.getRaum(view.getRaumUuidForItem(newValue)));
                     }
-                } else if ("szenario-view.fxml".equals(fxmlFile)) {
-                    SzenarioController szenarioController = loader.getController();
-                    try {
-                        SzenarioObjektService szenarioObjektService = SzenarioObjektService.getInstance();
-                        szenarioController.setSzenario(szenarioObjektService.getSzenarioMap().get(szenarioObjektService.getSzenarioTreeMap().getA(newValue)));
-                    } catch (SQLException eSQL){
-                        StatusLog.addError(eSQL);
+                    case SZENARIO -> {
+                        final SzenarioController szenarioController = loader.getController();
+                        szenarioController.setSzenario(model.getSzenario(view.getSzenarioUuidForItem(newValue)));
                     }
+                    default -> StatusLog.addError(new InputMismatchException("Ausgewähltes Objekt existiert nicht."));
                 }
                 view.getHauptPane().getChildren().setAll(neuesPanel);
-            } catch (IOException e) {
-                StatusLog.addError("FXMLLoader konnte nicht geladen werden", e);
+            } catch (IOException eIO) {
+                StatusLog.addError("FXMLLoader konnte nicht geladen werden", eIO);
             }
 
             //TODO dieser Aufruf muss in jeden changed (oder# einen generischeren)
@@ -72,30 +64,16 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         StatusLog.createErrorFile();
     }
 
-    private String getFxmlFile(TreeItem<String> newValue) {
-        final TreeItem<String> root = view.getUebersichtTree().getRoot();
-        final String fxmlFile;
-        final TreeItem<String> parent = newValue.getParent();
-        if (parent == root) {
-            fxmlFile = switch (newValue.getValue().strip()) {
-                case "Räume" -> "raume-view.fxml";
-                case "Geräte" -> "geraete-view.fxml";
-                case "Szenarien" -> "szenarien-view.fxml";
-                default -> throw new IllegalStateException("Unexpected value: " + newValue.getValue().strip());
-            };
-            //Raum
-        } else if (parent == root.getChildren().get(0)) {
-            fxmlFile = "raum-view.fxml";
-            //Gerät
-        } else if (parent == root.getChildren().get(1)) {
-            fxmlFile = "geraet-view.fxml";
-            //Szenario
-        } else if (parent == root.getChildren().get(2)) {
-            fxmlFile = "szenario-view.fxml";
-        } else {
-            fxmlFile = "haupt-view.fxml";
-        }
-        return fxmlFile;
+    private String getFxmlFile(final TreeItem<String> newValue) {
+        return switch (view.getTreeItemType(newValue)) {
+            case RAUM -> "raum-view.fxml";
+            case GERAET -> "geraet-view.fxml";
+            case SZENARIO -> "szenario-view.fxml";
+            case RAEUME -> "raeume-view.fxml";
+            case GERAETE -> "geraete-view.fxml";
+            case SZENARIEN -> "szenarien-view.fxml";
+            default -> "haupt-view.fxml";
+        };
     }
 
     private void updateStatusLog() {
@@ -109,10 +87,12 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                     .map(meldung -> {
                         final Label label = new Label(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
                         label.setUserData(meldung.getMeldungsId());
-                        label.setStyle(meldung.getMeldungsTyp()
-                                .equals(Meldungstyp.FEHLER.getBezeichnung()) ? "-fx-text-fill: #cc0000"
-                                : meldung.getMeldungsTyp()
-                                .equals(Meldungstyp.METADATEN.getBezeichnung()) ? "-fx-text-fill: #0000ff" : "-fx-text-fill: #000000");
+                        final String typ = meldung.getMeldungsTyp();
+                        if (typ.equals(Meldungstyp.FEHLER.getBezeichnung())) {
+                            label.setStyle("-fx-text-fill: #cc0000");
+                        } else if (typ.equals(Meldungstyp.METADATEN.getBezeichnung())) {
+                            label.setStyle("-fx-text-fill: #0000ff");
+                        } else label.setStyle("-fx-text-fill: #000000");
                         return label;
                     })
                     .forEach(view.getStatusLogVBox().getChildren()::addFirst);
