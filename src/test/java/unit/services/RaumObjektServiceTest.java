@@ -1,8 +1,10 @@
 package unit.services;
 
+import data.models.fachobjekte.DAO;
 import data.models.fachobjekte.Raum;
 import data.services.datenServices.DataAccess;
 import data.services.datenServices.DatabaseCreationService;
+import data.services.datenServices.RaumDataService;
 import data.services.objektServices.RaumObjektService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,7 +33,23 @@ class RaumObjektServiceTest {
     @BeforeEach
     void initRaumMap() throws SQLException {
         StatusLog.clear();
+
+        //Testdaten
+        RaumDataService raumDataService = RaumDataService.getInstance();
+        UUID uuid = UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4");
+        raumDataService.addRaum(new Raum(uuid, "Raum 1"));
+
+        //Daten Laden
         raumObjektService.getAllRaeume();
+    }
+
+    @Test
+    void testGetAllRaeume() throws SQLException {
+        raumObjektService.getAllRaeume();
+        Map<UUID, Raum> map = raumObjektService.getRaumMap();
+        assertNotNull(map);
+        assertEquals(1, map.size());
+        assertFalse(StatusLog.hasError());
     }
 
     @Test
@@ -39,9 +58,8 @@ class RaumObjektServiceTest {
 
         assertTrue(result);
         assertFalse(StatusLog.hasError());
-        assertEquals(1, raumObjektService.getRaumMap().size());
-        Raum raum = raumObjektService.getRaumMap().values().iterator().next();
-        assertEquals("Wohnzimmer", raum.getName());
+        assertEquals(2, raumObjektService.getRaumMap().size());
+        assertTrue(raumObjektService.getRaumMap().values().stream().anyMatch(o -> o.getName().equals("Wohnzimmer")));
     }
 
     @Test
@@ -50,9 +68,7 @@ class RaumObjektServiceTest {
         StatusLog.clear();
         Raum raum = raumObjektService.getRaumMap().values().iterator().next();
 
-        boolean result = raumObjektService.updateRaum(raum, "Schlafzimmer");
-
-        assertTrue(result);
+        assertTrue(raumObjektService.updateRaum(raum, "Schlafzimmer"));
         assertFalse(StatusLog.hasError());
         assertEquals("Schlafzimmer", raumObjektService.getRaumMap().get(raum.getId()).getName());
     }
@@ -61,14 +77,14 @@ class RaumObjektServiceTest {
     void testDeleteRaum() {
         raumObjektService.addRaum("Bad");
         StatusLog.clear();
-        UUID id = raumObjektService.getRaumMap().keySet().iterator().next();
+        UUID id = raumObjektService.getRaumMap().values().stream().filter(o -> o.getName().equals("Bad")).findFirst().get().getId();
 
         boolean result = raumObjektService.deleteRaum(id);
 
         assertTrue(result);
         assertFalse(StatusLog.hasError());
         assertFalse(raumObjektService.getRaumMap().containsKey(id));
-        assertEquals(0, raumObjektService.getRaumMap().size());
+        assertEquals(1, raumObjektService.getRaumMap().size());
     }
 
     @AfterEach
