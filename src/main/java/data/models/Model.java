@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public final class Model {
-
     private static Model instance;
     private final Statusbereich statusbereich;
     private RaumObjektService raumObjektService = null;

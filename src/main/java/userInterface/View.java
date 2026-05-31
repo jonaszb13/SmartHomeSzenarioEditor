@@ -43,7 +43,6 @@ public class View {
         final TreeItem<String> root = new TreeItem<>("Root");
         uebersichtTree.setRoot(root);
         root.setExpanded(true);
-        //updateTreeModel();
     }
 
     public Pane getHauptPane() {

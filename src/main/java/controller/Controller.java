@@ -14,6 +14,7 @@ import util.statusmeldungen.Meldungstyp;
 import util.statusmeldungen.StatusLog;
 
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -46,7 +47,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                         final SzenarioController szenarioController = loader.getController();
                         szenarioController.setSzenario(model.getSzenario(view.getSzenarioUuidForItem(newValue)));
                     }
-                    default -> {/*TODO */}
+                    default -> StatusLog.addError(new InputMismatchException("Ausgewähltes Objekt existiert nicht."));
                 }
                 view.getHauptPane().getChildren().setAll(neuesPanel);
             } catch (IOException eIO) {
@@ -77,7 +78,6 @@ public class Controller implements ChangeListener<TreeItem<String>> {
 
     private void updateStatusLog() {
         try {
-            //TODO Überkomplexe Methode aufbrechen
             final List<Meldung> newMessages = model.getStatusbereich()
                     .getNewMessages(view.getStatusLogVBox()
                             .getChildren().isEmpty()
