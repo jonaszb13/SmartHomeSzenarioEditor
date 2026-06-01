@@ -17,4 +17,5 @@ module org.example.ui {
     exports controller;
     exports main;
     exports data.models;
+    exports data.models.fachobjekte;
 }

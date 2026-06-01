@@ -1,23 +1,22 @@
 package controller;
 
 import data.models.Model;
+import data.models.fachobjekte.Raum;
+import data.models.fachobjekte.Szenario;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
 import userInterface.View;
 import util.customExceptions.MessageMissing;
-import util.statusmeldungen.Meldung;
-import util.statusmeldungen.Meldungstyp;
 import util.statusmeldungen.StatusLog;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
+import java.util.function.Consumer;
 
 public class Controller implements ChangeListener<TreeItem<String>> {
     private final View view;
@@ -32,70 +31,103 @@ public class Controller implements ChangeListener<TreeItem<String>> {
     @Override
     public void changed(final ObservableValue<? extends TreeItem<String>> observable,
                         final TreeItem<String> oldValue, final TreeItem<String> newValue) {
+        if (newValue == null) return;
 
-        if (newValue != null) {
-            final String fxmlFile = getFxmlFile(newValue);
-            try {
-                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/userInterface/" + fxmlFile)));
-                final Pane neuesPanel = loader.load();
-                switch (view.getTreeItemType(newValue)) {
-                    case RAUM -> {
-                        final RaumController raumController = loader.getController();
-                        raumController.setRaum(model.getRaum(view.getRaumUuidForItem(newValue)));
-                    }
-                    case SZENARIO -> {
-                        final SzenarioController szenarioController = loader.getController();
-                        szenarioController.setSzenario(model.getSzenario(view.getSzenarioUuidForItem(newValue)));
-                    }
-                    default -> StatusLog.addError(new InputMismatchException("Ausgewähltes Objekt existiert nicht."));
-                }
-                view.getHauptPane().getChildren().setAll(neuesPanel);
-            } catch (IOException eIO) {
-                StatusLog.addError("FXMLLoader konnte nicht geladen werden", eIO);
-            }
-
-            //TODO dieser Aufruf muss in jeden changed (oder# einen generischeren)
-            //TODO nur durchführen, wenn der Statusbereich sichtbar ist
-            updateStatusLog();
+        switch (view.getTreeItemType(newValue)) {
+            case RAEUME   -> zeigeRaeumePanel();
+            case RAUM     -> zeigeRaumDetail(model.getRaum(view.getRaumUuidForItem(newValue)));
+            case SZENARIO -> zeigeSzenarioDetailPanel(model.getSzenario(view.getSzenarioUuidForItem(newValue)));
+            default       -> StatusLog.addError(new InputMismatchException("Ausgewähltes Objekt existiert nicht."));
         }
-        //TODO Linebreak alle 50 Zeichen
-        //StatusLog.addError("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
-        //TODO Debugging entfernen
-        StatusLog.createErrorFile();
+
+        updateStatusLog();
     }
 
-    private String getFxmlFile(final TreeItem<String> newValue) {
-        return switch (view.getTreeItemType(newValue)) {
-            case RAUM -> "raum-view.fxml";
-            case GERAET -> "geraet-view.fxml";
-            case SZENARIO -> "szenario-view.fxml";
-            case RAEUME -> "raeume-view.fxml";
-            case GERAETE -> "geraete-view.fxml";
-            case SZENARIEN -> "szenarien-view.fxml";
-            default -> "haupt-view.fxml";
-        };
+    private void aktualisiereTree() {
+        view.updateTreeModel(model.getRaumMap(), model.getGeraete(), model.getSzenarioMap());
+    }
+
+    private void nachModelAenderung() {
+        aktualisiereTree();
+        updateStatusLog();
+    }
+
+    private void zeigePanelHelper(final String fxmlPfad, final Consumer<FXMLLoader> setup) {
+        try {
+            final FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(
+                    getClass().getResource("/userInterface/" + fxmlPfad)));
+            final Pane panel = loader.load();
+            setup.accept(loader);
+            view.setHauptPane(panel);
+        } catch (IOException eIO) {
+            StatusLog.addError("Panel konnte nicht geladen werden: " + fxmlPfad, eIO);
+        }
+    }
+
+    private void zeigeRaeumePanel() {
+        zeigePanelHelper("raeume-view.fxml", loader -> {
+            final RaeumeController raeumeController = loader.getController();
+            raeumeController.setRaeume(new ArrayList<>(model.getRaumMap().values()));
+            raeumeController.setOnRaumOeffnen(this::zeigeRaumDetail);
+            raeumeController.setOnNeuenRaumAnlegenRequested(this::zeigeNeuerRaumPanel);
+            raeumeController.setOnAuswahlLoeschen(ids -> {
+                ids.forEach(model::deleteRaum);
+                nachModelAenderung();
+                zeigeRaeumePanel();
+            });
+        });
+    }
+
+    private void zeigeRaumDetail(final Raum raum) {
+        zeigePanelHelper("raum-view.fxml", loader -> {
+            final RaumController raumController = loader.getController();
+            raumController.setRaum(raum);
+            raumController.setOnBearbeiten(() -> zeigeBearbeitenRaumPanel(raum));
+            raumController.setOnSchliessen(this::zeigeRaeumePanel);
+        });
+    }
+
+    private void zeigeNeuerRaumPanel() {
+        zeigePanelHelper("neuer-raum-view.fxml", loader -> {
+            final NeuerRaumController neuerRaumController = loader.getController();
+            neuerRaumController.setOnAnlegen(name -> {
+                model.addRaum(name);
+                nachModelAenderung();
+                zeigeRaeumePanel();
+            });
+            neuerRaumController.setOnAbbrechen(this::zeigeRaeumePanel);
+        });
+    }
+
+    private void zeigeBearbeitenRaumPanel(final Raum raum) {
+        zeigePanelHelper("edit-raum-view.fxml", loader -> {
+            final BearbeitenRaumController bearbeitenRaumController = loader.getController();
+            bearbeitenRaumController.setRaum(raum);
+            bearbeitenRaumController.setOnSpeichern(neuerName -> {
+                model.updateRaum(raum, neuerName);
+                nachModelAenderung();
+                zeigeRaumDetail(raum);
+            });
+            bearbeitenRaumController.setOnAbbrechen(() -> zeigeRaumDetail(raum));
+            bearbeitenRaumController.setOnLoeschen(() -> {
+                model.deleteRaum(raum.getId());
+                nachModelAenderung();
+                zeigeRaeumePanel();
+            });
+        });
+    }
+
+    private void zeigeSzenarioDetailPanel(final Szenario szenario) {
+        zeigePanelHelper("szenario-view.fxml", loader -> {
+            final SzenarioController szenarioController = loader.getController();
+            szenarioController.setSzenario(szenario);
+        });
     }
 
     private void updateStatusLog() {
         try {
-            final List<Meldung> newMessages = model.getStatusbereich()
-                    .getNewMessages(view.getStatusLogVBox()
-                            .getChildren().isEmpty()
-                            ? null : UUID.fromString(view.getStatusLogVBox()
-                            .getChildren().getFirst().getUserData().toString()));
-            newMessages.stream()
-                    .map(meldung -> {
-                        final Label label = new Label(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
-                        label.setUserData(meldung.getMeldungsId());
-                        final String typ = meldung.getMeldungsTyp();
-                        if (typ.equals(Meldungstyp.FEHLER.getBezeichnung())) {
-                            label.setStyle("-fx-text-fill: #cc0000");
-                        } else if (typ.equals(Meldungstyp.METADATEN.getBezeichnung())) {
-                            label.setStyle("-fx-text-fill: #0000ff");
-                        } else label.setStyle("-fx-text-fill: #000000");
-                        return label;
-                    })
-                    .forEach(view.getStatusLogVBox().getChildren()::addFirst);
+            view.getStatusLogView().addMeldungen(
+                    model.getStatusbereich().getNewMessages(view.getStatusLogView().getLetzteStatusMeldungsId()));
         } catch (MessageMissing e) {
             StatusLog.addError(e.getMessage(), e);
         }

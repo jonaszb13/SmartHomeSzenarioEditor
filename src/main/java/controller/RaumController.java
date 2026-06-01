@@ -19,6 +19,7 @@ public class RaumController {
     @FXML
     private ListView<String> geraeteListView;
 
+    private Runnable onBearbeiten;
     private Runnable onSchliessen;
 
     public void setRaum(final Raum raum) {
@@ -31,12 +32,17 @@ public class RaumController {
         ));
     }
 
+    public void setOnBearbeiten(final Runnable onBearbeiten) {
+        this.onBearbeiten = onBearbeiten;
+    }
+
     public void setOnSchliessen(final Runnable onSchliessen) {
         this.onSchliessen = onSchliessen;
     }
 
     @FXML
     private void handleBearbeiten() {
+        if (onBearbeiten != null) onBearbeiten.run();
     }
 
     @FXML

@@ -4,21 +4,27 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" xmlns="http://javafx.com/javafx/17.0.12">
-    <Label text="Raumübersicht" StackPane.alignment="TOP_LEFT">
-        <StackPane.margin>
-            <Insets left="10.0" top="10.0" />
-        </StackPane.margin>
-    </Label>
-    <Button mnemonicParsing="false" text="Neuen Raum anlegen" StackPane.alignment="TOP_RIGHT">
-        <StackPane.margin>
-            <Insets right="130.0" top="10.0" />
-        </StackPane.margin>
-    </Button>
-    <Button mnemonicParsing="false" text="Auswahl löschen" StackPane.alignment="TOP_RIGHT">
-        <StackPane.margin>
-            <Insets right="10.0" top="10.0" />
-        </StackPane.margin>
-    </Button>
-    
-</StackPane>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.RaeumeController"
+            AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+            AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+    <top>
+        <VBox spacing="10">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Raumübersicht" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Neuen Raum anlegen" prefHeight="30" onAction="#onNeuenRaumAnlegen"/>
+                <Button text="Auswahl löschen" prefHeight="30"
+                        style="-fx-background-color: #cc0000; -fx-text-fill: white;"
+                        onAction="#onAuswahlLoeschen"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ListView fx:id="raumListView"/>
+    </center>
+
+</BorderPane>
