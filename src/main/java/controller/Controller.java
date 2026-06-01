@@ -64,6 +64,8 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         }
     }
 
+    //TODO: Controller vielleich aufteilen in eigenen Raum, Geräte und Szenario Controller und von diesem hier nur noch delegieren
+
     private void zeigeRaeumePanel() {
         zeigePanelHelper("raeume-view.fxml", loader -> {
             final RaeumeController raeumeController = loader.getController();
