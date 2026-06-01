@@ -23,6 +23,8 @@ public class View {
     @FXML
     private VBox statusLogVBox;
 
+    private StatusLogView statusLogView;
+
     public enum ViewClass {
         RAEUME, GERAETE, SZENARIEN,
         RAUM, GERAET, SZENARIO,
@@ -43,22 +45,23 @@ public class View {
         final TreeItem<String> root = new TreeItem<>("Root");
         uebersichtTree.setRoot(root);
         root.setExpanded(true);
-    }
-
-    public Pane getHauptPane() {
-        return hauptPane;
+        statusLogView = new StatusLogView(statusLogVBox);
     }
 
     public VBox getStatusLogVBox() {
         return statusLogVBox;
     }
 
-    public void addUebersichtTreeSelectionListener(ChangeListener<TreeItem<String>> listener) {
-        uebersichtTree.getSelectionModel().selectedItemProperty().addListener(listener);
+    public void setHauptPane(final Pane pane) {
+        hauptPane.getChildren().setAll(pane);
     }
 
-    public TreeView<String> getUebersichtTree() {
-        return uebersichtTree;
+    public StatusLogView getStatusLogView() {
+        return statusLogView;
+    }
+
+    public void addUebersichtTreeSelectionListener(ChangeListener<TreeItem<String>> listener) {
+        uebersichtTree.getSelectionModel().selectedItemProperty().addListener(listener);
     }
 
     public void updateTreeModel(final Map<UUID, Raum> raeumeMap, final Map<UUID, Geraet> geraeteMap,

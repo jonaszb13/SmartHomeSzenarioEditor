@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.geometry.Insets?>
 <BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.View">
 
     <top>
@@ -15,15 +16,15 @@
     </top>
 
     <left>
-        <VBox prefWidth="200" style="-fx-background-color: lightgray;">
-            <TreeView fx:id="uebersichtTree" style="-fx-background-color: lightgray;" />
+        <VBox prefWidth="200" style="-fx-background-color: #fff; -fx-border-width: 0 1 0 0; -fx-border-color: transparent #c4c6c9 transparent transparent">
+            <TreeView fx:id="uebersichtTree"/>
         </VBox>
     </left>
 
     <right>
-        <ScrollPane fitToWidth="true" prefWidth="300" style="-fx-background: lightgray; -fx-border-color: lightgray;">
-            <VBox fx:id="statusLogVBox" style="-fx-background-color: lightgray;">
-                </VBox>
+        <ScrollPane fitToWidth="true" prefWidth="300" style="-fx-background: #fff;">
+            <padding><Insets left="5" top="5" right="5" bottom="5"/></padding>
+            <VBox fx:id="statusLogVBox" spacing="1"/>
         </ScrollPane>
     </right>
 

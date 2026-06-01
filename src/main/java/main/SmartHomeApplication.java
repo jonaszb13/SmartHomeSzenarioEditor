@@ -43,7 +43,7 @@ public class SmartHomeApplication extends Application {
         Pane defaultPanel = FXMLLoader.load(
                 Objects.requireNonNull(getClass().getResource("/userInterface/haupt-view.fxml"))
         );
-        view.getHauptPane().getChildren().setAll(defaultPanel);
+        view.setHauptPane(defaultPanel);
 
         Scene scene = new Scene(loader.getRoot());
         stage.setTitle("Smart Home");
