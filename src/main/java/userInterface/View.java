@@ -48,6 +48,10 @@ public class View {
         statusLogView = new StatusLogView(statusLogVBox);
     }
 
+    public VBox getStatusLogVBox() {
+        return statusLogVBox;
+    }
+
     public void setHauptPane(final Pane pane) {
         hauptPane.getChildren().setAll(pane);
     }
