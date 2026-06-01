@@ -28,4 +28,6 @@ public abstract class Geraet extends DAO {
 
     public abstract void updateValue(String key, String value);
 
+    public abstract Map<String, String> getValues();
+
 }

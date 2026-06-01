@@ -4,6 +4,8 @@ import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class Lampe extends Geraet {
@@ -60,5 +62,14 @@ public class Lampe extends Geraet {
             default:
                 throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
         }
+    }
+
+    @Override
+    public Map<String, String> getValues() {
+        final Map<String, String> values = new HashMap<>();
+        values.put("haelligkeit", Double.toString(getHaelligkeit()));
+        values.put("farbe", getFarbe().toString());
+        values.put("eingeschaltet", Boolean.toString(eingeschaltet));
+        return values;
     }
 }

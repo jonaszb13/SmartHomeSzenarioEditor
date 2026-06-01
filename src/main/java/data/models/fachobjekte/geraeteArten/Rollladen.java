@@ -3,6 +3,8 @@ package data.models.fachobjekte.geraeteArten;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class Rollladen extends Geraet {
@@ -42,5 +44,13 @@ public class Rollladen extends Geraet {
             default:
                 throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
         }
+    }
+
+    @Override
+    public Map<String, String> getValues() {
+        final Map<String, String> values = new HashMap<>();
+        values.put("schliessstatus", Float.toString(getSchliessstatus()));
+        values.put("winckelung", Float.toString(getWinckelung()));
+        return values;
     }
 }

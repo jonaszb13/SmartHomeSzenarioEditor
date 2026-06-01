@@ -3,6 +3,8 @@ package data.models.fachobjekte.geraeteArten;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class Luefter extends Geraet {
@@ -41,5 +43,13 @@ public class Luefter extends Geraet {
             default:
                 throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
         }
+    }
+
+    @Override
+    public Map<String, String> getValues() {
+        final Map<String, String> values = new HashMap<>();
+        values.put("eingeschaltet", Boolean.toString(eingeschaltet));
+        values.put("staerke", Float.toString(staerke));
+        return values;
     }
 }
