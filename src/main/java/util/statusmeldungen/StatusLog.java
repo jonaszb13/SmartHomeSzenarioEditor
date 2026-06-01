@@ -90,7 +90,7 @@ public final class StatusLog {
         addMetadaten("Das Programm wurde kontrolliert beendet");
     }
 
-    private static boolean outputErrors(String filePathWithName) {
+    private static boolean outputErrors(final String filePathWithName) {
         boolean fehler = false;
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePathWithName))) {
             final List<Meldung> meldungen = getInstance().getStatusLogEintraege();

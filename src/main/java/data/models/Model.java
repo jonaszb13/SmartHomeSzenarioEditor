@@ -8,9 +8,11 @@ import data.services.objektServices.GeraetObjektService;
 import data.services.objektServices.RaumObjektService;
 import data.services.objektServices.SzenarioAktivationService;
 import data.services.objektServices.SzenarioObjektService;
+import util.statusmeldungen.Meldung;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,6 +48,10 @@ public final class Model {
 
     public Statusbereich getStatusbereich() {
         return statusbereich;
+    }
+
+    public List<Meldung> getNewMessages(boolean newMessages, UUID uuid) {
+        return getStatusbereich().getNewMessages(newMessages ? uuid : null);
     }
 
     //TODO WTF ist das

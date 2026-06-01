@@ -1,6 +1,6 @@
 package data.models.ansichten;
 
-import util.customExceptions.MessageMissing;
+import util.customExceptions.MessageMissingException;
 import util.statusmeldungen.Meldung;
 import util.statusmeldungen.StatusLog;
 
@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 
 public class Statusbereich {
 
-    public List<Meldung> getNewMessages(final UUID userDataLetzterNode) throws MessageMissing {
+    public List<Meldung> getNewMessages(final UUID userDataLetzterNode) throws MessageMissingException {
         final List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
         if (userDataLetzterNode == null) {
             return meldungen;
@@ -19,7 +19,7 @@ public class Statusbereich {
         int indexNeueMeldung = IntStream.range(0, meldungen.size())
                 .filter(i -> meldungen.get(i).getMeldungsId().equals(userDataLetzterNode))
                 .findFirst()
-                .orElseThrow(() -> new MessageMissing("Es liegt eine inkonsistente Datenbasis vor: Eine Meldung konnte nicht im Statuslog gefunden werden.")) + 1;
+                .orElseThrow(() -> new MessageMissingException("Es liegt eine inkonsistente Datenbasis vor: Eine Meldung konnte nicht im Statuslog gefunden werden.")) + 1;
         if (indexNeueMeldung == 0) {
             StatusLog.addError("Gespeicherte Meldung kann nicht mehr im StatusLog abgerufen werden.");
             return new ArrayList<>();
