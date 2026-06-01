@@ -105,6 +105,14 @@ public class View {
         return returnValue;
     }
 
+    public boolean hasStatusLogChildren () {
+        return !getStatusLogVBox().getChildren().isEmpty();
+    }
+
+    public UUID getMessageUUID () {
+        return UUID.fromString(getStatusLogVBox().getChildren().getFirst().getUserData().toString());
+    }
+
     public UUID getRaumUuidForItem(final TreeItem<String> item) {
         return raumTreeMap.getA(item);
     }

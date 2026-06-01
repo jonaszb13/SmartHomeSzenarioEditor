@@ -18,7 +18,7 @@ class StatusLogTest {
     }
 
     @Test
-    void addError_string_shouldAddFehlerMeldung() {
+    void testAddErrorString() {
         StatusLog.addError("TestFehler1");
         List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
         assertEquals(1, meldungen.size());
@@ -27,7 +27,7 @@ class StatusLogTest {
     }
 
     @Test
-    void addError_exception_shouldAddFehlerMeldungWithStackTrace() {
+    void testAddErrorException() {
         Exception exception = new RuntimeException("TestExceptionFehler1");
         StatusLog.addError(exception);
         Meldung meldungen = StatusLog.getInstance().getStatusLogEintraege().getFirst();
@@ -36,7 +36,7 @@ class StatusLogTest {
     }
 
     @Test
-    void addHinweis_shouldAddHinweisMeldung() {
+    void testAddWarningString() {
         StatusLog.addHinweis("TestHinweis1");
         Meldung meldungen = StatusLog.getInstance().getStatusLogEintraege().getFirst();
         assertFalse(meldungen.isError());
@@ -44,20 +44,20 @@ class StatusLogTest {
     }
 
     @Test
-    void hasError_withNoErrors_shoudlReturnFalse() {
+    void testHasErrorFalse() {
         StatusLog.addHinweis("TestHinweis1");
         assertFalse(StatusLog.hasError());
     }
 
     @Test
-    void hasError_withError_shouldReturnTrue() {
+    void testHasErrorTrue() {
         StatusLog.addHinweis("TestHinweis1");
         StatusLog.addError("TestFehler1");
         assertTrue(StatusLog.hasError());
     }
 
     @Test
-    void addMetadaten_shouldNotCountAsError() {
+    void testAddMetadata() {
         StatusLog.addMetadaten("TestMetadaten1");
         assertFalse(StatusLog.hasError());
     }

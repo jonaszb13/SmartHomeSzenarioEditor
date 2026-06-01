@@ -8,7 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
 import userInterface.View;
-import util.customExceptions.MessageMissing;
+import util.customExceptions.MessageMissingException;
 import util.statusmeldungen.Meldung;
 import util.statusmeldungen.Meldungstyp;
 import util.statusmeldungen.StatusLog;
@@ -43,9 +43,21 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                         final RaumController raumController = loader.getController();
                         raumController.setRaum(model.getRaum(view.getRaumUuidForItem(newValue)));
                     }
+                    case GERAET -> {
+                        //TODO
+                    }
                     case SZENARIO -> {
                         final SzenarioController szenarioController = loader.getController();
                         szenarioController.setSzenario(model.getSzenario(view.getSzenarioUuidForItem(newValue)));
+                    }
+                    case RAEUME -> {
+                        //TODO
+                    }
+                    case GERAETE -> {
+                        //TODO
+                    }
+                    case SZENARIEN -> {
+                        //TODO
                     }
                     default -> StatusLog.addError(new InputMismatchException("Ausgewähltes Objekt existiert nicht."));
                 }
@@ -78,6 +90,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
 
     private void updateStatusLog() {
         try {
+            //final List<Meldung> newMessages = view.hasStatusLogChildren() ? model.getNewMessages(view.hasStatusLogChildren(), view.getMessageUUID()) : new ArrayList<>();
             final List<Meldung> newMessages = model.getStatusbereich()
                     .getNewMessages(view.getStatusLogVBox()
                             .getChildren().isEmpty()
@@ -96,7 +109,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                         return label;
                     })
                     .forEach(view.getStatusLogVBox().getChildren()::addFirst);
-        } catch (MessageMissing e) {
+        } catch (MessageMissingException e) {
             StatusLog.addError(e.getMessage(), e);
         }
     }

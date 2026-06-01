@@ -1,6 +1,5 @@
 package unit.services;
 
-import data.models.fachobjekte.DAO;
 import data.models.fachobjekte.Raum;
 import data.services.datenServices.DataAccess;
 import data.services.datenServices.DatabaseCreationService;
@@ -64,7 +63,6 @@ class RaumObjektServiceTest {
 
     @Test
     void testUpdateRaum() {
-        raumObjektService.addRaum("Küche");
         StatusLog.clear();
         Raum raum = raumObjektService.getRaumMap().values().iterator().next();
 
@@ -75,16 +73,15 @@ class RaumObjektServiceTest {
 
     @Test
     void testDeleteRaum() {
-        raumObjektService.addRaum("Bad");
         StatusLog.clear();
-        UUID id = raumObjektService.getRaumMap().values().stream().filter(o -> o.getName().equals("Bad")).findFirst().get().getId();
+        UUID id = raumObjektService.getRaumMap().values().stream().filter(o -> o.getName().equals("Raum 1")).findFirst().get().getId();
 
         boolean result = raumObjektService.deleteRaum(id);
 
         assertTrue(result);
         assertFalse(StatusLog.hasError());
         assertFalse(raumObjektService.getRaumMap().containsKey(id));
-        assertEquals(1, raumObjektService.getRaumMap().size());
+        assertEquals(0, raumObjektService.getRaumMap().size());
     }
 
     @AfterEach
