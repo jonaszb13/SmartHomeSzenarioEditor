@@ -9,7 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
 import userInterface.View;
-import util.customExceptions.MessageMissing;
+import util.customExceptions.MessageMissingException;
 import util.statusmeldungen.StatusLog;
 
 import java.io.IOException;
@@ -128,7 +128,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         try {
             view.getStatusLogView().addMeldungen(
                     model.getStatusbereich().getNewMessages(view.getStatusLogView().getLetzteStatusMeldungsId()));
-        } catch (MessageMissing e) {
+        } catch (MessageMissingException e) {
             StatusLog.addError(e.getMessage(), e);
         }
     }
