@@ -143,6 +143,7 @@ public final class SzenarioObjektService {
     public boolean updateSzenarioStatus(final Szenario szenario, final boolean status) {
         boolean erfolgreich = false;
         if (szenarioDataService.updateSzenarioStatus(szenario, status)) {
+            szenario.setStatus(status);
             StatusLog.addHinweis(SZENARIO_STRING + szenario.getId() + WURDE_ERFOLGREICH_AKTUALISIERT);
             erfolgreich = true;
         } else {

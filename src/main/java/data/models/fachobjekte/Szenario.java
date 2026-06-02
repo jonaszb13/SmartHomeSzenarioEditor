@@ -17,7 +17,7 @@ public class Szenario extends DAO {
         this.aenderungen = new HashMap<>();
     }
 
-    public boolean isStatus() {
+    public boolean isActive() {
         return status;
     }
 
@@ -53,6 +53,7 @@ public class Szenario extends DAO {
         this.beschreibung = beschreibung;
     }
 
+    //TODO Checken, ob das nur von den richtigen stellen aufgerufen wird
     public record Aenderung(UUID id, Geraet geraet, String beschreibung, String schluessel, String wert) {
     }
 }
