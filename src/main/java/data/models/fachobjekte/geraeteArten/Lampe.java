@@ -71,7 +71,7 @@ public class Lampe extends Geraet {
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
         //TODO Keys etc. als Enums einführen
-        values.put("helligkeit", bereinigeZahlenwerteInsDeutsche(Double.toString(getHelligkeit())));
+        values.put("helligkeit", formatiereZahlenwerteInsDeutsche(Double.toString(getHelligkeit())));
         values.put("farbe", farbe != null ? String.format("#%02x%02x%02x", farbe.getRed(), farbe.getGreen(), farbe.getBlue()) : "#000000");
         values.put("eingeschaltet", Boolean.toString(eingeschaltet));
         return values;
@@ -92,7 +92,7 @@ public class Lampe extends Geraet {
                 || attributeMap.get("eingeschaltet") == null) {
             return false;
         }
-        attributeMap.replace("helligkeit", bereinigeZahlenwerteInsEnglische(attributeMap.get("helligkeit")));
+        attributeMap.replace("helligkeit", formatiereZahlenwerteInsEnglische(attributeMap.get("helligkeit")));
         if (!isDouble(attributeMap.get("helligkeit"))) {
             StatusLog.addError("Die Helligkeit muss eine Zahl sein");
             return false;

@@ -54,10 +54,10 @@ public abstract class Geraet extends DAO {
     public boolean isDouble(String myString) {
         return Pattern.matches(FP_REGEX, myString);
     }
-    public String bereinigeZahlenwerteInsEnglische(String unformatierterWert) {
+    public String formatiereZahlenwerteInsEnglische(String unformatierterWert) {
         return unformatierterWert.replace(".", "").replace(",", ".");
     }
-    public String bereinigeZahlenwerteInsDeutsche(String unformatierterWert) {
+    public String formatiereZahlenwerteInsDeutsche(String unformatierterWert) {
         return unformatierterWert.replace(".",",");
     }
 }

@@ -50,7 +50,7 @@ public class Luefter extends Geraet {
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
         values.put("eingeschaltet", Boolean.toString(eingeschaltet));
-        values.put("staerke", bereinigeZahlenwerteInsDeutsche(Double.toString(staerke)));
+        values.put("staerke", formatiereZahlenwerteInsDeutsche(Double.toString(staerke)));
         return values;
     }
 
@@ -67,7 +67,7 @@ public class Luefter extends Geraet {
                 || attributeMap.get("staerke") == null) {
             return false;
         }
-        attributeMap.replace("staerke", bereinigeZahlenwerteInsEnglische(attributeMap.get("staerke")));
+        attributeMap.replace("staerke", formatiereZahlenwerteInsEnglische(attributeMap.get("staerke")));
         if (!isDouble(attributeMap.get("stärke"))) {
             StatusLog.addError("Die Stärke muss eine Zahl sein");
             return false;

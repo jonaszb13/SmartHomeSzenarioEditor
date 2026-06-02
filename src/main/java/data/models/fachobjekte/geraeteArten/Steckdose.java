@@ -52,7 +52,7 @@ public class Steckdose extends Geraet {
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
         values.put("eingeschaltet", Boolean.toString(eingeschaltet));
-        values.put("aktuelleLeistung", bereinigeZahlenwerteInsDeutsche(Double.toString(aktuelleLeistung)));
+        values.put("aktuelleLeistung", formatiereZahlenwerteInsDeutsche(Double.toString(aktuelleLeistung)));
         return values;
     }
 
@@ -69,7 +69,7 @@ public class Steckdose extends Geraet {
                 || attributeMap.get("aktuelleLeistung") == null) {
             return false;
         }
-        attributeMap.replace("aktuelleLeistung", bereinigeZahlenwerteInsEnglische(attributeMap.get("aktuelleLeistung")));
+        attributeMap.replace("aktuelleLeistung", formatiereZahlenwerteInsEnglische(attributeMap.get("aktuelleLeistung")));
         if (!isDouble(attributeMap.get("aktuelleLeistung"))) {
             StatusLog.addError("Die aktuelle Leistung muss eine Zahl sein");
             return false;

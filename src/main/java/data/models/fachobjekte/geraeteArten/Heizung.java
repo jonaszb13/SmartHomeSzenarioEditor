@@ -40,7 +40,7 @@ public class Heizung extends Geraet {
     @Override
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
-        values.put("zielTemp", bereinigeZahlenwerteInsDeutsche(Double.toString(zielTemp)));
+        values.put("zielTemp", formatiereZahlenwerteInsDeutsche(Double.toString(zielTemp)));
         return values;
     }
 
@@ -54,7 +54,7 @@ public class Heizung extends Geraet {
     @Override
     public boolean isGueltigeAttribute(final Map<String, String> attributeMap) {
         if (attributeMap.get("zielTemp") == null) return false;
-        attributeMap.replace("zielTemp", bereinigeZahlenwerteInsEnglische(attributeMap.get("zielTemp")));
+        attributeMap.replace("zielTemp", formatiereZahlenwerteInsEnglische(attributeMap.get("zielTemp")));
         if (!isDouble(attributeMap.get("zielTemp"))) {
             StatusLog.addError("Die Zieltemperatur muss eine Zahl sein");
             return false;

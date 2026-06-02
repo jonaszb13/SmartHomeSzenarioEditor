@@ -50,8 +50,8 @@ public class Rollladen extends Geraet {
     @Override
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
-        values.put("schliessstatus", bereinigeZahlenwerteInsDeutsche(Double.toString(getSchliessstatus())));
-        values.put("neigung", bereinigeZahlenwerteInsDeutsche(Double.toString(getNeigung())));
+        values.put("schliessstatus", formatiereZahlenwerteInsDeutsche(Double.toString(getSchliessstatus())));
+        values.put("neigung", formatiereZahlenwerteInsDeutsche(Double.toString(getNeigung())));
         return values;
     }
 
@@ -68,12 +68,12 @@ public class Rollladen extends Geraet {
                 || attributeMap.get("neigung") == null) {
             return false;
         }
-        attributeMap.replace("schliessstatus", bereinigeZahlenwerteInsEnglische(attributeMap.get("schliessstatus")));
+        attributeMap.replace("schliessstatus", formatiereZahlenwerteInsEnglische(attributeMap.get("schliessstatus")));
         if (!isDouble(attributeMap.get("schliessstatus"))) {
             StatusLog.addError("Der Schließstatus muss eine Zahl sein");
             return false;
         }
-        attributeMap.replace("neigung", bereinigeZahlenwerteInsEnglische(attributeMap.get("neigung")));
+        attributeMap.replace("neigung", formatiereZahlenwerteInsEnglische(attributeMap.get("neigung")));
         if (!isDouble(attributeMap.get("neigung"))) {
             StatusLog.addError("Die Neigung muss eine Zahl sein");
             return false;
