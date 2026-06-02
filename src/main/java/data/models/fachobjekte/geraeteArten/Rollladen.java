@@ -10,7 +10,7 @@ import java.util.UUID;
 public class Rollladen extends Geraet {
 
     private float schliessstatus;
-    private float winckelung;
+    private float winkelung;
 
     public Rollladen(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
@@ -24,12 +24,12 @@ public class Rollladen extends Geraet {
         this.schliessstatus = schliessstatus;
     }
 
-    public float getWinckelung() {
-        return winckelung;
+    public float getWinkelung() {
+        return winkelung;
     }
 
-    public void setWinckelung(final float winckelung) {
-        this.winckelung = winckelung;
+    public void setWinkelung(final float winkelung) {
+        this.winkelung = winkelung;
     }
 
     @Override
@@ -38,8 +38,8 @@ public class Rollladen extends Geraet {
             case "schliessstatus":
                 setSchliessstatus(Float.parseFloat(value));
                 break;
-            case "winckelung":
-                setWinckelung(Float.parseFloat(value));
+            case "winkelung":
+                setWinkelung(Float.parseFloat(value));
                 break;
             default:
                 throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
@@ -50,7 +50,15 @@ public class Rollladen extends Geraet {
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
         values.put("schliessstatus", Float.toString(getSchliessstatus()));
-        values.put("winckelung", Float.toString(getWinckelung()));
+        values.put("winkelung", Float.toString(getWinkelung()));
         return values;
+    }
+
+    @Override
+    public Map<String, Class<?>> getAttributTypen() {
+        final Map<String, Class<?>> typen = new HashMap<>();
+        typen.put("schliessstatus", float.class);
+        typen.put("winkelung", float.class);
+        return typen;
     }
 }

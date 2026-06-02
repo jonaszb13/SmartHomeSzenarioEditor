@@ -1,6 +1,7 @@
 package controller;
 
 import data.models.Model;
+import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import javafx.beans.value.ChangeListener;
@@ -36,6 +37,8 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         switch (view.getTreeItemType(newValue)) {
             case RAEUME   -> zeigeRaeumePanel();
             case RAUM     -> zeigeRaumDetail(model.getRaum(view.getRaumUuidForItem(newValue)));
+            case GERAETE  -> zeigeGeraetePanel();
+            case GERAET   -> zeigeGeraetDetail(model.getGeraet(view.getGeraetUuidForItem(newValue)));
             case SZENARIO -> zeigeSzenarioDetailPanel(model.getSzenario(view.getSzenarioUuidForItem(newValue)));
             default       -> StatusLog.addError(new InputMismatchException("Ausgewähltes Objekt existiert nicht."));
         }
@@ -65,6 +68,65 @@ public class Controller implements ChangeListener<TreeItem<String>> {
     }
 
     //TODO: Controller vielleich aufteilen in eigenen Raum, Geräte und Szenario Controller und von diesem hier nur noch delegieren
+
+    private void zeigeGeraetePanel() {
+        zeigePanelHelper("geraete-view.fxml", loader -> {
+            final GeraeteController geraeteController = loader.getController();
+            geraeteController.setGeraete(new ArrayList<>(model.getGeraete().values()));
+            geraeteController.setOnGeraetOeffnen(this::zeigeGeraetDetail);
+            geraeteController.setOnNeuenGeraetAnlegenRequested(this::zeigeNeuesGeraetPanel);
+            geraeteController.setOnAuswahlLoeschen(ids -> {
+                ids.forEach(model::deleteGeraet);
+                nachModelAenderung();
+                zeigeGeraetePanel();
+            });
+        });
+    }
+
+    private void zeigeGeraetDetail(final Geraet geraet) {
+        zeigePanelHelper("geraet-view.fxml", loader -> {
+            final GeraetController geraetController = loader.getController();
+            geraetController.setGeraet(geraet);
+            geraetController.setOnBearbeiten(() -> zeigeBearbeitenGeraetPanel(geraet));
+            geraetController.setOnAbbrechen(this::zeigeGeraetePanel);
+        });
+    }
+
+    private void zeigeNeuesGeraetPanel() {
+        zeigePanelHelper("neues-geraet-view.fxml", loader -> {
+            final NeuesGeraetController neuesGeraetController = loader.getController();
+            neuesGeraetController.setGeraetTypen(new ArrayList<>(model.getGeraeteTypen()));
+            neuesGeraetController.setRaeume(new ArrayList<>(model.getRaumMap().values()));
+            neuesGeraetController.setAttributTypenProvider(model::getAttributTypenFuerGeraetTyp);
+            neuesGeraetController.setOnAnlegen((name, art, raum, attributeMap) -> {
+                model.addGeraet(name, art, raum, attributeMap);
+                nachModelAenderung();
+                zeigeGeraetePanel();
+            });
+            neuesGeraetController.setOnAbbrechen(this::zeigeGeraetePanel);
+        });
+    }
+
+    private void zeigeBearbeitenGeraetPanel(final Geraet geraet) {
+        zeigePanelHelper("edit-geraet-view.fxml", loader -> {
+            final BearbeitenGeraetController bearbeitenGeraetController = loader.getController();
+            bearbeitenGeraetController.setGeraet(geraet);
+            bearbeitenGeraetController.setRaeume(new ArrayList<>(model.getRaumMap().values()), geraet.getRaum());
+            bearbeitenGeraetController.setOnSpeichern((name, raum, attributeMap) -> {
+                model.updateGeraetName(geraet, name);
+                model.updateGeraetRaum(geraet, raum);
+                model.updateGeraetWerte(geraet, attributeMap);
+                nachModelAenderung();
+                zeigeGeraetDetail(geraet);
+            });
+            bearbeitenGeraetController.setOnAbbrechen(() -> zeigeGeraetDetail(geraet));
+            bearbeitenGeraetController.setOnLoeschen(() -> {
+                model.deleteGeraet(geraet.getId());
+                nachModelAenderung();
+                zeigeGeraetePanel();
+            });
+        });
+    }
 
     private void zeigeRaeumePanel() {
         zeigePanelHelper("raeume-view.fxml", loader -> {

@@ -30,4 +30,6 @@ public abstract class Geraet extends DAO {
 
     public abstract Map<String, String> getValues();
 
+    public abstract Map<String, Class<?>> getAttributTypen();
+
 }

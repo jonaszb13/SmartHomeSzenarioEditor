@@ -42,4 +42,11 @@ public class Heizung extends Geraet {
         values.put("zielTemp", Float.toString(zielTemp));
         return values;
     }
+
+    @Override
+    public Map<String, Class<?>> getAttributTypen() {
+        final Map<String, Class<?>> typen = new HashMap<>();
+        typen.put("zielTemp", float.class);
+        return typen;
+    }
 }

@@ -83,6 +83,7 @@ public final class GeraetObjektService {
         try {
             final Geraet geraet = GeraetFactory.getInstance().createGeraet(id, name, raum, art);
             if (geraetDataService.addGeraet(geraet, art, attributeMap)) {
+                geraet.setValues(attributeMap);
                 geraetMap.put(id, geraet);
                 StatusLog.addHinweis("Neues Gerät hinzugefügt. ID: " + geraet.getId());
                 erfolgreich = true;

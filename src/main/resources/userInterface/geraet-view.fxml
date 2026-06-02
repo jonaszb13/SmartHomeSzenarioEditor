@@ -1,8 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<StackPane>
-    <Label text="Gerät"/>
-</StackPane>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.GeraetController"
+            style="-fx-background-color: #fff;"
+            AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+            AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+    <top>
+        <VBox spacing="5" style="-fx-border-color: transparent transparent #c4c6c9 transparent; -fx-border-width: 0 0 1 0">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Label text="Einzelansicht" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+            <Label fx:id="geraetNameLabel" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="10" style="-fx-background-color: #fff">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+            <VBox spacing="5">
+                <Label text="ID"/>
+                <TextField fx:id="idField" editable="false"
+                           style="-fx-background-color: #f0f0f0;"/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Gerätename"/>
+                <TextField fx:id="nameField" editable="false"
+                           style="-fx-background-color: #f0f0f0;"/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Gerätetyp"/>
+                <TextField fx:id="typField" editable="false"
+                           style="-fx-background-color: #f0f0f0;"/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Zugeordneter Raum"/>
+                <TextField fx:id="raumField" editable="false"
+                           style="-fx-background-color: #f0f0f0;"/>
+            </VBox>
+
+            <Separator/>
+
+            <VBox fx:id="attributeContainer" spacing="10"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox style="-fx-background-color: #fff">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Button text="Abbrechen" prefWidth="200" prefHeight="50" onAction="#handleAbbrechen"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Bearbeiten" prefWidth="200" prefHeight="50" onAction="#handleBearbeiten"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

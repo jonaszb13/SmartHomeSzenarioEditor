@@ -51,6 +51,15 @@ public class Steckdose extends Geraet {
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
         values.put("eingeschaltet", Boolean.toString(eingeschaltet));
+        values.put("aktuelleLeistung", Float.toString(aktuelleLeistung));
         return values;
+    }
+
+    @Override
+    public Map<String, Class<?>> getAttributTypen() {
+        final Map<String, Class<?>> typen = new HashMap<>();
+        typen.put("eingeschaltet", boolean.class);
+        typen.put("aktuelleLeistung", float.class);
+        return typen;
     }
 }

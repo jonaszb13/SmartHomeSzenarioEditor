@@ -53,4 +53,12 @@ public class Sensor extends Geraet {
         values.put("ausschlag", Boolean.toString(ausschlag));
         return values;
     }
+
+    @Override
+    public Map<String, Class<?>> getAttributTypen() {
+        final Map<String, Class<?>> typen = new HashMap<>();
+        typen.put("eingeschaltet", boolean.class);
+        typen.put("ausschlag", boolean.class);
+        return typen;
+    }
 }

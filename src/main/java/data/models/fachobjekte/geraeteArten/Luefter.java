@@ -52,4 +52,12 @@ public class Luefter extends Geraet {
         values.put("staerke", Float.toString(staerke));
         return values;
     }
+
+    @Override
+    public Map<String, Class<?>> getAttributTypen() {
+        final Map<String, Class<?>> typen = new HashMap<>();
+        typen.put("eingeschaltet", boolean.class);
+        typen.put("staerke", float.class);
+        return typen;
+    }
 }

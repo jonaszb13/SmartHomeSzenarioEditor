@@ -68,8 +68,17 @@ public class Lampe extends Geraet {
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
         values.put("haelligkeit", Double.toString(getHaelligkeit()));
-        values.put("farbe", getFarbe().toString());
+        values.put("farbe", farbe != null ? String.format("#%02x%02x%02x", farbe.getRed(), farbe.getGreen(), farbe.getBlue()) : "#000000");
         values.put("eingeschaltet", Boolean.toString(eingeschaltet));
         return values;
+    }
+
+    @Override
+    public Map<String, Class<?>> getAttributTypen() {
+        final Map<String, Class<?>> typen = new HashMap<>();
+        typen.put("haelligkeit", double.class);
+        typen.put("farbe", Color.class);
+        typen.put("eingeschaltet", boolean.class);
+        return typen;
     }
 }
