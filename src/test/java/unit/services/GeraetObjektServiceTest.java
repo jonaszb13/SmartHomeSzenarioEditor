@@ -122,7 +122,7 @@ class GeraetObjektServiceTest {
         StatusLog.clear();
         Map<String, String> neueWerte = new HashMap<>();
         neueWerte.put("eingeschaltet", "false");
-        neueWerte.put("helligkeit", "10.0");
+        neueWerte.put("helligkeit", "10,0");
         neueWerte.put("farbe", "#000000");
 
         boolean result = geraetObjektService.updateGeraetWerte(LAMPE_1, neueWerte);

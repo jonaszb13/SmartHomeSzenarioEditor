@@ -63,7 +63,7 @@ public class Sensor extends Geraet {
     }
     @Override
     public boolean isGueltigeAttribute(final Map<String, String> attributeMap) {
-        return attributeMap.get("eingeschaltet") == null
-                && attributeMap.get("ausschlag") == null;
+        return attributeMap.get("eingeschaltet") != null
+                && attributeMap.get("ausschlag") != null;
     }
 }
