@@ -52,7 +52,7 @@ public final class SzenarioDataService {
                 """;
         try {
             String status;
-            if (szenario.isStatus()) status = "true";
+            if (szenario.isActive()) status = "true";
             else status = "false";
             dataAccess.addSzenario(sql, szenario.getId(), szenario.getName(), szenario.getBeschreibung(), status);
             erfolgreich = true;

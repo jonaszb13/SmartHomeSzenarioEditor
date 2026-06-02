@@ -1,10 +1,13 @@
 package unit.services;
 
+import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import data.models.fachobjekte.geraeteArten.Sensor;
 import data.services.datenServices.*;
+import data.services.objektServices.GeraetObjektService;
+import data.services.objektServices.RaumObjektService;
 import data.services.objektServices.SzenarioObjektService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,14 +24,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SzenarioObjektServiceTest {
     static final UUID RAUM_ID = UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4");
-    static final UUID SENSOR_ID = UUID.fromString("c216e129-1541-4455-804c-411b17dd015b");
-    static final Raum TEST_RAUM = new Raum(RAUM_ID, "Testraum");
+    static final UUID SENSOR_1_ID = UUID.fromString("c216e129-1541-4455-804c-411b17dd015b");
+    static final UUID SENSOR_2_ID = UUID.fromString("ffe1118c-440c-40d4-bfc4-dadbfa5db831");
+    static final UUID SZENARIO_1_ID = UUID.fromString("c06ecee9-65c3-4444-aa82-e1148badfc0d");
+    static final Raum RAUM_1 = new Raum(RAUM_ID, "Raum 1");
 
-    private static SzenarioObjektService szenarioObjektService;
+
     private static DataAccess dataAccess;
     private static RaumDataService raumDataService;
+    private static RaumObjektService raumObjektService;
     private static GeraetDataService geraetDataService;
-    private static Sensor testSensor;
+    private static GeraetObjektService geraetObjektService;
+    private static SzenarioDataService szenarioDataService;
+    private static SzenarioObjektService szenarioObjektService;
+    private static Sensor sensor1;
+    private static Sensor sensor2;
+    private static HashMap<String, String> sensorWerte1;
+    private static HashMap<String, String> sensorWerte2;
+    private static Szenario szenario1;
+    private static Szenario.Aenderung aenderung1;
+
 
     @BeforeAll
     static void setUp() throws Exception {
@@ -36,56 +51,100 @@ class SzenarioObjektServiceTest {
         DatabaseCreationService.createDatabase();
         dataAccess = DataAccess.getInstance();
         raumDataService = RaumDataService.getInstance();
+        raumObjektService = RaumObjektService.getInstance();
         geraetDataService = GeraetDataService.getInstance();
+        geraetObjektService = GeraetObjektService.getInstance();
+        szenarioDataService = SzenarioDataService.getInstance();
         szenarioObjektService = SzenarioObjektService.getInstance();
-        testSensor = (Sensor) GeraetFactory.getInstance().createGeraet(SENSOR_ID, "Testsensor", TEST_RAUM, "Sensor");
+
+        sensor1 = (Sensor) GeraetFactory.getInstance().createGeraet(SENSOR_1_ID, "Sensor 1", RAUM_1, "Sensor");
+        sensor2 = (Sensor) GeraetFactory.getInstance().createGeraet(SENSOR_2_ID, "Sensor 2", RAUM_1, "Sensor");
+
+        sensorWerte1 = new HashMap<>();
+        sensorWerte1.put("eingeschaltet", "true");
+        sensorWerte1.put("ausschlag", "true");
+        sensorWerte2 = new HashMap<>();
+        sensorWerte2.put("eingeschaltet", "false");
+        sensorWerte2.put("ausschlag", "false");
+
+        szenario1 = new Szenario(SZENARIO_1_ID, "Szenario 1");
+        aenderung1 = szenarioObjektService.getAenderung(sensor2, "Sensor an", "eingeschaltet", "true");
+
     }
 
     @BeforeEach
     void init() throws Exception {
         StatusLog.clear();
-        raumDataService.addRaum(TEST_RAUM);
-        geraetDataService.addGeraet(testSensor, "Sensor", new HashMap<>());
-        Map<UUID, data.models.fachobjekte.Geraet> geraetMap = new HashMap<>();
-        geraetMap.put(SENSOR_ID, testSensor);
+
+        raumDataService.addRaum(RAUM_1);
+        geraetDataService.addGeraet(sensor1, "Sensor", sensorWerte1);
+        geraetDataService.addGeraet(sensor2, "Sensor", sensorWerte2);
+        szenarioDataService.addSzenario(szenario1);
+        szenarioDataService.addSzenarioInhalt(szenario1, aenderung1, 2);
+
+        Map<UUID, Raum> raumMap = raumObjektService.getAllRaeume();
+        Map<UUID, Geraet> geraetMap = geraetObjektService.getAllGeraete(raumMap);
         szenarioObjektService.getAllSzenarien(geraetMap);
+
     }
 
     @Test
     void testAddSzenario() {
         Map<Integer, Szenario.Aenderung> aenderungen = new HashMap<>();
-        aenderungen.put(1, new Szenario.Aenderung(UUID.randomUUID(), testSensor, "Sensor an", "eingeschaltet", "true"));
+        aenderungen.put(1, szenarioObjektService.getAenderung(sensor1, "Sensor aus", "eingeschaltet", "false"));
 
-        boolean result = szenarioObjektService.addSzenario("Testszenario", "Beschreibung", aenderungen);
+        boolean result = szenarioObjektService.addSzenario("Szenario 2", "Sensor aus", aenderungen);
 
         assertTrue(result);
         assertFalse(StatusLog.hasError());
-        assertEquals(1, szenarioObjektService.getSzenarioMap().size());
-        Szenario szenario = szenarioObjektService.getSzenarioMap().values().iterator().next();
-        assertEquals("Testszenario", szenario.getName());
-        assertEquals("Beschreibung", szenario.getBeschreibung());
+        assertEquals(2, szenarioObjektService.getSzenarioMap().size());
+        Szenario szenario = szenarioObjektService.getSzenarioMap().values().stream().filter(o -> o.getName().equals("Szenario 2")).findFirst().get();
+        assertEquals("Sensor aus", szenario.getBeschreibung());
         assertEquals(1, szenario.getAenderungen().size());
+        assertEquals("eingeschaltet", szenario.getAenderungen().get(1).schluessel());
+        assertEquals("false", szenario.getAenderungen().get(1).wert());
+        assertEquals("Sensor aus", szenario.getAenderungen().get(1).beschreibung());
+    }
+
+    @Test
+    void testUpdateSzenarioName() {
+        StatusLog.clear();
+        Szenario szenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
+        boolean result = szenarioObjektService.updateSzenarioName(szenario, "Neu");
+
+        assertTrue(result);
+        assertFalse(StatusLog.hasError());
+        assertEquals("Neu", szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).getName());
+
+    }
+
+    @Test
+    void testupdateSzenarioBeschreibung() {
+        StatusLog.clear();
+        Szenario szenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
+        boolean result = szenarioObjektService.updateSzenarioBeschreibung(szenario, "Neue Beschreibung");
+
+        assertTrue(result);
+        assertFalse(StatusLog.hasError());
+        assertEquals("Neue Beschreibung", szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).getBeschreibung());
     }
 
     @Test
     void testUpdateSzenario() {
-        szenarioObjektService.addSzenario("Alt", "Alte Beschreibung", new HashMap<>());
         StatusLog.clear();
-        Szenario szenario = szenarioObjektService.getSzenarioMap().values().iterator().next();
-
+        Szenario szenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
         boolean result = szenarioObjektService.updateSzenario(szenario, "Neu", "Neue Beschreibung");
 
         assertTrue(result);
         assertFalse(StatusLog.hasError());
-        assertEquals("Neu", szenarioObjektService.getSzenarioMap().get(szenario.getId()).getName());
-        assertEquals("Neue Beschreibung", szenarioObjektService.getSzenarioMap().get(szenario.getId()).getBeschreibung());
+        assertEquals("Neu", szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).getName());
+        assertEquals("Neue Beschreibung", szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).getBeschreibung());
     }
 
     @Test
     void testDeleteSzenario() {
-        szenarioObjektService.addSzenario("Zu löschen", "Beschreibung", new HashMap<>());
         StatusLog.clear();
-        Szenario szenario = szenarioObjektService.getSzenarioMap().values().iterator().next();
+        Szenario szenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
 
         boolean result = szenarioObjektService.deleteSzenario(szenario);
 
@@ -96,46 +155,39 @@ class SzenarioObjektServiceTest {
 
     @Test
     void testAddSzenarioInhalt() {
-        szenarioObjektService.addSzenario("Szenario", "Beschreibung", new HashMap<>());
         StatusLog.clear();
-        Szenario szenario = szenarioObjektService.getSzenarioMap().values().iterator().next();
-        Szenario.Aenderung aenderung = new Szenario.Aenderung(UUID.randomUUID(), testSensor, "Sensor an", "eingeschaltet", "true");
+        Szenario szenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
+        Szenario.Aenderung aenderung = szenarioObjektService.getAenderung(sensor1, "Sensor an", "eingeschaltet", "true");
 
         boolean result = szenarioObjektService.addSzenarioInhalt(szenario, aenderung, 1);
 
         assertTrue(result);
         assertFalse(StatusLog.hasError());
-        assertEquals(1, szenario.getAenderungen().size());
-        assertEquals(aenderung.id(), szenario.getAenderungen().get(1).id());
+        assertEquals(2, szenario.getAenderungen().size());
+        assertEquals(aenderung, szenario.getAenderungen().get(1));
     }
 
     @Test
     void testUpdateSzenarioInhalt() {
-        Szenario.Aenderung aenderung = new Szenario.Aenderung(UUID.randomUUID(), testSensor, "Sensor an", "eingeschaltet", "true");
-        Map<Integer, Szenario.Aenderung> aenderungen = new HashMap<>();
-        aenderungen.put(1, aenderung);
-        szenarioObjektService.addSzenario("Szenario", "Beschreibung", aenderungen);
         StatusLog.clear();
-        Szenario szenario = szenarioObjektService.getSzenarioMap().values().iterator().next();
+        Szenario szenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
 
-        boolean result = szenarioObjektService.alterSzenarioInhalt(szenario, 1, testSensor, "Sensor aus", "eingeschaltet", "false");
+        boolean result = szenarioObjektService.alterSzenarioInhalt(szenario, 2, sensor1, "Sensor aus", "eingeschaltet", "false");
 
         assertTrue(result);
         assertFalse(StatusLog.hasError());
-        assertEquals("false", szenario.getAenderungen().get(1).wert());
-        assertEquals("Sensor aus", szenario.getAenderungen().get(1).beschreibung());
+        assertEquals(sensor1, szenario.getAenderungen().get(2).geraet());
+        assertEquals("eingeschaltet", szenario.getAenderungen().get(2).schluessel());
+        assertEquals("false", szenario.getAenderungen().get(2).wert());
+        assertEquals("Sensor aus", szenario.getAenderungen().get(2).beschreibung());
     }
 
     @Test
     void testDeleteSzenarioInhalt() {
-        Szenario.Aenderung aenderung = new Szenario.Aenderung(UUID.randomUUID(), testSensor, "Sensor an", "eingeschaltet", "true");
-        Map<Integer, Szenario.Aenderung> aenderungen = new HashMap<>();
-        aenderungen.put(1, aenderung);
-        szenarioObjektService.addSzenario("Szenario", "Beschreibung", aenderungen);
         StatusLog.clear();
-        Szenario szenario = szenarioObjektService.getSzenarioMap().values().iterator().next();
+        Szenario szenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
 
-        boolean result = szenarioObjektService.deleteSzenarioInhalt(szenario, 1);
+        boolean result = szenarioObjektService.deleteSzenarioInhalt(szenario, 2);
 
         assertTrue(result);
         assertFalse(StatusLog.hasError());

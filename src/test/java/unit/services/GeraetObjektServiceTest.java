@@ -2,16 +2,21 @@ package unit.services;
 
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
+import data.models.fachobjekte.geraeteArten.Lampe;
+import data.models.fachobjekte.geraeteArten.Sensor;
 import data.services.datenServices.DataAccess;
 import data.services.datenServices.DatabaseCreationService;
+import data.services.datenServices.GeraetDataService;
 import data.services.datenServices.RaumDataService;
 import data.services.objektServices.GeraetObjektService;
+import data.services.objektServices.RaumObjektService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import util.statusmeldungen.StatusLog;
 
+import java.awt.*;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,14 +25,21 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GeraetObjektServiceTest {
-    static final UUID RAUM_ID = UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4");
-    static final UUID RAUM2_ID = UUID.fromString("04c18f4e-36db-4f65-816c-475577a044a2");
-    static final Raum TEST_RAUM = new Raum(RAUM_ID, "Testraum");
-    static final Raum TEST_RAUM_2 = new Raum(RAUM2_ID, "Testraum 2");
+    static final UUID RAUM_1_ID = UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4");
+    static final UUID RAUM_3_ID = UUID.fromString("04c18f4e-36db-4f65-816c-475577a044a2");
+    static final Raum RAUM_1 = new Raum(RAUM_1_ID, "Raum 1");
+    static final Raum RAUM_3 = new Raum(RAUM_3_ID, "Raum 2");
+    static final UUID LAMPE_ID = UUID.fromString("fe4dacb0-7ef9-405f-be51-b739a4b6cd29");
+    static final Lampe LAMPE_1 = new Lampe(LAMPE_ID, "Lampe 1", RAUM_3);
+    static final UUID SENSOR_2_ID = UUID.fromString("ffe1118c-440c-40d4-bfc4-dadbfa5db831");
+    static final Sensor SENSOR_2 = new Sensor(SENSOR_2_ID, "Sensor 2", RAUM_1);
 
-    private static GeraetObjektService geraetObjektService;
     private static DataAccess dataAccess;
     private static RaumDataService raumDataService;
+    private static RaumObjektService raumObjektService;
+    private static GeraetDataService geraetDataService;
+    private static GeraetObjektService geraetObjektService;
+
 
     @BeforeAll
     static void setUp() throws SQLException {
@@ -35,93 +47,99 @@ class GeraetObjektServiceTest {
         DatabaseCreationService.createDatabase();
         dataAccess = DataAccess.getInstance();
         raumDataService = RaumDataService.getInstance();
+        raumObjektService = RaumObjektService.getInstance();
+        geraetDataService = GeraetDataService.getInstance();
         geraetObjektService = GeraetObjektService.getInstance();
     }
 
     @BeforeEach
     void init() throws Exception {
         StatusLog.clear();
-        raumDataService.addRaum(TEST_RAUM);
-        raumDataService.addRaum(TEST_RAUM_2);
-        Map<UUID, Raum> raumMap = new HashMap<>();
-        raumMap.put(RAUM_ID, TEST_RAUM);
-        raumMap.put(RAUM2_ID, TEST_RAUM_2);
+        raumDataService.addRaum(RAUM_1);
+        raumDataService.addRaum(RAUM_3);
+        geraetDataService.addGeraet(LAMPE_1, "Lampe", getLampenAttribute());
+        HashMap<String, String> sensorWerte = new HashMap<>();
+        sensorWerte.put("eingeschaltet", "false");
+        sensorWerte.put("ausschlag", "false");
+        geraetDataService.addGeraet(SENSOR_2, "Sensor", sensorWerte);
+
+        raumObjektService.getAllRaeume();
+        Map<UUID, Raum> raumMap = raumObjektService.getRaumMap();
         geraetObjektService.getAllGeraete(raumMap);
     }
 
     @Test
     void testAddGeraet() {
-        boolean result = geraetObjektService.addGeraet("Testlampe", "Lampe", TEST_RAUM, lampeAttr());
+        Map<String, String> attributemap = new HashMap<>();
+        attributemap.put("eingeschaltet", "true");
+        attributemap.put("ausschlag", "true");
 
-        assertTrue(result);
+        boolean erfolgreich = geraetObjektService.addGeraet("Sensor 1", "Sensor", RAUM_1, attributemap);
+
+        assertTrue(erfolgreich);
         assertFalse(StatusLog.hasError());
-        assertEquals(1, geraetObjektService.getGeraetMap().size());
-        Geraet geraet = geraetObjektService.getGeraetMap().values().iterator().next();
-        assertEquals("Testlampe", geraet.getName());
-        assertEquals(RAUM_ID, geraet.getRaum().getId());
+        assertEquals(3, geraetObjektService.getGeraetMap().size());
+        Geraet geraet = geraetObjektService.getGeraetMap().values().stream().filter(o -> o.getName().equals("Sensor 1")).findFirst().get();
+        assertEquals(RAUM_1, geraet.getRaum());
     }
 
     @Test
     void testDeleteGeraet() {
-        geraetObjektService.addGeraet("Testlampe", "Lampe", TEST_RAUM, lampeAttr());
         StatusLog.clear();
-        UUID id = geraetObjektService.getGeraetMap().keySet().iterator().next();
 
-        boolean result = geraetObjektService.deleteGeraet(id);
+        boolean erfolgreich = geraetObjektService.deleteGeraet(LAMPE_ID);
 
-        assertTrue(result);
+        assertTrue(erfolgreich);
         assertFalse(StatusLog.hasError());
-        assertFalse(geraetObjektService.getGeraetMap().containsKey(id));
+        assertEquals(1, geraetObjektService.getGeraetMap().size());
+        assertFalse(geraetObjektService.getGeraetMap().containsKey(LAMPE_ID));
     }
 
     @Test
     void testUpdateGeraetName() {
-        geraetObjektService.addGeraet("Testlampe", "Lampe", TEST_RAUM, lampeAttr());
         StatusLog.clear();
-        Geraet geraet = geraetObjektService.getGeraetMap().values().iterator().next();
 
-        boolean result = geraetObjektService.updateGeraetName(geraet, "Neue Lampe");
+        boolean erfolgreich = geraetObjektService.updateGeraetName(LAMPE_1, "Neue Lampe");
 
-        assertTrue(result);
+        assertTrue(erfolgreich);
         assertFalse(StatusLog.hasError());
-        assertEquals("Neue Lampe", geraetObjektService.getGeraetMap().get(geraet.getId()).getName());
+        assertEquals("Neue Lampe", geraetObjektService.getGeraetMap().get(LAMPE_ID).getName());
     }
 
     @Test
     void testUpdateGeraetRaum() {
-        geraetObjektService.addGeraet("Testlampe", "Lampe", TEST_RAUM, lampeAttr());
         StatusLog.clear();
-        Geraet geraet = geraetObjektService.getGeraetMap().values().iterator().next();
 
-        boolean result = geraetObjektService.updateGeraetRaum(geraet, TEST_RAUM_2);
+        boolean result = geraetObjektService.updateGeraetRaum(LAMPE_1, RAUM_1);
 
         assertTrue(result);
         assertFalse(StatusLog.hasError());
-        assertEquals(RAUM2_ID, geraetObjektService.getGeraetMap().get(geraet.getId()).getRaum().getId());
+        assertEquals(RAUM_1, geraetObjektService.getGeraetMap().get(LAMPE_ID).getRaum());
     }
 
     @Test
     void testUpdateGeraetWerte() {
-        geraetObjektService.addGeraet("Testlampe", "Lampe", TEST_RAUM, lampeAttr());
         StatusLog.clear();
-        Geraet geraet = geraetObjektService.getGeraetMap().values().iterator().next();
         Map<String, String> neueWerte = new HashMap<>();
         neueWerte.put("eingeschaltet", "false");
         neueWerte.put("haelligkeit", "10.0");
         neueWerte.put("farbe", "#000000");
 
-        boolean result = geraetObjektService.updateGeraetWerte(geraet, neueWerte);
+        boolean result = geraetObjektService.updateGeraetWerte(LAMPE_1, neueWerte);
 
         assertTrue(result);
         assertFalse(StatusLog.hasError());
+        assertFalse(LAMPE_1.isEingeschaltet());
+        assertEquals(10, LAMPE_1.getHaelligkeit());
+        assertEquals(Color.decode("#000000"), LAMPE_1.getFarbe());
     }
 
-    private static Map<String, String> lampeAttr() {
-        Map<String, String> attr = new HashMap<>();
-        attr.put("eingeschaltet", "true");
-        attr.put("haelligkeit", "80.0");
-        attr.put("farbe", "#FFFFFF");
-        return attr;
+    private static Map<String, String> getLampenAttribute() {
+        Map<String, String> attributeMap = new HashMap<>();
+        attributeMap.put("eingeschaltet", "true");
+        attributeMap.put("haelligkeit", "99.7");
+        attributeMap.put("farbe", "#00FF88");
+        return attributeMap;
     }
 
     @AfterEach
