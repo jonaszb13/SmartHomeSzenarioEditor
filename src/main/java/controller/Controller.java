@@ -40,6 +40,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             case GERAETE  -> zeigeGeraetePanel();
             case GERAET   -> zeigeGeraetDetail(model.getGeraet(view.getGeraetUuidForItem(newValue)));
             case SZENARIO -> zeigeSzenarioDetailPanel(model.getSzenario(view.getSzenarioUuidForItem(newValue)));
+            //TODO Fehler soll nicht zusätzlich noch erstellt werden, wenn Fehlermeldung durch Fehler beim Erstellen des Geräts ausgelöst ist
             default       -> StatusLog.addError(new InputMismatchException("Ausgewähltes Objekt existiert nicht."));
         }
 

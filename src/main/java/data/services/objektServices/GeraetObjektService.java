@@ -40,7 +40,7 @@ public final class GeraetObjektService {
         Map<UUID, Geraet> localGeraetMap = new HashMap<>();
         //TODO QUESTION: Sollen geräte ohne Attribute geladen werden?
         CachedRowSet crs = geraetDataService.getAllGeraete();
-        Map<String, String> atributeHashMap = new HashMap<>();
+        Map<String, String> attributeHashMap = new HashMap<>();
         UUID lastId = null;
         Geraet aktuellesGeraet = null;
         boolean erstesMal = true;
@@ -49,8 +49,8 @@ public final class GeraetObjektService {
             if (!id.equals(lastId)) {
                 if (erstesMal) erstesMal = false;
                 else {
-                    aktuellesGeraet.setValues(atributeHashMap);
-                    atributeHashMap = new HashMap<>();
+                    aktuellesGeraet.setValues(attributeHashMap);
+                    attributeHashMap = new HashMap<>();
                 }
                 final UUID raum = UUID.fromString(crs.getString("raum"));
                 try {
@@ -61,14 +61,14 @@ public final class GeraetObjektService {
                     StatusLog.addError("Bei der dynamischen Erstellung eines Geräts ist ein Fehler aufgetreten", e);
                     //TODO was mit Null tun?
                 }
-                atributeHashMap.put(crs.getString("schluessel"), crs.getString("wert"));
+                attributeHashMap.put(crs.getString("schluessel"), crs.getString("wert"));
                 localGeraetMap.put(id, aktuellesGeraet);
                 raumMap.get(raum).getGeraete().add(aktuellesGeraet);
                 lastId = id;
             }
-            atributeHashMap.put(crs.getString("schluessel"), crs.getString("wert"));
+            attributeHashMap.put(crs.getString("schluessel"), crs.getString("wert"));
         }
-        if (aktuellesGeraet != null) aktuellesGeraet.setValues(atributeHashMap);
+        if (aktuellesGeraet != null) aktuellesGeraet.setValues(attributeHashMap);
         StatusLog.addHinweis("GeräteMap erfolgreich geladen");
         geraetMap = localGeraetMap;
         return localGeraetMap;
@@ -82,6 +82,10 @@ public final class GeraetObjektService {
         }
         try {
             final Geraet geraet = GeraetFactory.getInstance().createGeraet(id, name, raum, art);
+            if (!geraet.isGueltigeAttribute(attributeMap)) {
+                StatusLog.addError("Das neue Gerät konnte nicht angelegt werden");
+                return erfolgreich;
+            }
             if (geraetDataService.addGeraet(geraet, art, attributeMap)) {
                 geraet.setValues(attributeMap);
                 geraetMap.put(id, geraet);
@@ -135,12 +139,16 @@ public final class GeraetObjektService {
 
     public boolean updateGeraetWerte(final Geraet geraet, final Map<String, String> attributeMap) {
         boolean erfolgreich = false;
+        if (!geraet.isGueltigeAttribute(attributeMap)) {
+           StatusLog.addError("Attribute des Geräts " + geraet.getName() + " konnten nicht aktualisiert werden");
+           return erfolgreich;
+        }
         if (geraetDataService.updateGeraetWerte(geraet, attributeMap)) {
             geraet.setValues(attributeMap);
-            StatusLog.addHinweis("Attribute des Geräts " + geraet.getId() + " wurden aktualisiert");
+            StatusLog.addHinweis("Attribute des Geräts " + geraet.getName() + " wurden aktualisiert");
             erfolgreich = true;
         } else {
-            StatusLog.addError("Attribute des Geräts " + geraet.getId() + " konnten nicht aktualisiert werden");
+            StatusLog.addError("Attribute des Geräts " + geraet.getName() + " konnten nicht aktualisiert werden");
         }
         return erfolgreich;
     }

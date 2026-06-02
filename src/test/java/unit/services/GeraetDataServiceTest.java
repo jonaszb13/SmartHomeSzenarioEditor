@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class GeraetDataServiceTest {
     private static final String LAMPE = "Lampe";
     private static final String SENSOR = "Sensor";
-    private static final String HAELLIGKEIT = "haelligkeit";
+    private static final String HELLIGKEIT = "helligkeit";
     private static final String FARBE = "farbe";
     private static final String EINGESCHALTET = "eingeschaltet";
     private static final String TRUE = "true";
@@ -54,7 +54,7 @@ class GeraetDataServiceTest {
                 "Sensor 1", raum, SENSOR);
         Map<String, String> lampeMap = new HashMap<>();
         Map<String, String> sensorMap = new HashMap<>();
-        lampeMap.put(HAELLIGKEIT, "99.7");
+        lampeMap.put(HELLIGKEIT, "99.7");
         lampeMap.put(FARBE, "#00FF88");
         lampeMap.put(EINGESCHALTET, TRUE);
         sensorMap.put(EINGESCHALTET, TRUE);
@@ -109,7 +109,7 @@ class GeraetDataServiceTest {
                 "Sensor 1", raum, SENSOR);
         Map<String, String> lampeMap = new HashMap<>();
         Map<String, String> sensorMap = new HashMap<>();
-        lampeMap.put(HAELLIGKEIT, "99.7");
+        lampeMap.put(HELLIGKEIT, "99.7");
         lampeMap.put(FARBE, "#00FF88");
         lampeMap.put(EINGESCHALTET, TRUE);
         sensorMap.put(EINGESCHALTET, TRUE);
@@ -146,11 +146,11 @@ class GeraetDataServiceTest {
         Lampe lampe = (Lampe) geraetFactory.createGeraet(UUID.fromString("fe4dacb0-7ef9-405f-be51-b739a4b6cd29"),
                 "Lampe 1", raum2, LAMPE);
         Map<String, String> lampeMap = new HashMap<>();
-        lampeMap.put(HAELLIGKEIT, "99.7");
+        lampeMap.put(HELLIGKEIT, "99.7");
         lampeMap.put(FARBE, "#00FF88");
         lampeMap.put(EINGESCHALTET, TRUE);
         Map<String, String> lampeMap2 = new HashMap<>();
-        lampeMap2.put(HAELLIGKEIT, "50.12");
+        lampeMap2.put(HELLIGKEIT, "50.12");
         lampeMap2.put(FARBE, "#1234AB");
         lampeMap2.put(EINGESCHALTET, "false");
 
