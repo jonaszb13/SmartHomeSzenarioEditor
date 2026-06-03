@@ -1,6 +1,7 @@
 package data.models.fachobjekte.geraeteArten;
 
 import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.Merkmalbezeichnung;
 import data.models.fachobjekte.Raum;
 import util.statusmeldungen.StatusLog;
 
@@ -36,47 +37,47 @@ public class Steckdose extends Geraet {
 
     @Override
     public void updateValue(final String key, final String value) {
-        switch (key) {
-            case "eingeschaltet":
-                setEingeschaltet(Boolean.parseBoolean(value));
-                break;
-            case "aktuelleLeistung":
-                setAktuelleLeistung(Double.parseDouble(value));
-                break;
-            default:
-                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        if (Merkmalbezeichnung.EINGESCHALTET.getBezeichnung().equals(key)) {
+            setEingeschaltet(Boolean.parseBoolean(value));
+        } else if (Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung().equals(key)) {
+            setAktuelleLeistung(Double.parseDouble(value));
+        } else {
+            IllegalArgumentException iaE = new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+            StatusLog.addError(iaE.getMessage(), iaE);
+            throw iaE;
         }
     }
 
     @Override
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
-        values.put("eingeschaltet", Boolean.toString(eingeschaltet));
-        values.put("aktuelleLeistung", formatiereZahlenwerteInsDeutsche(Double.toString(aktuelleLeistung)));
+        values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(eingeschaltet));
+        values.put(Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung(), formatiereZahlenwerteInsDeutsche(Double.toString(aktuelleLeistung)));
         return values;
     }
 
     @Override
     public Map<String, Class<?>> getAttributTypen() {
         final Map<String, Class<?>> typen = new HashMap<>();
-        typen.put("eingeschaltet", boolean.class);
-        typen.put("aktuelleLeistung", double.class);
+        typen.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), boolean.class);
+        typen.put(Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung(), double.class);
         return typen;
     }
+
     @Override
     public boolean isGueltigeAttribute(final Map<String, String> attributeMap) {
-        if (attributeMap.get("eingeschaltet") == null
-                || attributeMap.get("aktuelleLeistung") == null) {
+        if (attributeMap.get(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung()) == null
+                || attributeMap.get(Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung()) == null) {
             return false;
         }
-        attributeMap.replace("aktuelleLeistung", formatiereZahlenwerteInsEnglische(attributeMap.get("aktuelleLeistung")));
-        if (!isDouble(attributeMap.get("aktuelleLeistung"))) {
-            StatusLog.addError("Die aktuelle Leistung muss eine Zahl sein");
+        attributeMap.replace(Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung(), formatiereZahlenwerteInsEnglische(attributeMap.get(Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung())));
+        if (!isDouble(attributeMap.get(Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung()))) {
+            StatusLog.addError("Die " + Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung() + " muss eine Zahl sein \nDer Dezimalpunkt ist das Komma");
             return false;
         }
-        double aktuelleLeistung = Double.parseDouble(attributeMap.get("aktuelleLeistung"));
+        double aktuelleLeistung = Double.parseDouble(attributeMap.get(Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung()));
         if (aktuelleLeistung < 0 || aktuelleLeistung > 3680) {
-            StatusLog.addError("Die aktuelle Leistung muss zwischen 0 und 3680 Watt liegen");
+            StatusLog.addError("Die " + Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung() + " muss zwischen 0 und 3680 Watt liegen \nDer Dezimalpunkt ist das Komma");
             return false;
         }
         return true;

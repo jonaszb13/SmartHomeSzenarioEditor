@@ -1,6 +1,7 @@
 package unit.services;
 
 import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.Merkmalbezeichnung;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.geraeteArten.Lampe;
 import data.models.fachobjekte.geraeteArten.Sensor;
@@ -52,6 +53,14 @@ class GeraetObjektServiceTest {
         geraetObjektService = GeraetObjektService.getInstance();
     }
 
+    private static Map<String, String> getLampenAttribute() {
+        Map<String, String> attributeMap = new HashMap<>();
+        attributeMap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
+        attributeMap.put(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), "99.7");
+        attributeMap.put(Merkmalbezeichnung.FARBE.getBezeichnung(), "#00FF88");
+        return attributeMap;
+    }
+
     @BeforeEach
     void init() throws Exception {
         StatusLog.clear();
@@ -59,28 +68,13 @@ class GeraetObjektServiceTest {
         raumDataService.addRaum(RAUM_3);
         geraetDataService.addGeraet(LAMPE_1, "Lampe", getLampenAttribute());
         HashMap<String, String> sensorWerte = new HashMap<>();
-        sensorWerte.put("eingeschaltet", "false");
-        sensorWerte.put("ausschlag", "false");
+        sensorWerte.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "false");
+        sensorWerte.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), "false");
         geraetDataService.addGeraet(SENSOR_2, "Sensor", sensorWerte);
 
         raumObjektService.getAllRaeume();
         Map<UUID, Raum> raumMap = raumObjektService.getRaumMap();
         geraetObjektService.getAllGeraete(raumMap);
-    }
-
-    @Test
-    void testAddGeraet() {
-        Map<String, String> attributemap = new HashMap<>();
-        attributemap.put("eingeschaltet", "true");
-        attributemap.put("ausschlag", "true");
-
-        boolean erfolgreich = geraetObjektService.addGeraet("Sensor 1", "Sensor", RAUM_1, attributemap);
-
-        assertTrue(erfolgreich);
-        assertFalse(StatusLog.hasError());
-        assertEquals(3, geraetObjektService.getGeraetMap().size());
-        Geraet geraet = geraetObjektService.getGeraetMap().values().stream().filter(o -> o.getName().equals("Sensor 1")).findFirst().get();
-        assertEquals(RAUM_1, geraet.getRaum());
     }
 
     @Test
@@ -118,12 +112,27 @@ class GeraetObjektServiceTest {
     }
 
     @Test
+    void testAddGeraet() {
+        Map<String, String> attributemap = new HashMap<>();
+        attributemap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
+        attributemap.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), "true");
+
+        boolean erfolgreich = geraetObjektService.addGeraet("Sensor 1", "Sensor", RAUM_1, attributemap);
+
+        assertTrue(erfolgreich);
+        assertFalse(StatusLog.hasError());
+        assertEquals(3, geraetObjektService.getGeraetMap().size());
+        Geraet geraet = geraetObjektService.getGeraetMap().values().stream().filter(o -> o.getName().equals("Sensor 1")).findFirst().get();
+        assertEquals(RAUM_1, geraet.getRaum());
+    }
+
+    @Test
     void testUpdateGeraetWerte() {
         StatusLog.clear();
         Map<String, String> neueWerte = new HashMap<>();
-        neueWerte.put("eingeschaltet", "false");
-        neueWerte.put("helligkeit", "10,0");
-        neueWerte.put("farbe", "#000000");
+        neueWerte.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "false");
+        neueWerte.put(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), "10,0");
+        neueWerte.put(Merkmalbezeichnung.FARBE.getBezeichnung(), "#000000");
 
         boolean result = geraetObjektService.updateGeraetWerte(LAMPE_1, neueWerte);
 
@@ -132,14 +141,6 @@ class GeraetObjektServiceTest {
         assertFalse(LAMPE_1.isEingeschaltet());
         assertEquals(10, LAMPE_1.getHelligkeit());
         assertEquals(Color.decode("#000000"), LAMPE_1.getFarbe());
-    }
-
-    private static Map<String, String> getLampenAttribute() {
-        Map<String, String> attributeMap = new HashMap<>();
-        attributeMap.put("eingeschaltet", "true");
-        attributeMap.put("helligkeit", "99.7");
-        attributeMap.put("farbe", "#00FF88");
-        return attributeMap;
     }
 
     @AfterEach

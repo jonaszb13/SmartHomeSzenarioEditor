@@ -1,5 +1,7 @@
 package data.models.fachobjekte;
 
+import util.statusmeldungen.StatusLog;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -43,7 +45,8 @@ public abstract class Geraet extends DAO {
             updateValue(entry.getKey(), entry.getValue());
         }
     }
-    public abstract boolean isGueltigeAttribute(final Map<String, String> attributeMap);
+
+    public abstract boolean isGueltigeAttribute(Map<String, String> attributeMap);
 
     public abstract void updateValue(String key, String value);
 
@@ -55,7 +58,9 @@ public abstract class Geraet extends DAO {
         return Pattern.matches(FP_REGEX, myString);
     }
     public String formatiereZahlenwerteInsEnglische(String unformatierterWert) {
-        return unformatierterWert.replace(".", "").replace(",", ".");
+        String formatierterWert = unformatierterWert.replace(".", "").replace(",", ".");
+        if (formatierterWert.equals(unformatierterWert)) StatusLog.addHinweis("Der Dezimalpunkt ist das Komma");
+        return formatierterWert;
     }
     public String formatiereZahlenwerteInsDeutsche(String unformatierterWert) {
         return unformatierterWert.replace(".",",");

@@ -1,6 +1,7 @@
 package unit.services;
 
 import data.models.fachobjekte.GeraetFactory;
+import data.models.fachobjekte.Merkmalbezeichnung;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.geraeteArten.Lampe;
 import data.models.fachobjekte.geraeteArten.Sensor;
@@ -23,9 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class GeraetDataServiceTest {
     private static final String LAMPE = "Lampe";
     private static final String SENSOR = "Sensor";
-    private static final String HELLIGKEIT = "helligkeit";
-    private static final String FARBE = "farbe";
-    private static final String EINGESCHALTET = "eingeschaltet";
     private static final String TRUE = "true";
     private static DataAccess dataAccess;
     private static RaumDataService raumDataService;
@@ -54,10 +52,10 @@ class GeraetDataServiceTest {
                 "Sensor 1", raum, SENSOR);
         Map<String, String> lampeMap = new HashMap<>();
         Map<String, String> sensorMap = new HashMap<>();
-        lampeMap.put(HELLIGKEIT, "99.7");
-        lampeMap.put(FARBE, "#00FF88");
-        lampeMap.put(EINGESCHALTET, TRUE);
-        sensorMap.put(EINGESCHALTET, TRUE);
+        lampeMap.put(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), "99.7");
+        lampeMap.put(Merkmalbezeichnung.FARBE.getBezeichnung(), "#00FF88");
+        lampeMap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE);
+        sensorMap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE);
         sensorMap.put("ausschlag", TRUE);
 
         //Überprüfen, dass leer
@@ -109,10 +107,10 @@ class GeraetDataServiceTest {
                 "Sensor 1", raum, SENSOR);
         Map<String, String> lampeMap = new HashMap<>();
         Map<String, String> sensorMap = new HashMap<>();
-        lampeMap.put(HELLIGKEIT, "99.7");
-        lampeMap.put(FARBE, "#00FF88");
-        lampeMap.put(EINGESCHALTET, TRUE);
-        sensorMap.put(EINGESCHALTET, TRUE);
+        lampeMap.put(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), "99.7");
+        lampeMap.put(Merkmalbezeichnung.FARBE.getBezeichnung(), "#00FF88");
+        lampeMap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE);
+        sensorMap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE);
         sensorMap.put("ausschlag", TRUE);
         
         //einfügen
@@ -146,13 +144,13 @@ class GeraetDataServiceTest {
         Lampe lampe = (Lampe) geraetFactory.createGeraet(UUID.fromString("fe4dacb0-7ef9-405f-be51-b739a4b6cd29"),
                 "Lampe 1", raum2, LAMPE);
         Map<String, String> lampeMap = new HashMap<>();
-        lampeMap.put(HELLIGKEIT, "99.7");
-        lampeMap.put(FARBE, "#00FF88");
-        lampeMap.put(EINGESCHALTET, TRUE);
+        lampeMap.put(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), "99.7");
+        lampeMap.put(Merkmalbezeichnung.FARBE.getBezeichnung(), "#00FF88");
+        lampeMap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE);
         Map<String, String> lampeMap2 = new HashMap<>();
-        lampeMap2.put(HELLIGKEIT, "50.12");
-        lampeMap2.put(FARBE, "#1234AB");
-        lampeMap2.put(EINGESCHALTET, "false");
+        lampeMap2.put(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), "50.12");
+        lampeMap2.put(Merkmalbezeichnung.FARBE.getBezeichnung(), "#1234AB");
+        lampeMap2.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "false");
 
         //einfügen
         raumDataService.addRaum(raum);
