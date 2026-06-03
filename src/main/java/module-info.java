@@ -19,4 +19,6 @@ module src.main {
     exports data.models;
     exports data.models.fachobjekte;
     exports util.statusmeldungen;
+    exports data.models.fachobjekte.geraeteArten;
+    exports util.customExceptions;
 }

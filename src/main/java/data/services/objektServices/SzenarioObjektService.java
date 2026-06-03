@@ -17,7 +17,6 @@ public final class SzenarioObjektService {
     private static SzenarioObjektService instance;
     private final SzenarioDataService szenarioDataService;
     private Map<UUID, Szenario> szenarioMap;
-    private static final String SZENARIO_STRING = "Szenario ";
     public static final String WURDE_ERFOLGREICH_AKTUALISIERT = " wurde erfolgreich aktualisiert.";
     public static final String KONNTE_NICHT_AKTUALISIERT_WERDEN = " konnte nicht aktualisiert werden.";
 
@@ -57,13 +56,18 @@ public final class SzenarioObjektService {
                 localSzenarienMap.put(id, aktuellesSzenario);
                 lastId = id;
             }
-            aktuellesSzenario.getAenderungen().put(crs.getInt("position"), new Szenario.Aenderung(
-                    UUID.fromString(crs.getString(10)),
-                    geraetMap.get(UUID.fromString(crs.getString("geraet"))),
-                    crs.getString("Aktion"),
-                    crs.getString("schluessel"),
-                    crs.getString("wert")
-            ));
+            final Geraet geraet = geraetMap.get(UUID.fromString(crs.getString("geraet")));
+            if (geraet == null) {
+                StatusLog.addError("Szenario-Aktion verweist auf unbekanntes Gerät, Aktion wird übersprungen");
+            } else {
+                aktuellesSzenario.getAenderungen().put(crs.getInt("position"), new Szenario.Aenderung(
+                        UUID.fromString(crs.getString(10)),
+                        geraet,
+                        crs.getString("Aktion"),
+                        crs.getString("schluessel"),
+                        crs.getString("wert")
+                ));
+            }
         }
         StatusLog.addHinweis("SzenarienMap erfolgreich geladen");
         szenarioMap = localSzenarienMap;
@@ -83,10 +87,10 @@ public final class SzenarioObjektService {
         }
         if (szenarioDataService.addSzenario(szenario)) {
             szenarioMap.put(uuid, szenario);
-            StatusLog.addHinweis(SZENARIO_STRING + szenario.getId() + " wurde erfolgreich erstellt.");
+            StatusLog.addHinweis(szenario.getName() + " wurde erfolgreich erstellt.");
             erfolgreich = true;
         } else {
-            StatusLog.addError(SZENARIO_STRING + szenario.getId() + " konnte nicht erstellt werden.");
+            StatusLog.addError(szenario.getName() + " konnte nicht erstellt werden.");
         }
         return erfolgreich;
     }
@@ -96,10 +100,10 @@ public final class SzenarioObjektService {
         szenario.setName(name);
         szenario.setBeschreibung(beschreibung);
         if (szenarioDataService.updateSzenario(szenario)) {
-            StatusLog.addHinweis(SZENARIO_STRING + szenario.getId() + WURDE_ERFOLGREICH_AKTUALISIERT);
+            StatusLog.addHinweis(szenario.getName() + WURDE_ERFOLGREICH_AKTUALISIERT);
             erfolgreich = true;
         } else {
-            StatusLog.addError(SZENARIO_STRING + szenario.getId() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
+            StatusLog.addError(szenario.getName() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
         }
         return erfolgreich;
     }
@@ -108,10 +112,10 @@ public final class SzenarioObjektService {
         boolean erfolgreich = false;
         szenario.setName(name);
         if (szenarioDataService.updateSzenario(szenario)) {
-            StatusLog.addHinweis(SZENARIO_STRING + szenario.getId() + WURDE_ERFOLGREICH_AKTUALISIERT);
+            StatusLog.addHinweis(szenario.getName() + WURDE_ERFOLGREICH_AKTUALISIERT);
             erfolgreich = true;
         } else {
-            StatusLog.addError(SZENARIO_STRING + szenario.getId() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
+            StatusLog.addError(szenario.getName() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
         }
         return erfolgreich;
     }
@@ -120,10 +124,10 @@ public final class SzenarioObjektService {
         boolean erfolgreich = false;
         szenario.setBeschreibung(beschreibung);
         if (szenarioDataService.updateSzenario(szenario)) {
-            StatusLog.addHinweis(SZENARIO_STRING + szenario.getId() + WURDE_ERFOLGREICH_AKTUALISIERT);
+            StatusLog.addHinweis(szenario.getName() + WURDE_ERFOLGREICH_AKTUALISIERT);
             erfolgreich = true;
         } else {
-            StatusLog.addError(SZENARIO_STRING + szenario.getId() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
+            StatusLog.addError(szenario.getName() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
         }
         return erfolgreich;
     }
@@ -132,10 +136,10 @@ public final class SzenarioObjektService {
         boolean erfolgreich = false;
         if (szenarioDataService.deleteSzenario(szenario)) {
             szenarioMap.remove(szenario.getId());
-            StatusLog.addHinweis(SZENARIO_STRING + szenario.getId() + " wurde erfolgreich gelöscht.");
+            StatusLog.addHinweis(szenario.getName() + " wurde erfolgreich gelöscht.");
             erfolgreich = true;
         } else {
-            StatusLog.addError(SZENARIO_STRING + szenario.getId() + " konnte nicht gelöscht werden.");
+            StatusLog.addError(szenario.getName() + " konnte nicht gelöscht werden.");
         }
         return erfolgreich;
     }
@@ -144,10 +148,10 @@ public final class SzenarioObjektService {
         boolean erfolgreich = false;
         if (szenarioDataService.updateSzenarioStatus(szenario, status)) {
             szenario.setStatus(status);
-            StatusLog.addHinweis(SZENARIO_STRING + szenario.getId() + WURDE_ERFOLGREICH_AKTUALISIERT);
+            StatusLog.addHinweis("Status des " + szenario.getName() +  WURDE_ERFOLGREICH_AKTUALISIERT);
             erfolgreich = true;
         } else {
-            StatusLog.addError(SZENARIO_STRING + szenario.getId() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
+            StatusLog.addError("Status des " + szenario.getName() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
         }
         return erfolgreich;
     }
@@ -156,10 +160,10 @@ public final class SzenarioObjektService {
         boolean erfolgreich = false;
         if (szenarioDataService.addSzenarioInhalt(szenario, aenderung, position)) {
             szenario.getAenderungen().put(position, aenderung);
-            StatusLog.addHinweis("Dem Szenario " + szenario.getId() + " wurde eine Aktion erfolgreich hinzugefügt.");
+            StatusLog.addHinweis("Dem Szenario: " + szenario.getName()+ " wurde eine Aktion erfolgreich hinzugefügt.");
             erfolgreich = true;
         } else {
-            StatusLog.addError("Dem Szenario " + szenario.getId() + " konnte keine Aktion hinzugefügt werden.");
+            StatusLog.addError("Dem Szenario: " + szenario.getName() + " konnte keine Aktion hinzugefügt werden.");
         }
         return erfolgreich;
     }
@@ -171,10 +175,10 @@ public final class SzenarioObjektService {
                 geraet, beschreibung, schluessel, wert);
         if (szenarioDataService.alterSzenarioInhalt(neueAenderung, position)) {
             szenario.getAenderungen().replace(position, neueAenderung);
-            StatusLog.addHinweis("Änderung im Szenario " + szenario.getId() + WURDE_ERFOLGREICH_AKTUALISIERT);
+            StatusLog.addHinweis("Änderung im Szenario: " + szenario.getName() + WURDE_ERFOLGREICH_AKTUALISIERT);
             erfolgreich = true;
         } else {
-            StatusLog.addError("Änderung im Szenario " + szenario.getId() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
+            StatusLog.addError("Änderung im Szenario: " + szenario.getName() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
         }
         return erfolgreich;
     }
@@ -183,10 +187,10 @@ public final class SzenarioObjektService {
         boolean erfolgreich = false;
         if (szenarioDataService.deleteSzenarioInhalt(szenario.getAenderungen().get(position).id())) {
             szenario.getAenderungen().remove(position);
-            StatusLog.addHinweis("Änderung aus Szenario " + szenario.getId() + " erfolgreich gelöscht");
+            StatusLog.addHinweis("Änderung aus Szenario: " + szenario.getName() + " erfolgreich gelöscht");
             erfolgreich = true;
         } else {
-            StatusLog.addError("Änderung aus Szenario " + szenario.getId() + " konnte nicht gelöscht werden");
+            StatusLog.addError("Änderung aus Szenario: " + szenario.getName() + " konnte nicht gelöscht werden");
         }
         return erfolgreich;
     }

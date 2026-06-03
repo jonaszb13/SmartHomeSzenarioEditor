@@ -3,8 +3,10 @@ package userInterface;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.Pane;
@@ -16,6 +18,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class View {
+    @FXML
+    private SplitPane hauptSplitPane;
     @FXML
     private TreeView<String> uebersichtTree;
     @FXML
@@ -46,6 +50,7 @@ public class View {
         uebersichtTree.setRoot(root);
         root.setExpanded(true);
         statusLogView = new StatusLogView(statusLogVBox);
+        Platform.runLater(() -> hauptSplitPane.setDividerPositions(0.15, 0.75));
     }
 
     public VBox getStatusLogVBox() {
