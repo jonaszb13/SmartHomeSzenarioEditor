@@ -39,6 +39,10 @@ public final class GeraetFactory {
         return instance;
     }
 
+    public java.util.Set<String> getGeraeteTypen() {
+        return geraeteKlassen.keySet();
+    }
+
     public Geraet createGeraet(final UUID id, final String name, final Raum raum, final String typ) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Geraet geraet = null;
         try {

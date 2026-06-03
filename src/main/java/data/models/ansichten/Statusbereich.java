@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 public class Statusbereich {
 
     //TODO Linebreak nach ca. 50 Zeichen für zu lange Messages hinzufügen
+    //TODO gucken ob das mit dem MVC-Pattern passt oder kein Ansichten-Model bestehen sollte (eher util-ordner?)
 
     public List<Meldung> getNewMessages(final UUID userDataLetzterNode) throws MessageMissingException {
         final List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();

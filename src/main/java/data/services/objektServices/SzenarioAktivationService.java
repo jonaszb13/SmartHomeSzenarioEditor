@@ -28,8 +28,8 @@ public final class SzenarioAktivationService {
     public boolean aktiviereSzenario(final Szenario szenario) {
         boolean erfolgreich = true;
         for (Szenario.Aenderung aenderung : szenario.getAenderungen().values()) {
-            Map<String, String> attributeMap = new HashMap<>();
-            attributeMap.put(aenderung.schluessel(), aenderung.wert());
+            Map<String, String> attributeMap = aenderung.geraet().getValues();
+            attributeMap.replace(aenderung.schluessel(), aenderung.wert());
             if (!geraetObjektService.updateGeraetWerte(aenderung.geraet(), attributeMap)) {
                 erfolgreich = false;
                 break;

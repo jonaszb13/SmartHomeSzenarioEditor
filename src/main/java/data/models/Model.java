@@ -2,18 +2,20 @@ package data.models;
 
 import data.models.ansichten.Statusbereich;
 import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import data.services.objektServices.GeraetObjektService;
 import data.services.objektServices.RaumObjektService;
 import data.services.objektServices.SzenarioAktivationService;
 import data.services.objektServices.SzenarioObjektService;
-import util.statusmeldungen.Meldung;
+import util.customExceptions.NoGeraetProvidedException;
 import util.statusmeldungen.StatusLog;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public final class Model {
@@ -50,12 +52,6 @@ public final class Model {
         return statusbereich;
     }
 
-    public List<Meldung> getNewMessages(boolean newMessages, UUID uuid) {
-        return getStatusbereich().getNewMessages(newMessages ? uuid : null);
-    }
-
-    //TODO WTF ist das
-
     // --- Räume ---
 
     public Map<UUID, Raum> getRaumMap() {
@@ -79,6 +75,26 @@ public final class Model {
     }
 
     // --- Geräte ---
+
+    public Set<String> getGeraeteTypen() {
+        try {
+            return GeraetFactory.getInstance().getGeraeteTypen();
+        } catch (NoGeraetProvidedException e) {
+            StatusLog.addError("Gerätetypen konnten nicht geladen werden", e);
+            return Set.of();
+        }
+    }
+
+    public Map<String, Class<?>> getAttributTypenFuerGeraetTyp(final String typ) {
+        try {
+            final Geraet tempGeraet = GeraetFactory.getInstance().createGeraet(UUID.randomUUID(), "", null, typ);
+            return tempGeraet != null ? tempGeraet.getAttributTypen() : Map.of();
+        } catch (NoGeraetProvidedException | NoSuchMethodException | InvocationTargetException |
+                 InstantiationException | IllegalAccessException e) {
+            StatusLog.addError("Attributtypen für Gerätetyp konnten nicht geladen werden", e);
+            return Map.of();
+        }
+    }
 
     public Map<UUID, Geraet> getGeraete() {
         return geraetObjektService.getGeraetMap();

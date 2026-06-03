@@ -122,7 +122,7 @@ class GeraetObjektServiceTest {
         StatusLog.clear();
         Map<String, String> neueWerte = new HashMap<>();
         neueWerte.put("eingeschaltet", "false");
-        neueWerte.put("haelligkeit", "10.0");
+        neueWerte.put("helligkeit", "10,0");
         neueWerte.put("farbe", "#000000");
 
         boolean result = geraetObjektService.updateGeraetWerte(LAMPE_1, neueWerte);
@@ -130,14 +130,14 @@ class GeraetObjektServiceTest {
         assertTrue(result);
         assertFalse(StatusLog.hasError());
         assertFalse(LAMPE_1.isEingeschaltet());
-        assertEquals(10, LAMPE_1.getHaelligkeit());
+        assertEquals(10, LAMPE_1.getHelligkeit());
         assertEquals(Color.decode("#000000"), LAMPE_1.getFarbe());
     }
 
     private static Map<String, String> getLampenAttribute() {
         Map<String, String> attributeMap = new HashMap<>();
         attributeMap.put("eingeschaltet", "true");
-        attributeMap.put("haelligkeit", "99.7");
+        attributeMap.put("helligkeit", "99.7");
         attributeMap.put("farbe", "#00FF88");
         return attributeMap;
     }

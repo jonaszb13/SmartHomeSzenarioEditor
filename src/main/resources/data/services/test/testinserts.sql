@@ -13,7 +13,7 @@ VALUES (random_uuid(),'c216e129-1541-4455-804c-411b17dd015b', 'eingeschaltet', '
        (random_uuid(),'c216e129-1541-4455-804c-411b17dd015b', 'ausschlag', 'true'),
        (random_uuid(),'ffe1118c-440c-40d4-bfc4-dadbfa5db831', 'ausschlag', 'false'),
        (random_uuid(),'eb08c72e-20f1-466a-b024-ced0d8a32703', 'zielTemp', '22.5'),
-       (random_uuid(),'fe4dacb0-7ef9-405f-be51-b739a4b6cd29', 'haelligkeit', '99.7'),
+       (random_uuid(),'fe4dacb0-7ef9-405f-be51-b739a4b6cd29', 'helligkeit', '99.7'),
        (random_uuid(),'fe4dacb0-7ef9-405f-be51-b739a4b6cd29', 'farbe', '#00FF88'),
        (random_uuid(),'fe4dacb0-7ef9-405f-be51-b739a4b6cd29', 'eingeschaltet', 'true');
 INSERT INTO SZENARIEN (ID, NAME, BESCHREIBUNG, STATUS)

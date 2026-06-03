@@ -2,6 +2,7 @@ package data.models.fachobjekte.geraeteArten;
 
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
+import util.statusmeldungen.StatusLog;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -9,13 +10,13 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Lampe extends Geraet {
-    private double haelligkeit;
+    private double helligkeit;
     private Color farbe;
     private boolean eingeschaltet;
 
-    public Lampe(final UUID id, final String name, final Raum raum, final double haelligkeit, final Color farbe, final boolean eingeschaltet) {
+    public Lampe(final UUID id, final String name, final Raum raum, final double helligkeit, final Color farbe, final boolean eingeschaltet) {
         super(id, name, raum);
-        this.haelligkeit = haelligkeit;
+        this.helligkeit = helligkeit;
         this.farbe = farbe;
         this.eingeschaltet = eingeschaltet;
     }
@@ -23,12 +24,12 @@ public class Lampe extends Geraet {
         super(id, name, raum);
     }
 
-    public double getHaelligkeit() {
-        return haelligkeit;
+    public double getHelligkeit() {
+        return helligkeit;
     }
 
-    public void setHaelligkeit(final double haelligkeit) {
-        this.haelligkeit = haelligkeit;
+    public void setHelligkeit(final double helligkeit) {
+        this.helligkeit = helligkeit;
     }
 
     public Color getFarbe() {
@@ -53,23 +54,55 @@ public class Lampe extends Geraet {
             case "eingeschaltet":
                 setEingeschaltet(Boolean.parseBoolean(value));
                 break;
-            case "haelligkeit":
-                setHaelligkeit(Double.parseDouble(value));
+            case "helligkeit":
+                setHelligkeit(Double.parseDouble(value));
                 break;
             case "farbe":
                 setFarbe(Color.decode(value));
                 break;
             default:
-                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+                IllegalArgumentException iaE = new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+                StatusLog.addError(iaE.getMessage(), iaE);
+                throw iaE;
         }
     }
 
     @Override
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
-        values.put("haelligkeit", Double.toString(getHaelligkeit()));
-        values.put("farbe", getFarbe().toString());
+        //TODO Keys etc. als Enums einführen
+        values.put("helligkeit", formatiereZahlenwerteInsDeutsche(Double.toString(getHelligkeit())));
+        values.put("farbe", farbe != null ? String.format("#%02x%02x%02x", farbe.getRed(), farbe.getGreen(), farbe.getBlue()) : "#000000");
         values.put("eingeschaltet", Boolean.toString(eingeschaltet));
         return values;
+    }
+
+    @Override
+    public Map<String, Class<?>> getAttributTypen() {
+        final Map<String, Class<?>> typen = new HashMap<>();
+        typen.put("helligkeit", double.class);
+        typen.put("farbe", Color.class);
+        typen.put("eingeschaltet", boolean.class);
+        return typen;
+    }
+    @Override
+    public boolean isGueltigeAttribute(final Map<String, String> attributeMap) {
+        if (attributeMap.get("helligkeit") == null
+                || attributeMap.get("farbe") == null
+                || attributeMap.get("eingeschaltet") == null) {
+            return false;
+        }
+        attributeMap.replace("helligkeit", formatiereZahlenwerteInsEnglische(attributeMap.get("helligkeit")));
+        if (!isDouble(attributeMap.get("helligkeit"))) {
+            StatusLog.addError("Die Helligkeit muss eine Zahl sein");
+            return false;
+        }
+
+        double helligkeit = Double.parseDouble(attributeMap.get("helligkeit"));
+        if (helligkeit < 0 || helligkeit > 100) {
+            StatusLog.addError("Die Helligkeit muss zwischen 0 und 100 Prozent liegen");
+            return false;
+        }
+         return true;
     }
 }

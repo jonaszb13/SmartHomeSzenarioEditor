@@ -72,7 +72,7 @@ public class SzenarioAktivationServiceTest {
         sensorWerte2.put("ausschlag", "false");
 
         szenario1 = new Szenario(SZENARIO_1_ID, "Szenario 1");
-        aenderung1 = szenarioObjektService.getAenderung(sensor1, "Sensor an", "eingeschaltet", "true");
+        aenderung1 = szenarioObjektService.getAenderung(sensor1, "Sensor an", "eingeschaltet", "false");
         aenderung2 = szenarioObjektService.getAenderung(sensor2, "Sensor an", "eingeschaltet", "true");
     }
 
@@ -100,7 +100,7 @@ public class SzenarioAktivationServiceTest {
         assertTrue(erfolgreich);
         assertFalse(StatusLog.hasError());
         assertTrue(szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).isActive());
-        assertEquals("true", sensorLokal1.getValues().get("eingeschaltet"));
+        assertEquals("false", sensorLokal1.getValues().get("eingeschaltet"));
         assertEquals("true", sensorLokal2.getValues().get("eingeschaltet"));
     }
 
