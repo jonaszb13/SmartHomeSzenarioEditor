@@ -21,4 +21,5 @@ module src.main {
     exports util.statusmeldungen;
     exports data.models.fachobjekte.geraeteArten;
     exports util.customExceptions;
+    exports util;
 }
