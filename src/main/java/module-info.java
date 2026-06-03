@@ -1,4 +1,4 @@
-module org.example.ui {
+module src.main {
     requires javafx.controls;
     requires javafx.fxml;
 
@@ -18,4 +18,5 @@ module org.example.ui {
     exports main;
     exports data.models;
     exports data.models.fachobjekte;
+    exports util.statusmeldungen;
 }

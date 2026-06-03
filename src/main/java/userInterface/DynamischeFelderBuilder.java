@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DynamischeFelderBuilder {
+public final class DynamischeFelderBuilder {
 
     private final Map<String, Node> controls = new LinkedHashMap<>();
     private final Map<String, Class<?>> typen;

@@ -1,9 +1,6 @@
 package unit.services;
 
-import data.models.fachobjekte.Geraet;
-import data.models.fachobjekte.GeraetFactory;
-import data.models.fachobjekte.Raum;
-import data.models.fachobjekte.Szenario;
+import data.models.fachobjekte.*;
 import data.models.fachobjekte.geraeteArten.Sensor;
 import data.services.datenServices.*;
 import data.services.objektServices.GeraetObjektService;
@@ -61,14 +58,14 @@ class SzenarioObjektServiceTest {
         sensor2 = (Sensor) GeraetFactory.getInstance().createGeraet(SENSOR_2_ID, "Sensor 2", RAUM_1, "Sensor");
 
         sensorWerte1 = new HashMap<>();
-        sensorWerte1.put("eingeschaltet", "true");
-        sensorWerte1.put("ausschlag", "true");
+        sensorWerte1.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
+        sensorWerte1.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), "true");
         sensorWerte2 = new HashMap<>();
-        sensorWerte2.put("eingeschaltet", "false");
-        sensorWerte2.put("ausschlag", "false");
+        sensorWerte2.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "false");
+        sensorWerte2.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), "false");
 
         szenario1 = new Szenario(SZENARIO_1_ID, "Szenario 1");
-        aenderung1 = szenarioObjektService.getAenderung(sensor2, "Sensor an", "eingeschaltet", "true");
+        aenderung1 = szenarioObjektService.getAenderung(sensor2, "Sensor an", Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
 
     }
 
@@ -91,7 +88,7 @@ class SzenarioObjektServiceTest {
     @Test
     void testAddSzenario() {
         Map<Integer, Szenario.Aenderung> aenderungen = new HashMap<>();
-        aenderungen.put(1, szenarioObjektService.getAenderung(sensor1, "Sensor aus", "eingeschaltet", "false"));
+        aenderungen.put(1, szenarioObjektService.getAenderung(sensor1, "Sensor aus", Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "false"));
 
         boolean result = szenarioObjektService.addSzenario("Szenario 2", "Sensor aus", aenderungen);
 
@@ -101,7 +98,7 @@ class SzenarioObjektServiceTest {
         Szenario szenario = szenarioObjektService.getSzenarioMap().values().stream().filter(o -> o.getName().equals("Szenario 2")).findFirst().get();
         assertEquals("Sensor aus", szenario.getBeschreibung());
         assertEquals(1, szenario.getAenderungen().size());
-        assertEquals("eingeschaltet", szenario.getAenderungen().get(1).schluessel());
+        assertEquals(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), szenario.getAenderungen().get(1).schluessel());
         assertEquals("false", szenario.getAenderungen().get(1).wert());
         assertEquals("Sensor aus", szenario.getAenderungen().get(1).beschreibung());
     }
@@ -157,7 +154,7 @@ class SzenarioObjektServiceTest {
     void testAddSzenarioInhalt() {
         StatusLog.clear();
         Szenario szenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
-        Szenario.Aenderung aenderung = szenarioObjektService.getAenderung(sensor1, "Sensor an", "eingeschaltet", "true");
+        Szenario.Aenderung aenderung = szenarioObjektService.getAenderung(sensor1, "Sensor an", Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
 
         boolean result = szenarioObjektService.addSzenarioInhalt(szenario, aenderung, 1);
 
@@ -172,12 +169,12 @@ class SzenarioObjektServiceTest {
         StatusLog.clear();
         Szenario szenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
 
-        boolean result = szenarioObjektService.alterSzenarioInhalt(szenario, 2, sensor1, "Sensor aus", "eingeschaltet", "false");
+        boolean result = szenarioObjektService.alterSzenarioInhalt(szenario, 2, sensor1, "Sensor aus", Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "false");
 
         assertTrue(result);
         assertFalse(StatusLog.hasError());
         assertEquals(sensor1, szenario.getAenderungen().get(2).geraet());
-        assertEquals("eingeschaltet", szenario.getAenderungen().get(2).schluessel());
+        assertEquals(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), szenario.getAenderungen().get(2).schluessel());
         assertEquals("false", szenario.getAenderungen().get(2).wert());
         assertEquals("Sensor aus", szenario.getAenderungen().get(2).beschreibung());
     }

@@ -1,6 +1,7 @@
 package data.models.fachobjekte.geraeteArten;
 
 import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.Merkmalbezeichnung;
 import data.models.fachobjekte.Raum;
 import util.statusmeldungen.StatusLog;
 
@@ -34,48 +35,48 @@ public class Luefter extends Geraet {
 
     @Override
     public void updateValue(final String key, final String value) {
-        switch (key) {
-            case "eingeschaltet":
-                setEingeschaltet(Boolean.parseBoolean(value));
-                break;
-            case "staerke":
-                setStaerke(Double.parseDouble(value));
-                break;
-            default:
-                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        if (Merkmalbezeichnung.EINGESCHALTET.getBezeichnung().equals(key)) {
+            setEingeschaltet(Boolean.parseBoolean(value));
+        } else if (Merkmalbezeichnung.STAERKE.getBezeichnung().equals(key)) {
+            setStaerke(Double.parseDouble(value));
+        } else {
+            IllegalArgumentException iaE = new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+            StatusLog.addError(iaE.getMessage(), iaE);
+            throw iaE;
         }
     }
 
     @Override
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
-        values.put("eingeschaltet", Boolean.toString(eingeschaltet));
-        values.put("staerke", formatiereZahlenwerteInsDeutsche(Double.toString(staerke)));
+        values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(eingeschaltet));
+        values.put(Merkmalbezeichnung.STAERKE.getBezeichnung(), formatiereZahlenwerteInsDeutsche(Double.toString(staerke)));
         return values;
     }
 
     @Override
     public Map<String, Class<?>> getAttributTypen() {
         final Map<String, Class<?>> typen = new HashMap<>();
-        typen.put("eingeschaltet", boolean.class);
-        typen.put("staerke", double.class);
+        typen.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), boolean.class);
+        typen.put(Merkmalbezeichnung.STAERKE.getBezeichnung(), double.class);
         return typen;
     }
+
     @Override
     public boolean isGueltigeAttribute(final Map<String, String> attributeMap) {
-        if (attributeMap.get("eingeschaltet") == null
-                || attributeMap.get("staerke") == null) {
+        if (attributeMap.get(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung()) == null
+                || attributeMap.get(Merkmalbezeichnung.STAERKE.getBezeichnung()) == null) {
             return false;
         }
-        attributeMap.replace("staerke", formatiereZahlenwerteInsEnglische(attributeMap.get("staerke")));
-        if (!isDouble(attributeMap.get("stärke"))) {
-            StatusLog.addError("Die Stärke muss eine Zahl sein");
+        attributeMap.replace(Merkmalbezeichnung.STAERKE.getBezeichnung(), formatiereZahlenwerteInsEnglische(attributeMap.get(Merkmalbezeichnung.STAERKE.getBezeichnung())));
+        if (!isDouble(attributeMap.get(Merkmalbezeichnung.STAERKE.getBezeichnung()))) {
+            StatusLog.addError("Die " + Merkmalbezeichnung.STAERKE.getBezeichnung() + " muss eine Zahl sein \nDer Dezimalpunkt ist das Komma");
             return false;
         }
 
-        double staerke = Double.parseDouble(attributeMap.get("stärke"));
+        double staerke = Double.parseDouble(attributeMap.get(Merkmalbezeichnung.STAERKE.getBezeichnung()));
         if (staerke < 0 || staerke > 100) {
-            StatusLog.addError("Die Stärke muss zwischen 0 und 100 Prozent liegen");
+            StatusLog.addError("Die " + Merkmalbezeichnung.STAERKE.getBezeichnung() + " muss zwischen 0 und 100 Prozent liegen \nDer Dezimalpunkt ist das Komma");
             return false;
         }
         return true;

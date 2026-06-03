@@ -30,6 +30,7 @@ public class StatusLogView {
     private Label meldungZuLabel(final Meldung meldung) {
         final Label label = new Label(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext());
         label.setUserData(meldung.getMeldungsId());
+        label.setWrapText(true);
         final String typ = meldung.getMeldungsTyp();
         if (typ.equals(Meldungstyp.FEHLER.getBezeichnung())) {
             label.setStyle("-fx-text-fill: #cc0000");

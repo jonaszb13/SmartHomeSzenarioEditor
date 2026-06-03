@@ -1,9 +1,6 @@
 package unit.services;
 
-import data.models.fachobjekte.Geraet;
-import data.models.fachobjekte.GeraetFactory;
-import data.models.fachobjekte.Raum;
-import data.models.fachobjekte.Szenario;
+import data.models.fachobjekte.*;
 import data.models.fachobjekte.geraeteArten.Sensor;
 import data.services.datenServices.*;
 import data.services.objektServices.GeraetObjektService;
@@ -65,15 +62,15 @@ public class SzenarioAktivationServiceTest {
         sensor2 = (Sensor) GeraetFactory.getInstance().createGeraet(SENSOR_2_ID, "Sensor 2", RAUM_1, "Sensor");
 
         sensorWerte1 = new HashMap<>();
-        sensorWerte1.put("eingeschaltet", "true");
-        sensorWerte1.put("ausschlag", "true");
+        sensorWerte1.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
+        sensorWerte1.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), "true");
         sensorWerte2 = new HashMap<>();
-        sensorWerte2.put("eingeschaltet", "false");
-        sensorWerte2.put("ausschlag", "false");
+        sensorWerte2.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "false");
+        sensorWerte2.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), "false");
 
         szenario1 = new Szenario(SZENARIO_1_ID, "Szenario 1");
-        aenderung1 = szenarioObjektService.getAenderung(sensor1, "Sensor an", "eingeschaltet", "false");
-        aenderung2 = szenarioObjektService.getAenderung(sensor2, "Sensor an", "eingeschaltet", "true");
+        aenderung1 = szenarioObjektService.getAenderung(sensor1, "Sensor an", Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "false");
+        aenderung2 = szenarioObjektService.getAenderung(sensor2, "Sensor an", Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
     }
 
     @BeforeEach
@@ -100,8 +97,8 @@ public class SzenarioAktivationServiceTest {
         assertTrue(erfolgreich);
         assertFalse(StatusLog.hasError());
         assertTrue(szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).isActive());
-        assertEquals("false", sensorLokal1.getValues().get("eingeschaltet"));
-        assertEquals("true", sensorLokal2.getValues().get("eingeschaltet"));
+        assertEquals("false", sensorLokal1.getValues().get(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung()));
+        assertEquals("true", sensorLokal2.getValues().get(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung()));
     }
 
     @Test

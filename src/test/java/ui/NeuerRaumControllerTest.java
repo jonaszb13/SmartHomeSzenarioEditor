@@ -20,13 +20,13 @@ import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 class NeuerRaumControllerTest extends ApplicationTest {
 
-    private static final AtomicReference<String> capturedName = new AtomicReference<>();
-    private static final AtomicBoolean abbrechenCallback = new AtomicBoolean();
+    private static final AtomicReference<String> CAPTURED_NAME = new AtomicReference<>();
+    private static final AtomicBoolean ABBRECHEN_CALLBACK = new AtomicBoolean();
 
     @BeforeEach
     void reset() {
-        capturedName.set(null);
-        abbrechenCallback.set(false);
+        CAPTURED_NAME.set(null);
+        ABBRECHEN_CALLBACK.set(false);
         interact(() -> lookup("#raumNameField").<TextField>query().clear());
     }
 
@@ -36,8 +36,8 @@ class NeuerRaumControllerTest extends ApplicationTest {
                 getClass().getResource("/userInterface/neuer-raum-view.fxml"));
         Parent root = loader.load();
         NeuerRaumController controller = loader.getController();
-        controller.setOnAnlegen(capturedName::set);
-        controller.setOnAbbrechen(() -> abbrechenCallback.set(true));
+        controller.setOnAnlegen(CAPTURED_NAME::set);
+        controller.setOnAbbrechen(() -> ABBRECHEN_CALLBACK.set(true));
         stage.setScene(new Scene(root, 800, 600));
         stage.show();
     }
@@ -58,14 +58,14 @@ class NeuerRaumControllerTest extends ApplicationTest {
         interact(() -> lookup("#raumNameField").<TextField>query().setText("Wohnzimmer"));
         interact(() -> lookup("Raum anlegen").<Button>query().fire());
 
-        assertEquals("Wohnzimmer", capturedName.get());
+        assertEquals("Wohnzimmer", CAPTURED_NAME.get());
     }
 
     @Test
     void testLeererNameWirdNichtAkzeptiert() {
         interact(() -> lookup("Raum anlegen").<Button>query().fire());
 
-        assertNull(capturedName.get());
+        assertNull(CAPTURED_NAME.get());
     }
 
     @Test
@@ -73,7 +73,7 @@ class NeuerRaumControllerTest extends ApplicationTest {
         interact(() -> lookup("#raumNameField").<TextField>query().setText(""));
         interact(() -> lookup("Raum anlegen").<Button>query().fire());
 
-        assertNull(capturedName.get());
+        assertNull(CAPTURED_NAME.get());
     }
 
     @Test
@@ -81,13 +81,13 @@ class NeuerRaumControllerTest extends ApplicationTest {
         interact(() -> lookup("#raumNameField").<TextField>query().setText(" Küche "));
         interact(() -> lookup("Raum anlegen").<Button>query().fire());
 
-        assertEquals("Küche", capturedName.get());
+        assertEquals("Küche", CAPTURED_NAME.get());
     }
 
     @Test
     void testAbbrechenCallback() {
         interact(() -> lookup("Abbrechen").<Button>query().fire());
 
-        assertTrue(abbrechenCallback.get());
+        assertTrue(ABBRECHEN_CALLBACK.get());
     }
 }

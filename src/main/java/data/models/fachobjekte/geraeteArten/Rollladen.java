@@ -1,6 +1,7 @@
 package data.models.fachobjekte.geraeteArten;
 
 import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.Merkmalbezeichnung;
 import data.models.fachobjekte.Raum;
 import util.statusmeldungen.StatusLog;
 
@@ -35,59 +36,59 @@ public class Rollladen extends Geraet {
 
     @Override
     public void updateValue(final String key, final String value) {
-        switch (key) {
-            case "schliessstatus":
-                setSchliessstatus(Double.parseDouble(value));
-                break;
-            case "neigung":
-                setNeigung(Double.parseDouble(value));
-                break;
-            default:
-                throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+        if (Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung().equals(key)) {
+            setSchliessstatus(Double.parseDouble(value));
+        } else if (Merkmalbezeichnung.NEIGUNG.getBezeichnung().equals(key)) {
+            setNeigung(Double.parseDouble(value));
+        } else {
+            IllegalArgumentException iaE = new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+            StatusLog.addError(iaE.getMessage(), iaE);
+            throw iaE;
         }
     }
 
     @Override
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
-        values.put("schliessstatus", formatiereZahlenwerteInsDeutsche(Double.toString(getSchliessstatus())));
-        values.put("neigung", formatiereZahlenwerteInsDeutsche(Double.toString(getNeigung())));
+        values.put(Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung(), formatiereZahlenwerteInsDeutsche(Double.toString(getSchliessstatus())));
+        values.put(Merkmalbezeichnung.NEIGUNG.getBezeichnung(), formatiereZahlenwerteInsDeutsche(Double.toString(getNeigung())));
         return values;
     }
 
     @Override
     public Map<String, Class<?>> getAttributTypen() {
         final Map<String, Class<?>> typen = new HashMap<>();
-        typen.put("schliessstatus", double.class);
-        typen.put("neigung", double.class);
+        typen.put(Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung(), double.class);
+        typen.put(Merkmalbezeichnung.NEIGUNG.getBezeichnung(), double.class);
         return typen;
     }
+
     @Override
     public boolean isGueltigeAttribute(final Map<String, String> attributeMap) {
-        if (attributeMap.get("schliessstatus") == null
-                || attributeMap.get("neigung") == null) {
+        if (attributeMap.get(Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung()) == null
+                || attributeMap.get(Merkmalbezeichnung.NEIGUNG.getBezeichnung()) == null) {
             return false;
         }
-        attributeMap.replace("schliessstatus", formatiereZahlenwerteInsEnglische(attributeMap.get("schliessstatus")));
-        if (!isDouble(attributeMap.get("schliessstatus"))) {
-            StatusLog.addError("Der Schließstatus muss eine Zahl sein");
+        attributeMap.replace(Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung(), formatiereZahlenwerteInsEnglische(attributeMap.get(Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung())));
+        if (!isDouble(attributeMap.get(Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung()))) {
+            StatusLog.addError("Der " + Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung() + " muss eine Zahl sein \nDer Dezimalpunkt das ein Komma");
             return false;
         }
-        attributeMap.replace("neigung", formatiereZahlenwerteInsEnglische(attributeMap.get("neigung")));
-        if (!isDouble(attributeMap.get("neigung"))) {
-            StatusLog.addError("Die Neigung muss eine Zahl sein");
+        attributeMap.replace(Merkmalbezeichnung.NEIGUNG.getBezeichnung(), formatiereZahlenwerteInsEnglische(attributeMap.get(Merkmalbezeichnung.NEIGUNG.getBezeichnung())));
+        if (!isDouble(attributeMap.get(Merkmalbezeichnung.NEIGUNG.getBezeichnung()))) {
+            StatusLog.addError("Die " + Merkmalbezeichnung.NEIGUNG.getBezeichnung() + " muss eine Zahl sein \nDer Dezimalpunkt das ein Komma");
             return false;
         }
 
-        double schliessstatus = Double.parseDouble(attributeMap.get("schliessstatus"));
+        double schliessstatus = Double.parseDouble(attributeMap.get(Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung()));
         if (schliessstatus < 0 || schliessstatus > 100) {
-            StatusLog.addError("Der Schließstatus muss zwischen 0 und 100 Prozent liegen");
+            StatusLog.addError("Der " + Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung() + " muss zwischen 0 und 100 Prozent liegen \nDer Dezimalpunkt das ein Komma");
             return false;
         }
 
-        double neigung = Double.parseDouble(attributeMap.get("neigung"));
+        double neigung = Double.parseDouble(attributeMap.get(Merkmalbezeichnung.NEIGUNG.getBezeichnung()));
         if (neigung < -90 || neigung > 90) {
-            StatusLog.addError("Die Neigung muss zwischen -90 und +90 liegen");
+            StatusLog.addError("Die " + Merkmalbezeichnung.NEIGUNG.getBezeichnung() + " muss zwischen -90 und +90 liegen \nDer Dezimalpunkt das ein Komma");
             return false;
         }
         return true;

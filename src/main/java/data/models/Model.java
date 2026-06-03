@@ -1,6 +1,5 @@
 package data.models;
 
-import data.models.ansichten.Statusbereich;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
@@ -20,7 +19,7 @@ import java.util.UUID;
 
 public final class Model {
     private static Model instance;
-    private final Statusbereich statusbereich;
+    private final StatusLog statusbereich;
     private RaumObjektService raumObjektService = null;
     private GeraetObjektService geraetObjektService = null;
     private SzenarioObjektService szenarioObjektService = null;
@@ -45,10 +44,10 @@ public final class Model {
         } catch (SQLException eSQL) {
             StatusLog.addError("Das Model konnte nicht geladen werden: ", eSQL);
         }
-        this.statusbereich = new Statusbereich();
+        this.statusbereich = StatusLog.getInstance();
     }
 
-    public Statusbereich getStatusbereich() {
+    public StatusLog getStatusbereich() {
         return statusbereich;
     }
 

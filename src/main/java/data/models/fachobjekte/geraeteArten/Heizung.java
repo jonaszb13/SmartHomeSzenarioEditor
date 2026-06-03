@@ -1,6 +1,7 @@
 package data.models.fachobjekte.geraeteArten;
 
 import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.Merkmalbezeichnung;
 import data.models.fachobjekte.Raum;
 import util.statusmeldungen.StatusLog;
 
@@ -30,38 +31,40 @@ public class Heizung extends Geraet {
 
     @Override
     public void updateValue(final String key, final String value) {
-        if ("zielTemp".equals(key)) {
+        if (Merkmalbezeichnung.ZIELTEMP.getBezeichnung().equals(key)) {
             setZielTemp(Double.parseDouble(value));
         } else {
-            throw new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+            IllegalArgumentException iaE = new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+            StatusLog.addError(iaE.getMessage(), iaE);
+            throw iaE;
         }
     }
 
     @Override
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
-        values.put("zielTemp", formatiereZahlenwerteInsDeutsche(Double.toString(zielTemp)));
+        values.put(Merkmalbezeichnung.ZIELTEMP.getBezeichnung(), formatiereZahlenwerteInsDeutsche(Double.toString(getZielTemp())));
         return values;
     }
 
     @Override
     public Map<String, Class<?>> getAttributTypen() {
         final Map<String, Class<?>> typen = new HashMap<>();
-        typen.put("zielTemp", double.class);
+        typen.put(Merkmalbezeichnung.ZIELTEMP.getBezeichnung(), double.class);
         return typen;
     }
 
     @Override
     public boolean isGueltigeAttribute(final Map<String, String> attributeMap) {
-        if (attributeMap.get("zielTemp") == null) return false;
-        attributeMap.replace("zielTemp", formatiereZahlenwerteInsEnglische(attributeMap.get("zielTemp")));
-        if (!isDouble(attributeMap.get("zielTemp"))) {
-            StatusLog.addError("Die Zieltemperatur muss eine Zahl sein");
+        if (attributeMap.get(Merkmalbezeichnung.ZIELTEMP.getBezeichnung()) == null) return false;
+        attributeMap.replace(Merkmalbezeichnung.ZIELTEMP.getBezeichnung(), formatiereZahlenwerteInsEnglische(attributeMap.get(Merkmalbezeichnung.ZIELTEMP.getBezeichnung())));
+        if (!isDouble(attributeMap.get(Merkmalbezeichnung.ZIELTEMP.getBezeichnung()))) {
+            StatusLog.addError("Die " + Merkmalbezeichnung.ZIELTEMP.getBezeichnung() + " muss eine Zahl sein \nDer Dezimalpunkt ist das Komma");
             return false;
         }
-        double zielTemp = Double.parseDouble(attributeMap.get("zielTemp"));
+        double zielTemp = Double.parseDouble(attributeMap.get(Merkmalbezeichnung.ZIELTEMP.getBezeichnung()));
         if (zielTemp < 5 || zielTemp > 30) {
-            StatusLog.addError("Die Zieltemperatur muss zwischen 5 und 30 Grad Celsius liegen");
+            StatusLog.addError("Die " + Merkmalbezeichnung.ZIELTEMP.getBezeichnung() + " muss zwischen 5 und 30 Grad Celsius liegen \nDer Dezimalpunkt ist das Komma");
             return false;
         }
         return true;

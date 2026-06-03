@@ -1,6 +1,7 @@
 package unit.services;
 
 import data.models.fachobjekte.GeraetFactory;
+import data.models.fachobjekte.Merkmalbezeichnung;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import data.models.fachobjekte.geraeteArten.Sensor;
@@ -23,7 +24,6 @@ class SzenarioDataServiceTest {
     static final String SZENARIO_2 = "Szenario 2";
     static final String SENSOR_AN = "Sensor an";
     static final String SENSOR_AUS = "Sensor aus";
-    static final String EINGESCHALTET = "eingeschaltet";
     static final String TRUE = "true";
     static final String FALSE = "false";
     static final String RAUM_1 = "Raum 1";
@@ -61,9 +61,9 @@ class SzenarioDataServiceTest {
         Szenario szenario2 = new Szenario(java.util.UUID.fromString("22710be6-8c78-404f-b89e-3d47b20c1db6"), SZENARIO_2);
         szenario2.setBeschreibung(SZENARIO_2);
         szenario1.getAenderungen().put(1, new Szenario.Aenderung(
-                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE));
         szenario2.getAenderungen().put(1, new Szenario.Aenderung(
-                java.util.UUID.fromString("81abcdf3-c6dd-4ee4-8deb-1dd0b96d55e7"), sensor, SENSOR_AUS, EINGESCHALTET, FALSE));
+                java.util.UUID.fromString("81abcdf3-c6dd-4ee4-8deb-1dd0b96d55e7"), sensor, SENSOR_AUS, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), FALSE));
 
         CachedRowSet crs = dataAccess.getData(SZENARIO_MENGE);
         crs.next();
@@ -113,7 +113,7 @@ class SzenarioDataServiceTest {
         Szenario szenario = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario.setBeschreibung(SZENARIO_1);
         szenario.getAenderungen().put(1, new Szenario.Aenderung(
-                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE));
 
         raumDataService.addRaum(raum);
         geraetDataService.addGeraet(sensor, SENSOR, new HashMap<>());
@@ -142,12 +142,12 @@ class SzenarioDataServiceTest {
         Sensor sensor = (Sensor) geraetFactory.createGeraet(java.util.UUID.fromString(UUID_2),
                 SENSOR_1, raum, SENSOR);
         Map<String, String> sensorMap = new HashMap<>();
-        sensorMap.put(EINGESCHALTET, FALSE);
+        sensorMap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), FALSE);
         sensorMap.put("ausschlag", FALSE);
         Szenario szenario = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario.setBeschreibung(SZENARIO_1);
         szenario.getAenderungen().put(1, new Szenario.Aenderung(
-                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE));
 
         raumDataService.addRaum(raum);
         geraetDataService.addGeraet(sensor, SENSOR, sensorMap);
@@ -180,9 +180,9 @@ class SzenarioDataServiceTest {
         Szenario szenario2 = new Szenario(java.util.UUID.fromString("22710be6-8c78-404f-b89e-3d47b20c1db6"), SZENARIO_2);
         szenario2.setBeschreibung(SZENARIO_2);
         szenario1.getAenderungen().put(1, new Szenario.Aenderung(
-                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE));
         szenario2.getAenderungen().put(1, new Szenario.Aenderung(
-                java.util.UUID.fromString("81abcdf3-c6dd-4ee4-8deb-1dd0b96d55e7"), sensor, SENSOR_AUS, EINGESCHALTET, FALSE));
+                java.util.UUID.fromString("81abcdf3-c6dd-4ee4-8deb-1dd0b96d55e7"), sensor, SENSOR_AUS, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), FALSE));
 
         raumDataService.addRaum(raum);
         geraetDataService.addGeraet(sensor, SENSOR, new HashMap<>());
@@ -208,9 +208,9 @@ class SzenarioDataServiceTest {
         Szenario szenario = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario.setBeschreibung(SZENARIO_1);
         szenario.getAenderungen().put(1, new Szenario.Aenderung(
-                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE));
         Szenario.Aenderung neueAenderung = new Szenario.Aenderung(
-                java.util.UUID.fromString("b64095bb-25ea-4c60-ac63-d8a4c7f0158d"), sensor, SENSOR_AUS, EINGESCHALTET, FALSE);
+                java.util.UUID.fromString("b64095bb-25ea-4c60-ac63-d8a4c7f0158d"), sensor, SENSOR_AUS, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), FALSE);
 
         raumDataService.addRaum(raum);
         geraetDataService.addGeraet(sensor, SENSOR, new HashMap<>());
@@ -240,10 +240,10 @@ class SzenarioDataServiceTest {
         Szenario szenario = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario.setBeschreibung(SZENARIO_1);
         szenario.getAenderungen().put(1, new Szenario.Aenderung(
-                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, EINGESCHALTET, TRUE));
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE));
         // Gleiche ID, aber andere Beschreibung und anderer Wert
         Szenario.Aenderung aenderungNeu = new Szenario.Aenderung(
-                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AUS, EINGESCHALTET, FALSE);
+                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AUS, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), FALSE);
 
         raumDataService.addRaum(raum);
         geraetDataService.addGeraet(sensor, SENSOR, new HashMap<>());
@@ -259,7 +259,7 @@ class SzenarioDataServiceTest {
         crs.next();
         assertEquals(aenderungNeu.id(), crs.getObject(1));
         assertEquals(SENSOR_AUS, crs.getString(2));
-        assertEquals(EINGESCHALTET, crs.getString(3));
+        assertEquals(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), crs.getString(3));
         assertEquals(FALSE, crs.getString(4));
     }
 
@@ -271,7 +271,7 @@ class SzenarioDataServiceTest {
         Szenario szenario = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
         szenario.setBeschreibung(SZENARIO_1);
         Szenario.Aenderung aenderung = new Szenario.Aenderung(
-                java.util.UUID.fromString("b64095bb-25ea-4c60-ac63-d8a4c7f0158d"), sensor, SENSOR_AN, EINGESCHALTET, TRUE);
+                java.util.UUID.fromString("b64095bb-25ea-4c60-ac63-d8a4c7f0158d"), sensor, SENSOR_AN, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE);
         szenario.getAenderungen().put(1, aenderung);
 
         raumDataService.addRaum(raum);

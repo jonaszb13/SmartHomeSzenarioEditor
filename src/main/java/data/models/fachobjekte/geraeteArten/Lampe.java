@@ -1,6 +1,7 @@
 package data.models.fachobjekte.geraeteArten;
 
 import data.models.fachobjekte.Geraet;
+import data.models.fachobjekte.Merkmalbezeichnung;
 import data.models.fachobjekte.Raum;
 import util.statusmeldungen.StatusLog;
 
@@ -20,6 +21,7 @@ public class Lampe extends Geraet {
         this.farbe = farbe;
         this.eingeschaltet = eingeschaltet;
     }
+
     public Lampe(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
     }
@@ -50,59 +52,55 @@ public class Lampe extends Geraet {
 
     @Override
     public void updateValue(final String key, final String value) {
-        switch (key) {
-            case "eingeschaltet":
-                setEingeschaltet(Boolean.parseBoolean(value));
-                break;
-            case "helligkeit":
-                setHelligkeit(Double.parseDouble(value));
-                break;
-            case "farbe":
-                setFarbe(Color.decode(value));
-                break;
-            default:
-                IllegalArgumentException iaE = new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
-                StatusLog.addError(iaE.getMessage(), iaE);
-                throw iaE;
+        if (Merkmalbezeichnung.EINGESCHALTET.getBezeichnung().equals(key)) {
+            setEingeschaltet(Boolean.parseBoolean(value));
+        } else if (Merkmalbezeichnung.HELLIGKEIT.getBezeichnung().equals(key)) {
+            setHelligkeit(Double.parseDouble(value));
+        } else if (Merkmalbezeichnung.FARBE.getBezeichnung().equals(key)) {
+            setFarbe(Color.decode(value));
+        } else {
+            IllegalArgumentException iaE = new IllegalArgumentException("Ungültiger Schlüssel in der Datenbank");
+            StatusLog.addError(iaE.getMessage(), iaE);
+            throw iaE;
         }
     }
 
     @Override
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
-        //TODO Keys etc. als Enums einführen
-        values.put("helligkeit", formatiereZahlenwerteInsDeutsche(Double.toString(getHelligkeit())));
-        values.put("farbe", farbe != null ? String.format("#%02x%02x%02x", farbe.getRed(), farbe.getGreen(), farbe.getBlue()) : "#000000");
-        values.put("eingeschaltet", Boolean.toString(eingeschaltet));
+        values.put(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), formatiereZahlenwerteInsDeutsche(Double.toString(getHelligkeit())));
+        values.put(Merkmalbezeichnung.FARBE.getBezeichnung(), farbe != null ? String.format("#%02x%02x%02x", farbe.getRed(), farbe.getGreen(), farbe.getBlue()) : "#000000");
+        values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(eingeschaltet));
         return values;
     }
 
     @Override
     public Map<String, Class<?>> getAttributTypen() {
         final Map<String, Class<?>> typen = new HashMap<>();
-        typen.put("helligkeit", double.class);
-        typen.put("farbe", Color.class);
-        typen.put("eingeschaltet", boolean.class);
+        typen.put(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), double.class);
+        typen.put(Merkmalbezeichnung.FARBE.getBezeichnung(), Color.class);
+        typen.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), boolean.class);
         return typen;
     }
+
     @Override
     public boolean isGueltigeAttribute(final Map<String, String> attributeMap) {
-        if (attributeMap.get("helligkeit") == null
-                || attributeMap.get("farbe") == null
-                || attributeMap.get("eingeschaltet") == null) {
+        if (attributeMap.get(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung()) == null
+                || attributeMap.get(Merkmalbezeichnung.FARBE.getBezeichnung()) == null
+                || attributeMap.get(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung()) == null) {
             return false;
         }
-        attributeMap.replace("helligkeit", formatiereZahlenwerteInsEnglische(attributeMap.get("helligkeit")));
-        if (!isDouble(attributeMap.get("helligkeit"))) {
-            StatusLog.addError("Die Helligkeit muss eine Zahl sein");
+        attributeMap.replace(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), formatiereZahlenwerteInsEnglische(attributeMap.get(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung())));
+        if (!isDouble(attributeMap.get(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung()))) {
+            StatusLog.addError("Die " + Merkmalbezeichnung.HELLIGKEIT.getBezeichnung() + " muss eine Zahl sein \nDer Dezimalpunkt ist das Komma");
             return false;
         }
 
-        double helligkeit = Double.parseDouble(attributeMap.get("helligkeit"));
+        double helligkeit = Double.parseDouble(attributeMap.get(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung()));
         if (helligkeit < 0 || helligkeit > 100) {
-            StatusLog.addError("Die Helligkeit muss zwischen 0 und 100 Prozent liegen");
+            StatusLog.addError("Die " + Merkmalbezeichnung.HELLIGKEIT.getBezeichnung() + " muss zwischen 0 und 100 Prozent liegen \nDer Dezimalpunkt ist das Komma");
             return false;
         }
-         return true;
+        return true;
     }
 }
