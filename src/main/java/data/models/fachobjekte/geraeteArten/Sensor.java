@@ -51,7 +51,7 @@ public class Sensor extends Geraet {
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
         values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(eingeschaltet));
-                values.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), Boolean.toString(ausschlag));
+        values.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), Boolean.toString(ausschlag));
         return values;
     }
 
@@ -59,7 +59,7 @@ public class Sensor extends Geraet {
     public Map<String, Class<?>> getAttributTypen() {
         final Map<String, Class<?>> typen = new HashMap<>();
         typen.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), boolean.class);
-                typen.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), boolean.class);
+        typen.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), boolean.class);
         return typen;
     }
 

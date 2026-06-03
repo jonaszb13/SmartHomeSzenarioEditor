@@ -53,6 +53,14 @@ class GeraetObjektServiceTest {
         geraetObjektService = GeraetObjektService.getInstance();
     }
 
+    private static Map<String, String> getLampenAttribute() {
+        Map<String, String> attributeMap = new HashMap<>();
+        attributeMap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
+        attributeMap.put(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), "99.7");
+        attributeMap.put(Merkmalbezeichnung.FARBE.getBezeichnung(), "#00FF88");
+        return attributeMap;
+    }
+
     @BeforeEach
     void init() throws Exception {
         StatusLog.clear();
@@ -67,21 +75,6 @@ class GeraetObjektServiceTest {
         raumObjektService.getAllRaeume();
         Map<UUID, Raum> raumMap = raumObjektService.getRaumMap();
         geraetObjektService.getAllGeraete(raumMap);
-    }
-
-    @Test
-    void testAddGeraet() {
-        Map<String, String> attributemap = new HashMap<>();
-        attributemap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
-        attributemap.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), "true");
-
-        boolean erfolgreich = geraetObjektService.addGeraet("Sensor 1", "Sensor", RAUM_1, attributemap);
-
-        assertTrue(erfolgreich);
-        assertFalse(StatusLog.hasError());
-        assertEquals(3, geraetObjektService.getGeraetMap().size());
-        Geraet geraet = geraetObjektService.getGeraetMap().values().stream().filter(o -> o.getName().equals("Sensor 1")).findFirst().get();
-        assertEquals(RAUM_1, geraet.getRaum());
     }
 
     @Test
@@ -119,6 +112,21 @@ class GeraetObjektServiceTest {
     }
 
     @Test
+    void testAddGeraet() {
+        Map<String, String> attributemap = new HashMap<>();
+        attributemap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
+        attributemap.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), "true");
+
+        boolean erfolgreich = geraetObjektService.addGeraet("Sensor 1", "Sensor", RAUM_1, attributemap);
+
+        assertTrue(erfolgreich);
+        assertFalse(StatusLog.hasError());
+        assertEquals(3, geraetObjektService.getGeraetMap().size());
+        Geraet geraet = geraetObjektService.getGeraetMap().values().stream().filter(o -> o.getName().equals("Sensor 1")).findFirst().get();
+        assertEquals(RAUM_1, geraet.getRaum());
+    }
+
+    @Test
     void testUpdateGeraetWerte() {
         StatusLog.clear();
         Map<String, String> neueWerte = new HashMap<>();
@@ -133,14 +141,6 @@ class GeraetObjektServiceTest {
         assertFalse(LAMPE_1.isEingeschaltet());
         assertEquals(10, LAMPE_1.getHelligkeit());
         assertEquals(Color.decode("#000000"), LAMPE_1.getFarbe());
-    }
-
-    private static Map<String, String> getLampenAttribute() {
-        Map<String, String> attributeMap = new HashMap<>();
-        attributeMap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
-        attributeMap.put(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), "99.7");
-        attributeMap.put(Merkmalbezeichnung.FARBE.getBezeichnung(), "#00FF88");
-        return attributeMap;
     }
 
     @AfterEach

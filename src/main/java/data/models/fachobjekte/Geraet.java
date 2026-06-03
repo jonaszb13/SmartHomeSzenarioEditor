@@ -45,6 +45,7 @@ public abstract class Geraet extends DAO {
             updateValue(entry.getKey(), entry.getValue());
         }
     }
+
     public abstract boolean isGueltigeAttribute(Map<String, String> attributeMap);
 
     public abstract void updateValue(String key, String value);
