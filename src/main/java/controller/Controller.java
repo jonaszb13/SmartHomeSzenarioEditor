@@ -14,12 +14,7 @@ import util.customExceptions.MessageMissingException;
 import util.statusmeldungen.StatusLog;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class Controller implements ChangeListener<TreeItem<String>> {
@@ -46,7 +41,6 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             case GERAET   -> zeigeGeraetDetail(model.getGeraet(view.getGeraetUuidForItem(newValue)));
             case SZENARIO -> zeigeSzenarioDetailPanel(model.getSzenario(view.getSzenarioUuidForItem(newValue)));
             case SZENARIEN -> zeigeSzenarienPanel();
-            //TODO Fehler soll nicht zusätzlich noch erstellt werden, wenn Fehlermeldung durch Fehler beim Erstellen des Geräts ausgelöst ist
             default       -> StatusLog.addError(new InputMismatchException("Ausgewähltes Objekt existiert nicht."));
         }
 
