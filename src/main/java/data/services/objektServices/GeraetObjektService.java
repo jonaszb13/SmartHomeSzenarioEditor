@@ -49,7 +49,7 @@ public final class GeraetObjektService {
             if (!id.equals(lastId)) {
                 if (erstesMal) erstesMal = false;
                 else {
-                    aktuellesGeraet.setValues(attributeHashMap);
+                    if (aktuellesGeraet != null) aktuellesGeraet.setValues(attributeHashMap);
                     attributeHashMap = new HashMap<>();
                 }
                 final UUID raum = UUID.fromString(crs.getString("raum"));
@@ -59,11 +59,13 @@ public final class GeraetObjektService {
                 } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                          IllegalAccessException e) {
                     StatusLog.addError("Bei der dynamischen Erstellung eines Geräts ist ein Fehler aufgetreten", e);
-                    //TODO was mit Null tun?
+                    aktuellesGeraet = null;
                 }
                 attributeHashMap.put(crs.getString("schluessel"), crs.getString("wert"));
-                localGeraetMap.put(id, aktuellesGeraet);
-                raumMap.get(raum).getGeraete().add(aktuellesGeraet);
+                if (aktuellesGeraet != null) {
+                    localGeraetMap.put(id, aktuellesGeraet);
+                    raumMap.get(raum).getGeraete().add(aktuellesGeraet);
+                }
                 lastId = id;
             }
             attributeHashMap.put(crs.getString("schluessel"), crs.getString("wert"));
@@ -129,10 +131,10 @@ public final class GeraetObjektService {
         boolean erfolgreich = false;
         if (geraetDataService.updateGeraetRaum(geraet, raum)) {
             geraetMap.get(geraet.getId()).setRaum(raum);
-            StatusLog.addHinweis("Raum des Geräts " + geraet.getId() + " erfolgreich zu " + raum.getName() + " geändert");
+            StatusLog.addHinweis("Raum des Geräts " + geraet.getName() + " erfolgreich zu " + raum.getName() + " geändert");
             erfolgreich = true;
         } else {
-            StatusLog.addError("Raum des Geräts " + geraet.getId() + " konnte nicht geändert werden");
+            StatusLog.addError("Raum des Geräts " + geraet.getName() + " konnte nicht geändert werden");
         }
         return erfolgreich;
     }

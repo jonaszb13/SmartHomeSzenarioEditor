@@ -4,7 +4,6 @@ import data.models.fachobjekte.Szenario;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 
 public final class SzenarioAktivationService {
@@ -37,9 +36,9 @@ public final class SzenarioAktivationService {
         }
         if (erfolgreich && !szenarioObjektService.updateSzenarioStatus(szenario, true)) erfolgreich = false;
         if (erfolgreich) {
-            StatusLog.addHinweis("Szenario erfolgreich ausgeführt");
+            StatusLog.addHinweis(szenario.getName() + " erfolgreich ausgeführt");
         } else {
-            StatusLog.addError("Szenario konnte nicht aktiviert werden");
+            StatusLog.addError(szenario.getName() + " konnte nicht aktiviert werden");
         }
         return erfolgreich;
     }

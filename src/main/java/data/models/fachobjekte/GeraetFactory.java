@@ -6,10 +6,7 @@ import util.customExceptions.NoGeraetProvidedException;
 import util.statusmeldungen.StatusLog;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Factory-Klasse die das dynamische erstellen von Objekten,
@@ -39,7 +36,7 @@ public final class GeraetFactory {
         return instance;
     }
 
-    public java.util.Set<String> getGeraeteTypen() {
+    public Set<String> getGeraeteTypen() {
         return geraeteKlassen.keySet();
     }
 

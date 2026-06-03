@@ -1,47 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.SzenarioController"
+            style="-fx-background-color: #fff"
             AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
             AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
 
     <top>
-        <VBox spacing="4">
+        <VBox spacing="5" style="-fx-border-color: transparent transparent #c4c6c9 transparent; -fx-border-width: 0 0 1 0">
             <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            <Label text="Szenario" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
-            <Label fx:id="szenrioNameLabel" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
-            <Separator/>
+            <Label text="Einzelansicht" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+            <Label fx:id="szenarioNameLabel" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
         </VBox>
     </top>
 
     <center>
-        <VBox spacing="16">
+        <VBox spacing="16" style="-fx-background-color: #fff">
             <padding><Insets top="16" right="10" bottom="10" left="10"/></padding>
 
             <VBox spacing="4">
                 <Label text="Szenarioname"/>
-                <TextField fx:id="szenarioNameField" editable="false" prefWidth="300"
+                <TextField fx:id="szenarioNameField" editable="false"
                            style="-fx-background-color: #f0f0f0;"/>
             </VBox>
 
             <VBox spacing="4">
-                <Label text="Szenario Inhalte"/>
-                <ListView fx:id="szenarioInhalt" prefHeight="150" prefWidth="300"
+                <Label text="Kurzbeschreibung"/>
+                <TextArea fx:id="szenarioBeschreibungArea" editable="false" prefHeight="80" wrapText="true"
+                          style="-fx-background-color: #f0f0f0;" mouseTransparent="true" focusTraversable="false"/>
+            </VBox>
+
+            <VBox spacing="4">
+                <Label text="Aktionsfolge"/>
+                <ListView fx:id="szenarioInhalt" prefHeight="150"
                           style="-fx-background-color: #f0f0f0;" mouseTransparent="true" focusTraversable="false"/>
             </VBox>
         </VBox>
     </center>
 
     <bottom>
-        <HBox>
+        <HBox spacing="10" style="-fx-background-color: #fff">
             <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            <Button text="Bearbeiten" prefWidth="190" prefHeight="45" onAction="#handleBearbeiten"/>
+            <Button text="Schließen" prefWidth="150" prefHeight="50" onAction="#handleSchliessen"/>
             <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Szenario ausführen" prefWidth="180" prefHeight="50"
+                    style="-fx-background-color: #2e7d32; -fx-text-fill: white;"
+                    onAction="#handleAusfuehren"/>
+            <Button text="Bearbeiten" prefWidth="150" prefHeight="50" onAction="#handleBearbeiten"/>
         </HBox>
     </bottom>
 
