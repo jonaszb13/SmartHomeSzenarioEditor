@@ -6,6 +6,7 @@ import data.models.fachobjekte.Szenario;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.control.Menu;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -26,6 +27,8 @@ public class View {
     private Pane hauptPane;
     @FXML
     private VBox statusLogVBox;
+    @FXML
+    private Menu szenarioOeffnenMenu;
 
     private StatusLogView statusLogView;
 
@@ -131,5 +134,9 @@ public class View {
 
     public UUID getSzenarioUuidForItem(final TreeItem<String> item) {
         return szenarioTreeMap.getA(item);
+    }
+
+    public Menu getSzenarioOeffnenMenu() {
+        return szenarioOeffnenMenu;
     }
 }

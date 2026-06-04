@@ -148,10 +148,14 @@ public final class SzenarioObjektService {
         boolean erfolgreich = false;
         if (szenarioDataService.updateSzenarioStatus(szenario, status)) {
             szenario.setStatus(status);
-            StatusLog.addHinweis("Status des " + szenario.getName() +  WURDE_ERFOLGREICH_AKTUALISIERT);
+            if (status) {
+                StatusLog.addHinweis("Szenario " + szenario.getName() + " wurde aktiviert");
+            } else {
+                StatusLog.addHinweis("Szenario " + szenario.getName() + " wurde deaktiviert");
+            }
             erfolgreich = true;
         } else {
-            StatusLog.addError("Status des " + szenario.getName() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
+            StatusLog.addError("Status des Szenarios " + szenario.getName() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
         }
         return erfolgreich;
     }
