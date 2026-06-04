@@ -146,8 +146,16 @@ public final class GeraetObjektService {
            return erfolgreich;
         }
         if (geraetDataService.updateGeraetWerte(geraet, attributeMap)) {
+            Map <String, String> alteWerte = geraet.getValues();
             geraet.setValues(attributeMap);
-            StatusLog.addHinweis("Attribute des Geräts " + geraet.getName() + " wurden aktualisiert");
+            for (String key : attributeMap.keySet()) {
+                if (!attributeMap.get(key).equals(alteWerte.get(key))) {
+                    if (geraet.isDouble(attributeMap.get(key))) {
+                        attributeMap.replace(key, geraet.formatiereZahlenwerteInsDeutsche(attributeMap.get(key)));
+                    }
+                    StatusLog.addHinweis(key + " des Geräts " + geraet.getName() + " wurde auf " + attributeMap.get(key) + " gesetzt");
+                }
+            }
             erfolgreich = true;
         } else {
             StatusLog.addError("Attribute des Geräts " + geraet.getName() + " konnten nicht aktualisiert werden");
