@@ -102,6 +102,15 @@ public class DataAccess {
     }
 
     /* package */
+    void updateGeraetWert(final String sql, final String attribut, final String attributWert, final UUID id) throws SQLException {
+        final PreparedStatement pStmt = conn.prepareStatement(sql);
+        pStmt.setString(1, attribut);
+        pStmt.setString(2, attributWert);
+        pStmt.setObject(3, id);
+        pStmt.executeUpdate();
+    }
+
+    /* package */
     void insertId2SId(final String sql, final UUID id, final String name, final String art, final UUID raum) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
@@ -112,12 +121,11 @@ public class DataAccess {
     }
 
     /* package */
-    void addSzenario(final String sql, final UUID id, final String name, final String beschreibung, final String status) throws SQLException {
+    void addSzenario(final String sql, final UUID id, final String name, final String beschreibung) throws SQLException {
         final PreparedStatement pStmt = conn.prepareStatement(sql);
         pStmt.setObject(1, id);
         pStmt.setString(2, name);
         pStmt.setString(3, beschreibung);
-        pStmt.setString(4, status);
         pStmt.executeUpdate();
     }
 

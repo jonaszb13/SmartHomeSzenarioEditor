@@ -6,7 +6,7 @@ import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
 import data.services.objektServices.GeraetObjektService;
 import data.services.objektServices.RaumObjektService;
-import data.services.objektServices.SzenarioAktivationService;
+import data.services.objektServices.SzenarioAusfuehrungsService;
 import data.services.objektServices.SzenarioObjektService;
 import util.customExceptions.NoGeraetProvidedException;
 import util.statusmeldungen.StatusLog;
@@ -23,7 +23,7 @@ public final class Model {
     private RaumObjektService raumObjektService = null;
     private GeraetObjektService geraetObjektService = null;
     private SzenarioObjektService szenarioObjektService = null;
-    private SzenarioAktivationService szenarioAktivationService = null;
+    private SzenarioAusfuehrungsService szenarioAktivationService = null;
 
     public static Model getInstance() {
         if (instance == null) {
@@ -37,10 +37,10 @@ public final class Model {
             raumObjektService = RaumObjektService.getInstance();
             geraetObjektService = GeraetObjektService.getInstance();
             szenarioObjektService = SzenarioObjektService.getInstance();
-            szenarioAktivationService = SzenarioAktivationService.getInstance();
+            szenarioAktivationService = SzenarioAusfuehrungsService.getInstance();
             Map<UUID, Raum> raumMap = raumObjektService.getAllRaeume();
             Map<UUID, Geraet> geraetMap = geraetObjektService.getAllGeraete(raumMap);
-            szenarioObjektService.getAllSzenarien(geraetMap);
+            szenarioObjektService.ladeAlleSzenarien(geraetMap);
         } catch (SQLException eSQL) {
             StatusLog.addError("Das Model konnte nicht geladen werden: ", eSQL);
         }
@@ -112,10 +112,12 @@ public final class Model {
     }
 
     public boolean updateGeraetName(final Geraet geraet, final String name) {
+        if (geraet.getName().equals(name)) return false;
         return geraetObjektService.updateGeraetName(geraet, name);
     }
 
     public boolean updateGeraetRaum(final Geraet geraet, final Raum raum) {
+        if (geraet.getRaum() == raum) return false;
         return geraetObjektService.updateGeraetRaum(geraet, raum);
     }
 
@@ -145,34 +147,17 @@ public final class Model {
         return szenarioObjektService.updateSzenario(szenario, name, beschreibung);
     }
 
-    public boolean updateSzenarioStatus(final Szenario szenario, final boolean status) {
-        return szenarioObjektService.updateSzenarioStatus(szenario, status);
-    }
 
     public boolean addSzenarioAktion(final Szenario szenario, final Szenario.Aenderung aenderung, final int position) {
         return szenarioObjektService.addSzenarioInhalt(szenario, aenderung, position);
-    }
-
-    public boolean updateSzenarioAktion(final Szenario szenario, final int position, final Geraet geraet,
-                                        final String beschreibung, final String schluessel, final String wert) {
-        return szenarioObjektService.alterSzenarioInhalt(szenario, position, geraet, beschreibung, schluessel, wert);
     }
 
     public boolean deleteSzenarioAktion(final Szenario szenario, final int position) {
         return szenarioObjektService.deleteSzenarioInhalt(szenario, position);
     }
 
-    public Szenario.Aenderung createAenderung(final Geraet geraet, final String beschreibung,
-                                              final String schluessel, final String wert) {
-        return szenarioObjektService.getAenderung(geraet, beschreibung, schluessel, wert);
-    }
-
-    public boolean aktiviereSzenario(final Szenario szenario) {
-        return szenarioAktivationService.aktiviereSzenario(szenario);
-    }
-
-    public boolean deaktiviereSzenario(final Szenario szenario) {
-        return szenarioAktivationService.deaktiviereSzenario(szenario);
+    public boolean fuehreSzenarioAus(final Szenario szenario) {
+        return szenarioAktivationService.fuehreSzenarioAus(szenario);
     }
 
 }

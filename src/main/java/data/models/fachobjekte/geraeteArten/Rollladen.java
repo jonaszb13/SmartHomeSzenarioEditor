@@ -71,24 +71,24 @@ public class Rollladen extends Geraet {
         }
         attributeMap.replace(Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung(), formatiereZahlenwerteInsEnglische(attributeMap.get(Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung())));
         if (!isDouble(attributeMap.get(Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung()))) {
-            StatusLog.addError("Der " + Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung() + " muss eine Zahl sein \nDer Dezimalpunkt das ein Komma");
+            StatusLog.addError("Der " + Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung() + " muss eine Zahl sein \nDer Dezimalpunkt ist das Komma");
             return false;
         }
         attributeMap.replace(Merkmalbezeichnung.NEIGUNG.getBezeichnung(), formatiereZahlenwerteInsEnglische(attributeMap.get(Merkmalbezeichnung.NEIGUNG.getBezeichnung())));
         if (!isDouble(attributeMap.get(Merkmalbezeichnung.NEIGUNG.getBezeichnung()))) {
-            StatusLog.addError("Die " + Merkmalbezeichnung.NEIGUNG.getBezeichnung() + " muss eine Zahl sein \nDer Dezimalpunkt das ein Komma");
+            StatusLog.addError("Die " + Merkmalbezeichnung.NEIGUNG.getBezeichnung() + " muss eine Zahl sein \nDer Dezimalpunkt ist das Komma");
             return false;
         }
 
         double schliessstatus = Double.parseDouble(attributeMap.get(Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung()));
         if (schliessstatus < 0 || schliessstatus > 100) {
-            StatusLog.addError("Der " + Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung() + " muss zwischen 0 und 100 Prozent liegen \nDer Dezimalpunkt das ein Komma");
+            StatusLog.addError("Der " + Merkmalbezeichnung.SCHLIESSSTATUS.getBezeichnung() + " muss zwischen 0 und 100 Prozent liegen \nDer Dezimalpunkt ist das Komma");
             return false;
         }
 
         double neigung = Double.parseDouble(attributeMap.get(Merkmalbezeichnung.NEIGUNG.getBezeichnung()));
         if (neigung < -90 || neigung > 90) {
-            StatusLog.addError("Die " + Merkmalbezeichnung.NEIGUNG.getBezeichnung() + " muss zwischen -90 und +90 liegen \nDer Dezimalpunkt das ein Komma");
+            StatusLog.addError("Die " + Merkmalbezeichnung.NEIGUNG.getBezeichnung() + " muss zwischen -90 und +90 liegen \nDer Dezimalpunkt ist das Komma");
             return false;
         }
         return true;
