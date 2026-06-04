@@ -12,7 +12,7 @@
             <Menu mnemonicParsing="false" text="Neu" />
             <Menu mnemonicParsing="false" text="Öffnen" />
             <Menu mnemonicParsing="false" text="Speichern" />
-            <Menu mnemonicParsing="false" text="Szeanrio öffnen" />
+            <Menu fx:id="szenarioOeffnenMenu" mnemonicParsing="false" text="Szenario öffnen" />
         </MenuBar>
     </top>
 

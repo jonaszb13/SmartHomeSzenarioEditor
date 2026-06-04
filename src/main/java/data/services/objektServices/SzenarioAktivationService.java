@@ -4,6 +4,9 @@ import data.models.fachobjekte.Szenario;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 public final class SzenarioAktivationService {
@@ -26,6 +29,7 @@ public final class SzenarioAktivationService {
 
     public boolean aktiviereSzenario(final Szenario szenario) {
         boolean erfolgreich = true;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM 'um' HH:mm:ss 'Uhr'", Locale.GERMANY);
         for (Szenario.Aenderung aenderung : szenario.getAenderungen().values()) {
             Map<String, String> attributeMap = aenderung.geraet().getValues();
             attributeMap.replace(aenderung.schluessel(), aenderung.wert());
@@ -36,9 +40,9 @@ public final class SzenarioAktivationService {
         }
         if (erfolgreich && !szenarioObjektService.updateSzenarioStatus(szenario, true)) erfolgreich = false;
         if (erfolgreich) {
-            StatusLog.addHinweis(szenario.getName() + " erfolgreich ausgeführt");
+            StatusLog.addHinweis("Szenario " + szenario.getName() + " erfolgreich am " + sdf.format(new Date()) + " ausgeführt");
         } else {
-            StatusLog.addError(szenario.getName() + " konnte nicht aktiviert werden");
+            StatusLog.addError("Szenario " + szenario.getName() + " konnte nicht aktiviert werden");
         }
         return erfolgreich;
     }

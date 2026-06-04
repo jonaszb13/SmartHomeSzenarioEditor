@@ -7,6 +7,7 @@ import data.models.fachobjekte.Szenario;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
 import userInterface.View;
@@ -14,12 +15,7 @@ import util.customExceptions.MessageMissingException;
 import util.statusmeldungen.StatusLog;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class Controller implements ChangeListener<TreeItem<String>> {
@@ -32,6 +28,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         this.view = view;
         this.view.addUebersichtTreeSelectionListener(this);
         this.model = model;
+        aktualisiereSzenarioMenu();
     }
 
     @Override
@@ -46,7 +43,6 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             case GERAET   -> zeigeGeraetDetail(model.getGeraet(view.getGeraetUuidForItem(newValue)));
             case SZENARIO -> zeigeSzenarioDetailPanel(model.getSzenario(view.getSzenarioUuidForItem(newValue)));
             case SZENARIEN -> zeigeSzenarienPanel();
-            //TODO Fehler soll nicht zusätzlich noch erstellt werden, wenn Fehlermeldung durch Fehler beim Erstellen des Geräts ausgelöst ist
             default       -> StatusLog.addError(new InputMismatchException("Ausgewähltes Objekt existiert nicht."));
         }
 
@@ -59,7 +55,17 @@ public class Controller implements ChangeListener<TreeItem<String>> {
 
     private void nachModelAenderung() {
         aktualisiereTree();
+        aktualisiereSzenarioMenu();
         updateStatusLog();
+    }
+
+    private void aktualisiereSzenarioMenu() {
+        view.getSzenarioOeffnenMenu().getItems().clear();
+        model.getSzenarioMap().forEach((id, szenario) -> {
+            final MenuItem item = new MenuItem(szenario.getName());
+            item.setOnAction(e -> zeigeSzenarioDetailPanel(szenario));
+            view.getSzenarioOeffnenMenu().getItems().add(item);
+        });
     }
 
     private void zeigePanelHelper(final String fxmlPfad, final Consumer<FXMLLoader> setup) {
