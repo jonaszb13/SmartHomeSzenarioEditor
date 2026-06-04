@@ -81,7 +81,7 @@ class SzenarioObjektServiceTest {
 
         Map<UUID, Raum> raumMap = raumObjektService.getAllRaeume();
         Map<UUID, Geraet> geraetMap = geraetObjektService.getAllGeraete(raumMap);
-        szenarioObjektService.getAllSzenarien(geraetMap);
+        szenarioObjektService.ladeAlleSzenarien(geraetMap);
 
     }
 

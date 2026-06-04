@@ -39,7 +39,7 @@ public final class SzenarioObjektService {
         return new Szenario.Aenderung(UUID.randomUUID(), geraet, beschreibung, schluessel, wert);
     }
 
-    public Map<UUID, Szenario> getAllSzenarien(final Map<UUID, Geraet> geraetMap) throws SQLException {
+    public void ladeAlleSzenarien(final Map<UUID, Geraet> geraetMap) throws SQLException {
         StatusLog.addHinweis("Beginne SzenarienMap zu laden");
         Map<UUID, Szenario> localSzenarienMap = new HashMap<>();
         CachedRowSet crs = szenarioDataService.getAllGeraete();
@@ -52,7 +52,6 @@ public final class SzenarioObjektService {
                 final String name = crs.getString("name");
                 aktuellesSzenario = new Szenario(id, name);
                 aktuellesSzenario.setBeschreibung(crs.getString("beschreibung"));
-                aktuellesSzenario.setStatus(Boolean.parseBoolean(crs.getString("status")));
                 localSzenarienMap.put(id, aktuellesSzenario);
                 lastId = id;
             }
@@ -61,7 +60,7 @@ public final class SzenarioObjektService {
                 StatusLog.addError("Szenario-Aktion verweist auf unbekanntes Gerät, Aktion wird übersprungen");
             } else {
                 aktuellesSzenario.getAenderungen().put(crs.getInt("position"), new Szenario.Aenderung(
-                        UUID.fromString(crs.getString(10)),
+                        UUID.fromString(crs.getString(9)),
                         geraet,
                         crs.getString("Aktion"),
                         crs.getString("schluessel"),
@@ -71,7 +70,6 @@ public final class SzenarioObjektService {
         }
         StatusLog.addHinweis("SzenarienMap erfolgreich geladen");
         szenarioMap = localSzenarienMap;
-        return localSzenarienMap;
     }
 
     public boolean addSzenario(final String name, final String beschreibung, final Map<Integer, Szenario.Aenderung> aenderung) {
@@ -144,27 +142,11 @@ public final class SzenarioObjektService {
         return erfolgreich;
     }
 
-    public boolean updateSzenarioStatus(final Szenario szenario, final boolean status) {
-        boolean erfolgreich = false;
-        if (szenarioDataService.updateSzenarioStatus(szenario, status)) {
-            szenario.setStatus(status);
-            if (status) {
-                StatusLog.addHinweis("Szenario " + szenario.getName() + " wurde aktiviert");
-            } else {
-                StatusLog.addHinweis("Szenario " + szenario.getName() + " wurde deaktiviert");
-            }
-            erfolgreich = true;
-        } else {
-            StatusLog.addError("Status des Szenarios " + szenario.getName() + KONNTE_NICHT_AKTUALISIERT_WERDEN);
-        }
-        return erfolgreich;
-    }
-
     public boolean addSzenarioInhalt(final Szenario szenario, final Szenario.Aenderung aenderung, final int position) {
         boolean erfolgreich = false;
         if (szenarioDataService.addSzenarioInhalt(szenario, aenderung, position)) {
             szenario.getAenderungen().put(position, aenderung);
-            StatusLog.addHinweis("Dem Szenario: " + szenario.getName()+ " wurde eine Aktion erfolgreich hinzugefügt.");
+            StatusLog.addHinweis("Dem Szenario: " + szenario.getName() + " wurde eine Aktion erfolgreich hinzugefügt.");
             erfolgreich = true;
         } else {
             StatusLog.addError("Dem Szenario: " + szenario.getName() + " konnte keine Aktion hinzugefügt werden.");
