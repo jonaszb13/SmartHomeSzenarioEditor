@@ -129,7 +129,7 @@ public final class GeraetDataService {
                 AND GERAET = ?
                 """;
         try {
-            dataAccess.updateSzenario(sql, wert, schluessel, geraet.getId());
+            dataAccess.updateGeraetWert(sql, wert, schluessel, geraet.getId());
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);

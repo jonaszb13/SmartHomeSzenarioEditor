@@ -121,7 +121,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         view.updateTreeModel(model.getRaumMap(), model.getGeraete(), model.getSzenarioMap());
     }
 
-    private void nachModelAenderung() {
+    private void aktualisierenDerGuiElemente() {
         aktualisiereTree();
         aktualisiereSzenarioMenu();
         updateStatusLog();
@@ -161,7 +161,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             geraeteController.setOnNeuenGeraetAnlegenRequested(this::zeigeNeuesGeraetPanel);
             geraeteController.setOnAuswahlLoeschen(ids -> {
                 ids.forEach(model::deleteGeraet);
-                nachModelAenderung();
+                aktualisierenDerGuiElemente();
                 zeigeGeraetePanel();
             });
         });
@@ -184,7 +184,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             neuesGeraetController.setAttributTypenProvider(model::getAttributTypenFuerGeraetTyp);
             neuesGeraetController.setOnAnlegen((name, art, raum, attributeMap) -> {
                 model.addGeraet(name, art, raum, attributeMap);
-                nachModelAenderung();
+                aktualisierenDerGuiElemente();
                 zeigeGeraetePanel();
             });
             neuesGeraetController.setOnAbbrechen(this::zeigeGeraetePanel);
@@ -197,16 +197,18 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             bearbeitenGeraetController.setGeraet(geraet);
             bearbeitenGeraetController.setRaeume(new ArrayList<>(model.getRaumMap().values()), geraet.getRaum());
             bearbeitenGeraetController.setOnSpeichern((name, raum, attributeMap) -> {
-                model.updateGeraetName(geraet, name);
-                model.updateGeraetRaum(geraet, raum);
-                model.updateGeraetWerte(geraet, attributeMap);
-                nachModelAenderung();
+                if (!model.updateGeraetName(geraet, name)
+                        && !model.updateGeraetRaum(geraet, raum)
+                        && !model.updateGeraetWerte(geraet, attributeMap)) {
+                    StatusLog.addHinweis("Es wurden keine Änderungen am Gerät vorgenommen");
+                }
+                aktualisierenDerGuiElemente();
                 zeigeGeraetDetail(geraet);
             });
             bearbeitenGeraetController.setOnAbbrechen(() -> zeigeGeraetDetail(geraet));
             bearbeitenGeraetController.setOnLoeschen(() -> {
                 model.deleteGeraet(geraet.getId());
-                nachModelAenderung();
+                aktualisierenDerGuiElemente();
                 zeigeGeraetePanel();
             });
         });
@@ -220,7 +222,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             raeumeController.setOnNeuenRaumAnlegenRequested(this::zeigeNeuerRaumPanel);
             raeumeController.setOnAuswahlLoeschen(ids -> {
                 ids.forEach(model::deleteRaum);
-                nachModelAenderung();
+                aktualisierenDerGuiElemente();
                 zeigeRaeumePanel();
             });
         });
@@ -240,7 +242,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             final NeuerRaumController neuerRaumController = loader.getController();
             neuerRaumController.setOnAnlegen(name -> {
                 model.addRaum(name);
-                nachModelAenderung();
+                aktualisierenDerGuiElemente();
                 zeigeRaeumePanel();
             });
             neuerRaumController.setOnAbbrechen(this::zeigeRaeumePanel);
@@ -253,13 +255,13 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             bearbeitenRaumController.setRaum(raum);
             bearbeitenRaumController.setOnSpeichern(neuerName -> {
                 model.updateRaum(raum, neuerName);
-                nachModelAenderung();
+                aktualisierenDerGuiElemente();
                 zeigeRaumDetail(raum);
             });
             bearbeitenRaumController.setOnAbbrechen(() -> zeigeRaumDetail(raum));
             bearbeitenRaumController.setOnLoeschen(() -> {
                 model.deleteRaum(raum.getId());
-                nachModelAenderung();
+                aktualisierenDerGuiElemente();
                 zeigeRaeumePanel();
             });
         });
@@ -271,13 +273,13 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             szenarienController.setSzenarien(new ArrayList<>(model.getSzenarioMap().values()));
             szenarienController.setOnSzenarioOeffnen(this::zeigeSzenarioDetailPanel);
             szenarienController.setOnSzenarioAusfuehren(szenario -> {
-                model.aktiviereSzenario(szenario);
-                nachModelAenderung();
+                model.fuehreSzenarioAus(szenario);
+                aktualisierenDerGuiElemente();
             });
             szenarienController.setOnNeuesSzenarioAnlegenRequested(this::zeigeNeuesSzenarioPanelFrisch);
             szenarienController.setOnAuswahlLoeschen(ids -> {
                 ids.forEach(id -> model.deleteSzenario(model.getSzenario(id)));
-                nachModelAenderung();
+                aktualisierenDerGuiElemente();
                 zeigeSzenarienPanel();
             });
         });
@@ -290,8 +292,8 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             szenarioController.setOnBearbeiten(() -> zeigeBearbeitenSzenarioPanel(szenario));
             szenarioController.setOnSchliessen(this::zeigeSzenarienPanel);
             szenarioController.setOnAusfuehren(() -> {
-                model.aktiviereSzenario(szenario);
-                nachModelAenderung();
+                model.fuehreSzenarioAus(szenario);
+                aktualisierenDerGuiElemente();
             });
         });
     }
@@ -318,7 +320,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             ctrl.setOnAnlegen((name, beschr, aktionen) -> {
                 model.addSzenario(name, beschr, aktionenListZuMap(aktionen));
                 formState.zuruecksetzen();
-                nachModelAenderung();
+                aktualisierenDerGuiElemente();
                 zeigeSzenarienPanel();
             });
             ctrl.setOnAbbrechen(() -> {
@@ -359,7 +361,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                 ersetzeSzenarioAktionen(formState.szenarioImBearbeitungsmodus, aktionen);
                 final Szenario gespeichert = formState.szenarioImBearbeitungsmodus;
                 formState.zuruecksetzen();
-                nachModelAenderung();
+                aktualisierenDerGuiElemente();
                 zeigeSzenarioDetailPanel(gespeichert);
             });
             ctrl.setOnAbbrechen(() -> {
@@ -370,7 +372,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             ctrl.setOnLoeschen(() -> {
                 model.deleteSzenario(formState.szenarioImBearbeitungsmodus);
                 formState.zuruecksetzen();
-                nachModelAenderung();
+                aktualisierenDerGuiElemente();
                 zeigeSzenarienPanel();
             });
         });

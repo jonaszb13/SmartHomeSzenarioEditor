@@ -42,7 +42,6 @@ public final class RaumObjektService {
             localRaumMap.put(id, new Raum(id, name));
         }
         StatusLog.addHinweis("RäumeMap erfolgreich geladen");
-        //TODO Abändern?
         this.raumMap = localRaumMap;
         return localRaumMap;
     }

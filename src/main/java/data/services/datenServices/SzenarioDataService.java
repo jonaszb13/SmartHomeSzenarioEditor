@@ -34,7 +34,7 @@ public final class SzenarioDataService {
     public CachedRowSet getAllGeraete() throws SQLException {
         //language=SQL
         String sql = """
-                SELECT SZENARIEN.ID AS SID, NAME, STATUS, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION, SZENARIEN_INHALT.ID AS SIID
+                SELECT SZENARIEN.ID AS SID, NAME, BESCHREIBUNG, AKTION, GERAET, SCHLUESSEL, WERT, POSITION, SZENARIEN_INHALT.ID AS SIID
                 FROM SZENARIEN
                 JOIN SZENARIEN_INHALT
                 ON SZENARIEN.ID = Szenarien_Inhalt.SZENARIO
@@ -47,14 +47,11 @@ public final class SzenarioDataService {
         boolean erfolgreich = false;
         //language=SQL
         final String sql = """
-                INSERT INTO Szenarien ("ID", "NAME", "BESCHREIBUNG", "STATUS")
-                VALUES (?, ?, ?, ?)
+                INSERT INTO Szenarien ("ID", "NAME", "BESCHREIBUNG")
+                VALUES (?, ?, ?)
                 """;
         try {
-            String status;
-            if (szenario.isActive()) status = "true";
-            else status = "false";
-            dataAccess.addSzenario(sql, szenario.getId(), szenario.getName(), szenario.getBeschreibung(), status);
+            dataAccess.addSzenario(sql, szenario.getId(), szenario.getName(), szenario.getBeschreibung());
             erfolgreich = true;
             for (final Map.Entry<Integer, Szenario.Aenderung> e : szenario.getAenderungen().entrySet()) {
                 if (!addSzenarioInhalt(szenario, e.getValue(), e.getKey())) erfolgreich = false;
@@ -75,27 +72,6 @@ public final class SzenarioDataService {
                 """;
         try {
             dataAccess.updateSzenario(sql, szenario.getName(), szenario.getBeschreibung(), szenario.getId());
-            erfolgreich = true;
-        } catch (SQLException eSQL) {
-            StatusLog.addError(eSQL);
-        }
-        return erfolgreich;
-    }
-
-    public boolean updateSzenarioStatus(final Szenario szenario, final boolean status) {
-        boolean erfolgreich = false;
-        //language=SQL
-        final String sql = """
-                UPDATE SZENARIEN
-                SET STATUS = ?
-                WHERE ID = ?
-                """;
-        try {
-            if (status) {
-                dataAccess.updateOneValue(sql, "true", szenario.getId());
-            } else {
-                dataAccess.updateOneValue(sql, "false", szenario.getId());
-            }
             erfolgreich = true;
         } catch (SQLException eSQL) {
             StatusLog.addError(eSQL);

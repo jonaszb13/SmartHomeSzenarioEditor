@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import javax.sql.rowset.CachedRowSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -136,39 +135,6 @@ class SzenarioDataServiceTest {
         assertEquals(szenario.getAenderungen().get(crs.getInt(8)).id(), crs.getObject(3));
     }
 
-    @Test
-    void testUpdateSzenarioStatus() throws Exception {
-        Raum raum = new Raum(java.util.UUID.fromString(UUID_1), RAUM_1);
-        Sensor sensor = (Sensor) geraetFactory.createGeraet(java.util.UUID.fromString(UUID_2),
-                SENSOR_1, raum, SENSOR);
-        Map<String, String> sensorMap = new HashMap<>();
-        sensorMap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), FALSE);
-        sensorMap.put("ausschlag", FALSE);
-        Szenario szenario = new Szenario(java.util.UUID.fromString(UUID_3), SZENARIO_1);
-        szenario.setBeschreibung(SZENARIO_1);
-        szenario.getAenderungen().put(1, new Szenario.Aenderung(
-                java.util.UUID.fromString(UUID_4), sensor, SENSOR_AN, Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), TRUE));
-
-        raumDataService.addRaum(raum);
-        geraetDataService.addGeraet(sensor, SENSOR, sensorMap);
-        szenarioDataService.addSzenario(szenario);
-
-        //language=SQL
-        CachedRowSet crs = dataAccess.getData("SELECT ID, NAME, STATUS FROM SZENARIEN");
-        crs.next();
-        assertEquals(szenario.getId(), crs.getObject(1));
-        assertEquals(FALSE, crs.getString(3));
-
-        szenarioDataService.updateSzenarioStatus(szenario, true);
-        crs = dataAccess.getData("SELECT ID, NAME, STATUS FROM SZENARIEN");
-        crs.next();
-        assertEquals(TRUE, crs.getString(3));
-
-        szenarioDataService.updateSzenarioStatus(szenario, false);
-        crs = dataAccess.getData("SELECT ID, NAME, STATUS FROM SZENARIEN");
-        crs.next();
-        assertEquals(FALSE, crs.getString(3));
-    }
 
     @Test
     void testDeleteSzenario() throws Exception {

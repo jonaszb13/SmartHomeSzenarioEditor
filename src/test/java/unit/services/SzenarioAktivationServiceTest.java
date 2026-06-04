@@ -5,20 +5,16 @@ import data.models.fachobjekte.geraeteArten.Sensor;
 import data.services.datenServices.*;
 import data.services.objektServices.GeraetObjektService;
 import data.services.objektServices.RaumObjektService;
-import data.services.objektServices.SzenarioAktivationService;
+import data.services.objektServices.SzenarioAusfuehrungsService;
 import data.services.objektServices.SzenarioObjektService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SzenarioAktivationServiceTest {
     static final UUID RAUM_ID = UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4");
@@ -41,7 +37,7 @@ public class SzenarioAktivationServiceTest {
     private static Szenario szenario1;
     private static Szenario.Aenderung aenderung1;
     private static Szenario.Aenderung aenderung2;
-    private static SzenarioAktivationService szenarioAktivationService;
+    private static SzenarioAusfuehrungsService szenarioAktivationService;
 
 
     @BeforeAll
@@ -56,7 +52,7 @@ public class SzenarioAktivationServiceTest {
         geraetObjektService = GeraetObjektService.getInstance();
         szenarioDataService = SzenarioDataService.getInstance();
         szenarioObjektService = SzenarioObjektService.getInstance();
-        szenarioAktivationService = SzenarioAktivationService.getInstance();
+        szenarioAktivationService = SzenarioAusfuehrungsService.getInstance();
 
         sensor1 = (Sensor) GeraetFactory.getInstance().createGeraet(SENSOR_1_ID, "Sensor 1", RAUM_1, "Sensor");
         sensor2 = (Sensor) GeraetFactory.getInstance().createGeraet(SENSOR_2_ID, "Sensor 2", RAUM_1, "Sensor");
@@ -84,33 +80,8 @@ public class SzenarioAktivationServiceTest {
 
         Map<UUID, Raum> raumMap = raumObjektService.getAllRaeume();
         Map<UUID, Geraet> geraetMap = geraetObjektService.getAllGeraete(raumMap);
-        szenarioObjektService.getAllSzenarien(geraetMap);
+        szenarioObjektService.ladeAlleSzenarien(geraetMap);
     }
-
-    @Test
-    void testAktiviereSzenario() {
-        Szenario szenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
-        Sensor sensorLokal1 = (Sensor) szenario.getAenderungen().get(1).geraet();
-        Sensor sensorLokal2 = (Sensor) szenario.getAenderungen().get(2).geraet();
-        boolean erfolgreich = szenarioAktivationService.aktiviereSzenario(szenario);
-
-        assertTrue(erfolgreich);
-        assertFalse(StatusLog.hasError());
-        assertTrue(szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).isActive());
-        assertEquals("false", sensorLokal1.getValues().get(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung()));
-        assertEquals("true", sensorLokal2.getValues().get(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung()));
-    }
-
-    @Test
-    void testDeaktiviereSzenario() {
-        Szenario szenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
-        boolean erfolgreich = szenarioAktivationService.deaktiviereSzenario(szenario);
-
-        assertTrue(erfolgreich);
-        assertFalse(StatusLog.hasError());
-        assertFalse(szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).isActive());
-    }
-
 
     @AfterEach
     void cleanUp() throws SQLException {

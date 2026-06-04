@@ -70,7 +70,8 @@ public final class GeraetObjektService {
             }
             attributeHashMap.put(crs.getString("schluessel"), crs.getString("wert"));
         }
-        if (aktuellesGeraet != null) aktuellesGeraet.setValues(attributeHashMap);
+        if (aktuellesGeraet != null)
+            aktuellesGeraet.setValues(attributeHashMap);
         StatusLog.addHinweis("GeräteMap erfolgreich geladen");
         geraetMap = localGeraetMap;
         return localGeraetMap;
@@ -142,21 +143,23 @@ public final class GeraetObjektService {
     public boolean updateGeraetWerte(final Geraet geraet, final Map<String, String> attributeMap) {
         boolean erfolgreich = false;
         if (!geraet.isGueltigeAttribute(attributeMap)) {
-           StatusLog.addError("Attribute des Geräts " + geraet.getName() + " konnten nicht aktualisiert werden");
-           return erfolgreich;
+            StatusLog.addError("Attribute des Geräts " + geraet.getName() + " konnten nicht aktualisiert werden");
+            return erfolgreich;
         }
         if (geraetDataService.updateGeraetWerte(geraet, attributeMap)) {
             Map<String, String> alteWerte = geraet.getValues();
             geraet.setValues(attributeMap);
+            int count = 0;
             for (String key : attributeMap.keySet()) {
+                if (geraet.isDouble(attributeMap.get(key))) {
+                    attributeMap.replace(key, geraet.formatiereZahlenwerteInsDeutsche(attributeMap.get(key)));
+                }
                 if (!attributeMap.get(key).equals(alteWerte.get(key))) {
-                    if (geraet.isDouble(attributeMap.get(key))) {
-                        attributeMap.replace(key, geraet.formatiereZahlenwerteInsDeutsche(attributeMap.get(key)));
-                    }
+                    count++;
                     StatusLog.addHinweis(key + " des Geräts " + geraet.getName() + " wurde auf " + attributeMap.get(key) + " gesetzt");
                 }
             }
-            erfolgreich = true;
+            if (count != 0) erfolgreich = true;
         } else {
             StatusLog.addError("Attribute des Geräts " + geraet.getName() + " konnten nicht aktualisiert werden");
         }
