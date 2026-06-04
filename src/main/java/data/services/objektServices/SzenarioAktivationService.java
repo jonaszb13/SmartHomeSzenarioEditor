@@ -40,7 +40,7 @@ public final class SzenarioAktivationService {
         }
         if (erfolgreich && !szenarioObjektService.updateSzenarioStatus(szenario, true)) erfolgreich = false;
         if (erfolgreich) {
-            StatusLog.addHinweis("Szenario " + szenario.getName() + " erfolgreich am " + sdf.format(new Date()) +" ausgeführt");
+            StatusLog.addHinweis("Szenario " + szenario.getName() + " erfolgreich am " + sdf.format(new Date()) + " ausgeführt");
         } else {
             StatusLog.addError("Szenario " + szenario.getName() + " konnte nicht aktiviert werden");
         }

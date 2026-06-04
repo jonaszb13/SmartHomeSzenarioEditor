@@ -146,7 +146,7 @@ public final class GeraetObjektService {
            return erfolgreich;
         }
         if (geraetDataService.updateGeraetWerte(geraet, attributeMap)) {
-            Map <String, String> alteWerte = geraet.getValues();
+            Map<String, String> alteWerte = geraet.getValues();
             geraet.setValues(attributeMap);
             for (String key : attributeMap.keySet()) {
                 if (!attributeMap.get(key).equals(alteWerte.get(key))) {
