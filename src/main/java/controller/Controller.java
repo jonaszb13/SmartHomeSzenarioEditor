@@ -4,15 +4,23 @@ import data.models.Model;
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
+import data.services.datenServices.DataTransportService;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.stage.FileChooser;
+
+import java.sql.SQLException;
 import userInterface.View;
 import util.customExceptions.MessageMissingException;
 import util.statusmeldungen.StatusLog;
+
+import java.io.File;
 
 import java.io.IOException;
 import java.util.*;
@@ -23,12 +31,72 @@ public class Controller implements ChangeListener<TreeItem<String>> {
     private final Model model;
 
     private final SzenarioFormState formState = new SzenarioFormState();
+    private final DataTransportService dataTransportService = new DataTransportService();
 
     public Controller(final View view, final Model model) {
         this.view = view;
         this.view.addUebersichtTreeSelectionListener(this);
         this.model = model;
         aktualisiereSzenarioMenu();
+        registriereMenuAktionen();
+    }
+
+    public void zeigeStandardansicht() {
+        zeigeSzenarienPanel();
+    }
+
+    private void registriereMenuAktionen() {
+        view.getMenuNeu().setOnAction(e -> handleNew());
+        view.getMenuExport().setOnAction(e -> handleExport());
+        view.getMenuImport().setOnAction(e -> handleImport());
+    }
+
+    private void handleExport() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Datenauszug exportieren");
+        chooser.setInitialFileName("Datenauszug_" + System.currentTimeMillis() + ".csv");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV-Dateien", "*.csv"));
+        File file = chooser.showSaveDialog(view.getWindow());
+        if (file == null) return;
+        if (dataTransportService.exportData(file)) {
+            StatusLog.addHinweis("Datenauszug exportiert: " + file.getName());
+        }
+        updateStatusLog();
+    }
+
+    private void handleImport() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Datenauszug importieren");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV-Dateien", "*.csv"));
+        File file = chooser.showOpenDialog(view.getWindow());
+        if (file == null) return;
+        if (dataTransportService.importData(file)) {
+            StatusLog.addHinweis("Datenauszug importiert: " + file.getName());
+            model.reload();
+            nachModelAenderung();
+        } else {
+            updateStatusLog();
+        }
+    }
+
+    private void handleNew() {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Alle Daten löschen");
+        confirm.setHeaderText("Alle Daten löschen?");
+        confirm.setContentText("Räume, Geräte und Szenarien werden gelöscht.");
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    dataTransportService.clearAllData();
+                    StatusLog.addHinweis("Alle Daten wurden gelöscht.");
+                    model.reload();
+                    nachModelAenderung();
+                } catch (SQLException e) {
+                    StatusLog.addError("Daten konnten nicht gelöscht werden", e);
+                    updateStatusLog();
+                }
+            }
+        });
     }
 
     @Override
@@ -63,7 +131,10 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         view.getSzenarioOeffnenMenu().getItems().clear();
         model.getSzenarioMap().forEach((id, szenario) -> {
             final MenuItem item = new MenuItem(szenario.getName());
-            item.setOnAction(e -> zeigeSzenarioDetailPanel(szenario));
+            item.setOnAction(e -> {
+                model.aktiviereSzenario(szenario);
+                nachModelAenderung();
+            });
             view.getSzenarioOeffnenMenu().getItems().add(item);
         });
     }

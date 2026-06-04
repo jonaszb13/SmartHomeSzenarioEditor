@@ -1,7 +1,5 @@
 package data.services.datenServices;
 
-import data.models.fachobjekte.Raum;
-import data.services.objektServices.RaumObjektService;
 import util.FileHandler;
 import util.statusmeldungen.StatusLog;
 
@@ -10,142 +8,118 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 
 public class DataTransportService {
 
-    public boolean exportData() {
+    private static final String SEMICOLON = ";";
+
+    public boolean exportData(final File file) {
         try {
-            String data = generateAuszug();
-            File file = new File(FileHandler.generateFile("", "Datenauszug", "csv"));
-            return FileHandler.writeTextFile(file, data);
+            return FileHandler.writeTextFile(file, generateAuszug());
         } catch (SQLException e) {
             StatusLog.addError(e);
             return false;
         }
     }
 
-    public boolean importData(String filePath) {
+    public boolean importData(final File file) {
         try {
-            StringBuilder builder = new StringBuilder();
-            List<String> data = FileHandler.readTextFile(new File(filePath));
-            String[] werte;
-            int teil = 0;
-            for (String line : data) {
-                if (line.startsWith(";")) {
-                    teil++;
-                    writeImport(builder.toString());
-                    builder = new StringBuilder();
-                    switch (teil) {
-                        case 0:
-                            //language=SQL
-                            builder.append("INSERT INTO RAEUME (ID, NAME) VALUES ");
-                            break;
-                        case 1:
-                            //language=SQL
-                            builder.append("INSERT INTO GERAETE (ID, NAME, RAUM, ART) VALUES ");
-                            break;
-                        case 2:
-                            //language=SQL
-                            builder.append("INSERT INTO GERAETE_WERTE (ID, GERAET, SCHLUESSEL, WERT) VALUES ");
-                            break;
-                        case 3:
-                            //language=SQL
-                            builder.append("INSERT INTO SZENARIEN (ID, NAME, STATUS, BESCHREIBUNG) VALUES ");
-                            break;
-                        case 4://language=SQL
-                            builder.append("INSERT INTO SZENARIEN_INHALT (ID, AKTION, SZENARIO, GERAET, SCHLUESSEL, WERT, POSITION) VALUES ");
-                            break;
-                    }
+            clearAllData();
+            List<String> lines = FileHandler.readTextFile(file);
+            int section = 0;
+            for (String line : lines) {
+                if (line.equals(SEMICOLON)) {
+                    section++;
+                    continue;
                 }
-                switch (teil) {
-                    case 0:
-                        werte = line.split(";");
-                        builder.append(", (").append(werte[0]).append(", ").append(werte[1]).append(")");
-                        break;
-                    case 1, 2:
-                        werte = line.split(";");
-                        builder.append(", (").append(werte[0]).append(", ").append(werte[1]).append(", ").append(werte[2])
-                                .append(", ").append(werte[3]).append(")");
-                        break;
-                    case 3:
-                        werte = line.split(";");
-                        builder.append(", (").append(werte[0]).append(", ").append(werte[1]).append(", ").append(werte[2])
-                                .append(", ").append(werte[3]).append(", ").append(werte[4]).append(", ").append(werte[5])
-                                .append(", ").append(werte[6]).append(")");
-                        break;
+                String sql = buildInsertSql(section, line.split(SEMICOLON, -1));
+                if (sql != null) {
+                    DataAccess.getInstance().executeUpdate(sql);
                 }
-                writeImport(builder.toString());
             }
-
+            return true;
         } catch (SQLException | FileNotFoundException e) {
             StatusLog.addError(e);
             return false;
         }
-        return true;
     }
 
-    public void writeImport(String sql) throws SQLException {
-        DataAccess.getInstance().executeUpdate(sql);
+    public void clearAllData() throws SQLException {
+        DataAccess.getInstance().executeUpdate("DELETE FROM SZENARIEN_INHALT");
+        DataAccess.getInstance().executeUpdate("DELETE FROM SZENARIEN");
+        DataAccess.getInstance().executeUpdate("DELETE FROM GERAETE_WERTE");
+        DataAccess.getInstance().executeUpdate("DELETE FROM GERAETE");
+        DataAccess.getInstance().executeUpdate("DELETE FROM RAEUME");
     }
 
+    private String buildInsertSql(final int section, final String[] col) {
+        return switch (section) {
+            case 0 -> String.format(
+                    "INSERT INTO RAEUME (ID, NAME) VALUES ('%s', '%s')",
+                    esc(col[0]), esc(col[1]));
+            case 1 -> String.format(
+                    "INSERT INTO GERAETE (ID, NAME, RAUM, ART) VALUES ('%s', '%s', '%s', '%s')",
+                    esc(col[0]), esc(col[1]), esc(col[2]), esc(col[3]));
+            case 2 -> String.format(
+                    "INSERT INTO GERAETE_WERTE (ID, GERAET, SCHLUESSEL, WERT) VALUES ('%s', '%s', '%s', '%s')",
+                    esc(col[0]), esc(col[1]), esc(col[2]), esc(col[3]));
+            case 3 -> String.format(
+                    "INSERT INTO SZENARIEN (ID, NAME, STATUS, BESCHREIBUNG) VALUES ('%s', '%s', '%s', '%s')",
+                    esc(col[0]), esc(col[1]), esc(col[2]), esc(col[3]));
+            case 4 -> String.format(
+                    "INSERT INTO SZENARIEN_INHALT (ID, AKTION, SZENARIO, GERAET, SCHLUESSEL, WERT, POSITION) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', %s)",
+                    esc(col[0]), esc(col[1]), esc(col[2]), esc(col[3]), esc(col[4]), esc(col[5]), col[6]);
+            default -> null;
+        };
+    }
+
+    private static String esc(final String value) {
+        return value == null ? "" : value.replace("'", "''");
+    }
 
     private String generateAuszug() throws SQLException {
         return generateRaumauszug() + generateGeraetAuszug() + generateSzenarioAuszug();
     }
 
     private String generateRaumauszug() throws SQLException {
-        StringBuilder builder = new StringBuilder();
-        Map<UUID, Raum> raumMap = RaumObjektService.getInstance().getRaumMap();
-        for (Raum entry : raumMap.values()) {
-            builder.append(entry.getId()).append(";").append(entry.getName()).append("\n");
+        StringBuilder sb = new StringBuilder();
+        CachedRowSet crs = DataAccess.getInstance().getData("SELECT ID, NAME FROM RAEUME");
+        while (crs.next()) {
+            sb.append(crs.getObject(1)).append(SEMICOLON).append(crs.getString(2)).append("\n");
         }
-        return builder.append(";\n").toString();
+        return sb.append(";\n").toString();
     }
 
     private String generateGeraetAuszug() throws SQLException {
-        StringBuilder builder = new StringBuilder();
-        //language=SQL
-        String sqlGeraet = "select ID, NAME, RAUM, ART from GERAETE";
-        CachedRowSet crs = DataAccess.getInstance().getData(sqlGeraet);
+        StringBuilder sb = new StringBuilder();
+        CachedRowSet crs = DataAccess.getInstance().getData("SELECT ID, NAME, RAUM, ART FROM GERAETE");
         while (crs.next()) {
-            builder.append(crs.getObject(1)).append(";").append(crs.getString(2))
-                    .append(crs.getObject(3)).append(";").append(crs.getString(4))
-                    .append("\n");
+            sb.append(crs.getObject(1)).append(SEMICOLON).append(crs.getString(2))
+                    .append(SEMICOLON).append(crs.getObject(3)).append(SEMICOLON).append(crs.getString(4)).append("\n");
         }
-        builder.append(";\n");
-        //language=SQL
-        String sqlGeraetWerte = "select ID, GERAET, SCHLUESSEL, WERT FROM GERAETE_WERTE";
-        crs = DataAccess.getInstance().getData(sqlGeraetWerte);
+        sb.append(";\n");
+        crs = DataAccess.getInstance().getData("SELECT ID, GERAET, SCHLUESSEL, WERT FROM GERAETE_WERTE");
         while (crs.next()) {
-            builder.append(crs.getObject(1)).append(";").append(crs.getObject(2))
-                    .append(crs.getString(3)).append(";").append(crs.getString(4))
-                    .append("\n");
+            sb.append(crs.getObject(1)).append(SEMICOLON).append(crs.getObject(2))
+                    .append(SEMICOLON).append(crs.getString(3)).append(SEMICOLON).append(crs.getString(4)).append("\n");
         }
-        return builder.append(";\n").toString();
+        return sb.append(";\n").toString();
     }
 
     private String generateSzenarioAuszug() throws SQLException {
         StringBuilder builder = new StringBuilder();
-        //language=SQL
-        String sqlSzenario = "select ID, NAME, STATUS, BESCHREIBUNG from SZENARIEN";
-        CachedRowSet crs = DataAccess.getInstance().getData(sqlSzenario);
+        CachedRowSet crs = DataAccess.getInstance().getData("SELECT ID, NAME, STATUS, BESCHREIBUNG FROM SZENARIEN");
         while (crs.next()) {
-            builder.append(crs.getObject(1)).append(";").append(crs.getString(2))
-                    .append(crs.getString(3)).append(";").append(crs.getString(4))
-                    .append("\n");
+            builder.append(crs.getObject(1)).append(SEMICOLON).append(crs.getString(2))
+                    .append(SEMICOLON).append(crs.getString(3)).append(SEMICOLON).append(crs.getString(4)).append("\n");
         }
         builder.append(";\n");
-        //language=SQL
-        String sqlSzenarioWerte = "select ID, AKTION, SZENARIO, GERAET, SCHLUESSEL, WERT, POSITION FROM SZENARIEN_INHALT";
-        crs = DataAccess.getInstance().getData(sqlSzenarioWerte);
+        crs = DataAccess.getInstance().getData("SELECT ID, AKTION, SZENARIO, GERAET, SCHLUESSEL, WERT, POSITION FROM SZENARIEN_INHALT");
         while (crs.next()) {
-            builder.append(crs.getObject(1)).append(";").append(crs.getString(2))
-                    .append(crs.getObject(3)).append(";").append(crs.getObject(4))
-                    .append(crs.getString(5)).append(";").append(crs.getString(6))
-                    .append(crs.getInt(7)).append("\n");
+            builder.append(crs.getObject(1)).append(SEMICOLON).append(crs.getString(2))
+                    .append(SEMICOLON).append(crs.getObject(3)).append(SEMICOLON).append(crs.getObject(4))
+                    .append(SEMICOLON).append(crs.getString(5)).append(SEMICOLON).append(crs.getString(6))
+                    .append(SEMICOLON).append(crs.getInt(7)).append("\n");
         }
         return builder.append(";\n").toString();
     }
