@@ -7,6 +7,7 @@ import data.models.fachobjekte.Szenario;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
 import userInterface.View;
@@ -27,6 +28,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         this.view = view;
         this.view.addUebersichtTreeSelectionListener(this);
         this.model = model;
+        aktualisiereSzenarioMenu();
     }
 
     @Override
@@ -53,7 +55,17 @@ public class Controller implements ChangeListener<TreeItem<String>> {
 
     private void nachModelAenderung() {
         aktualisiereTree();
+        aktualisiereSzenarioMenu();
         updateStatusLog();
+    }
+
+    private void aktualisiereSzenarioMenu() {
+        view.getSzenarioOeffnenMenu().getItems().clear();
+        model.getSzenarioMap().forEach((id, szenario) -> {
+            final MenuItem item = new MenuItem(szenario.getName());
+            item.setOnAction(e -> zeigeSzenarioDetailPanel(szenario));
+            view.getSzenarioOeffnenMenu().getItems().add(item);
+        });
     }
 
     private void zeigePanelHelper(final String fxmlPfad, final Consumer<FXMLLoader> setup) {
