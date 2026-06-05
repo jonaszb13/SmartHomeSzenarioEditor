@@ -6,12 +6,10 @@ import data.models.fachobjekte.Szenario;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.Menu;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 import util.DoubleMap;
 
 import java.util.List;
@@ -29,6 +27,12 @@ public class View {
     private VBox statusLogVBox;
     @FXML
     private Menu szenarioOeffnenMenu;
+    @FXML
+    private MenuItem menuItemNeu;
+    @FXML
+    private MenuItem menuItemImport;
+    @FXML
+    private MenuItem menuItemExport;
 
     private StatusLogView statusLogView;
 
@@ -129,5 +133,21 @@ public class View {
 
     public Menu getSzenarioOeffnenMenu() {
         return szenarioOeffnenMenu;
+    }
+
+    public MenuItem getMenuNeu() {
+        return menuItemNeu;
+    }
+
+    public MenuItem getMenuImport() {
+        return menuItemImport;
+    }
+
+    public MenuItem getMenuExport() {
+        return menuItemExport;
+    }
+
+    public Window getWindow() {
+        return hauptPane.getScene().getWindow();
     }
 }

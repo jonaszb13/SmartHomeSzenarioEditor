@@ -191,10 +191,10 @@ class GeraetDataServiceTest {
     @AfterEach
     void cleanUp() throws SQLException {
         //language=SQL
-        dataAccess.executeTestUpdate("DELETE FROM GERAETE_WERTE");
+        dataAccess.executeUpdate("DELETE FROM GERAETE_WERTE");
         //language=SQL
-        dataAccess.executeTestUpdate("DELETE FROM GERAETE");
+        dataAccess.executeUpdate("DELETE FROM GERAETE");
         //language=SQL
-        dataAccess.executeTestUpdate("DELETE FROM RAEUME");
+        dataAccess.executeUpdate("DELETE FROM RAEUME");
     }
 }

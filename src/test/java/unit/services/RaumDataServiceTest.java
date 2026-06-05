@@ -116,6 +116,6 @@ class RaumDataServiceTest {
     @AfterEach
     void cleanUp() throws SQLException {
         //language=SQL
-        dataAccess.executeTestUpdate("DELETE FROM RAEUME");
+        dataAccess.executeUpdate("DELETE FROM RAEUME");
     }
 }

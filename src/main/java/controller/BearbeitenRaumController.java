@@ -9,8 +9,6 @@ import java.util.function.Consumer;
 
 public class BearbeitenRaumController {
 
-    //TODO: vielleicht alle fxml Controller in das userInterface package verschieben, da hier ja keine keine wirkliche logik drin ist
-
     @FXML private Label raumNameKopf;
     @FXML private TextField raumNameField;
 

@@ -12,8 +12,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import userinterface.WertControlFactory;
+import util .statusmeldungen.StatusLog;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class SzenarioAktionenEditorController {
@@ -41,6 +44,7 @@ public class SzenarioAktionenEditorController {
 
     private SpeichernHandler onSpeichern;
     private Runnable onAbbrechen;
+    private Runnable onValidierungsfehler;
 
     @FXML
     public void initialize() {
@@ -79,6 +83,10 @@ public class SzenarioAktionenEditorController {
 
     public void setOnAbbrechen(final Runnable handler) {
         this.onAbbrechen = handler;
+    }
+
+    public void setOnValidierungsfehler(final Runnable handler) {
+        this.onValidierungsfehler = handler;
     }
 
     private void aktualisiereSchluesselAuswahl(final Geraet geraet) {
@@ -126,9 +134,19 @@ public class SzenarioAktionenEditorController {
         final String aktionsname = aktionsnameField.getText();
         final Geraet geraet = geraetComboBox.getValue();
         final String schluessel = schluesselComboBox.getValue();
-        if (aktionsname == null || aktionsname.isBlank() || geraet == null || schluessel == null || onSpeichern == null) return;
+        if (aktionsname == null || aktionsname.isBlank() || geraet == null || schluessel == null || onSpeichern == null) {
+            StatusLog.addError("Alle Pflichtfelder (Aktionsname, Gerät, Attribut) müssen ausgefüllt sein.");
+            if (onValidierungsfehler != null) onValidierungsfehler.run();
+            return;
+        }
+        final Map<String, String> validierungsMap = new HashMap<>(geraet.getValues());
+        validierungsMap.put(schluessel, leseWert());
+        if (!geraet.isGueltigeAttribute(validierungsMap)) {
+            if (onValidierungsfehler != null) onValidierungsfehler.run();
+            return;
+        }
         final UUID id = zuBearbeitendeAenderung != null ? zuBearbeitendeAenderung.id() : UUID.randomUUID();
-        onSpeichern.handle(new Szenario.Aenderung(id, geraet, aktionsname.trim(), schluessel, leseWert()));
+        onSpeichern.handle(new Szenario.Aenderung(id, geraet, aktionsname.trim(), schluessel, geraet.formatiereZahlenwerteInsDeutsche(validierungsMap.get(schluessel))));
     }
 
     @FXML

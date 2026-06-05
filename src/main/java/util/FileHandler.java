@@ -1,10 +1,16 @@
-package util.statusmeldungen;
+package util;
 
+import util.statusmeldungen.StatusLog;
+
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public final class FileHandler {
     private FileHandler() {
@@ -26,5 +32,29 @@ public final class FileHandler {
             filePathWithName = null;
         }
         return filePathWithName;
+    }
+
+    //Daten in Datei schreiben
+    public static boolean writeTextFile(File file, String data) {
+        try {
+            BufferedWriter wr = Files.newBufferedWriter(Paths.get(file.toURI()), StandardCharsets.UTF_8);
+            wr.write(data);
+            wr.close();
+        } catch (IOException eIO) {
+            StatusLog.addError(eIO);
+            return false;
+        }
+        return true;
+    }
+
+    //Datei auslesen
+    public static ArrayList<String> readTextFile(File file) throws FileNotFoundException {
+        Scanner reader = new Scanner(file);
+        ArrayList<String> data = new ArrayList<>();
+        while (reader.hasNextLine()) {
+            data.add(reader.nextLine());
+        }
+        reader.close();
+        return data;
     }
 }
