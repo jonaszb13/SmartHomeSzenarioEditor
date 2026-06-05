@@ -9,7 +9,6 @@
         PMD Regeln
     </description>
 
-
     <rule ref="category/java/errorprone.xml/EmptyCatchBlock" />
     <rule ref="category/java/bestpractices.xml/AbstractClassWithoutAbstractMethod" />
     <rule ref="category/java/bestpractices.xml/AccessorClassGeneration" />
