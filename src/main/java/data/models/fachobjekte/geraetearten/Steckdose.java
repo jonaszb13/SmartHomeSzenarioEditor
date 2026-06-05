@@ -16,8 +16,14 @@ public class Steckdose extends Geraet {
 
     public Steckdose(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
-        eingeschaltet = false;
     }
+
+    public Steckdose(final UUID id, final String name, final Raum raum, boolean eingeschaltet, double aktuelleLeistung) {
+        super(id, name, raum);
+        this.eingeschaltet = eingeschaltet;
+        this.aktuelleLeistung = aktuelleLeistung;
+    }
+
 
     public boolean isEingeschaltet() {
         return eingeschaltet;
@@ -51,8 +57,8 @@ public class Steckdose extends Geraet {
     @Override
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
-        values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(eingeschaltet));
-        values.put(Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung(), formatiereZahlenwerteInsDeutsche(Double.toString(aktuelleLeistung)));
+        values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(isEingeschaltet()));
+        values.put(Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung(), formatiereZahlenwerteInsDeutsche(Double.toString(getAktuelleLeistung())));
         return values;
     }
 

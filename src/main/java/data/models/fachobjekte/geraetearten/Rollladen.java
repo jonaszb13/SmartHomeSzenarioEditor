@@ -17,6 +17,11 @@ public class Rollladen extends Geraet {
     public Rollladen(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
     }
+    public Rollladen(final UUID id, final String name, final Raum raum, double schliessstatus, double neigung) {
+        super(id, name, raum);
+        this.schliessstatus = schliessstatus;
+        this.neigung = neigung;
+    }
 
     public double getSchliessstatus() {
         return schliessstatus;

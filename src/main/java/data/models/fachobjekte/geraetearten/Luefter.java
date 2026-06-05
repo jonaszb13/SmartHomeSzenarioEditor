@@ -16,6 +16,11 @@ public class Luefter extends Geraet {
     public Luefter(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
     }
+    public Luefter(final UUID id, final String name, final Raum raum, double staerke, boolean eingeschaltet) {
+        super(id, name, raum);
+        this.staerke = staerke;
+        this.eingeschaltet = eingeschaltet;
+    }
 
     public boolean isEingeschaltet() {
         return eingeschaltet;
@@ -49,8 +54,8 @@ public class Luefter extends Geraet {
     @Override
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
-        values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(eingeschaltet));
-        values.put(Merkmalbezeichnung.STAERKE.getBezeichnung(), formatiereZahlenwerteInsDeutsche(Double.toString(staerke)));
+        values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(isEingeschaltet()));
+        values.put(Merkmalbezeichnung.STAERKE.getBezeichnung(), formatiereZahlenwerteInsDeutsche(Double.toString(getStaerke())));
         return values;
     }
 

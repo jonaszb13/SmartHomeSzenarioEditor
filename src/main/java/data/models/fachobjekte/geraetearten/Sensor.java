@@ -17,6 +17,11 @@ public class Sensor extends Geraet {
     public Sensor(final UUID id, final String name, final Raum raum) {
         super(id, name, raum);
     }
+    public Sensor(final UUID id, final String name, final Raum raum, boolean ausschlag, boolean eingeschaltet) {
+        super(id, name, raum);
+        this.ausschlag = ausschlag;
+        this.eingeschaltet = eingeschaltet;
+    }
 
     public boolean isEingeschaltet() {
         return eingeschaltet;
@@ -50,8 +55,8 @@ public class Sensor extends Geraet {
     @Override
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
-        values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(eingeschaltet));
-        values.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), Boolean.toString(ausschlag));
+        values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(isEingeschaltet()));
+        values.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), Boolean.toString(isAusschlag()));
         return values;
     }
 

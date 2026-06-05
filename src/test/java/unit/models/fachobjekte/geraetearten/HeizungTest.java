@@ -3,45 +3,84 @@ package unit.models.fachobjekte.geraetearten;
 import data.models.fachobjekte.Merkmalbezeichnung;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.geraetearten.Heizung;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import util.statusmeldungen.StatusLog;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HeizungTest {
-    Heizung heizungKorrekt = new Heizung(UUID.randomUUID(), "Heizung Korrekt", new Raum(UUID.randomUUID(), "Raum"), 25.0);
+
+    private Heizung heizung;
+
+    @BeforeEach
+    public void createObject() {
+        heizung = new Heizung(UUID.randomUUID(), "Heizung", new Raum(UUID.randomUUID(), "Raum"), 25.0);
+        StatusLog.clear();
+    }
 
     @Test
     void updateValueGueltigerWert() {
-        String key = Merkmalbezeichnung.ZIELTEMP.getBezeichnung();
-        String value = "30.3";
-        heizungKorrekt.updateValue(key, value);
-        assertEquals(30.3, heizungKorrekt.getZielTemp());
-        assertEquals("30,3", heizungKorrekt.getValues().get(Merkmalbezeichnung.ZIELTEMP.getBezeichnung()));
+        final String key = Merkmalbezeichnung.ZIELTEMP.getBezeichnung();
+        final String value = "30.3";
+        heizung.updateValue(key, value);
+        assertEquals(30.3, heizung.getZielTemp());
+        assertEquals("30,3", heizung.getValues().get(Merkmalbezeichnung.ZIELTEMP.getBezeichnung()));
     }
 
     @Test
     void updateValueUngueltigerWert() {
-        String key = Merkmalbezeichnung.ZIELTEMP.getBezeichnung();
-        String value = "Test";
+        final String key = Merkmalbezeichnung.ZIELTEMP.getBezeichnung();
+        final String value = "Test";
         assertThrows(NumberFormatException.class, () -> {
-            heizungKorrekt.updateValue(key, value);
+            heizung.updateValue(key, value);
         });
-        assertEquals(25.0, heizungKorrekt.getZielTemp());
-        assertEquals("25,0", heizungKorrekt.getValues().get(Merkmalbezeichnung.ZIELTEMP.getBezeichnung()));
+        assertFalse(StatusLog.hasError());
+        assertEquals(25.0, heizung.getZielTemp());
+        assertEquals("25,0", heizung.getValues().get(Merkmalbezeichnung.ZIELTEMP.getBezeichnung()));
     }
 
     @Test
     void updateValueSchluesselNichtVorhanden() {
-        String key = "falsch";
-        String value = "30.3";
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            heizungKorrekt.updateValue(key, value);
+        final String key = "falsch";
+        final String value = "30.3";
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            heizung.updateValue(key, value);
         });
         assertEquals("Ungültiger Schlüssel in der Datenbank", exception.getMessage());
-        assertEquals(25.0, heizungKorrekt.getZielTemp());
-        assertEquals("25,0", heizungKorrekt.getValues().get(Merkmalbezeichnung.ZIELTEMP.getBezeichnung()));
+        assertTrue(StatusLog.hasError());
+        assertEquals(25.0, heizung.getZielTemp());
+        assertEquals("25,0", heizung.getValues().get(Merkmalbezeichnung.ZIELTEMP.getBezeichnung()));
+    }
+
+    @Test
+    void isGueltigeAttributeKorrekt() {
+        final Map<String, String> attributeMap = new HashMap<>();
+        attributeMap.put(Merkmalbezeichnung.ZIELTEMP.getBezeichnung(), "28,0");
+        assertTrue(heizung.isGueltigeAttribute(attributeMap));
+        assertFalse(StatusLog.hasError());
+        assertEquals(25.0, heizung.getZielTemp());
+    }
+
+    @Test
+    void isGueltigeAttributeTechnischInkorrekt() {
+        final Map<String, String> attributeMap = new HashMap<>();
+        attributeMap.put(Merkmalbezeichnung.ZIELTEMP.getBezeichnung(), "zweiunddreißig");
+        assertFalse(heizung.isGueltigeAttribute(attributeMap));
+        assertTrue(StatusLog.hasError());
+        assertEquals(25.0, heizung.getZielTemp());
+    }
+
+    @Test
+    void isGueltigeAttributeFachlichInkorrekt() {
+        final Map<String, String> attributeMap = new HashMap<>();
+        attributeMap.put(Merkmalbezeichnung.ZIELTEMP.getBezeichnung(), "32,0");
+        assertFalse(heizung.isGueltigeAttribute(attributeMap));
+        assertTrue(StatusLog.hasError());
+        assertEquals(25.0, heizung.getZielTemp());
     }
 }

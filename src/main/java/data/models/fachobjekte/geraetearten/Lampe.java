@@ -69,8 +69,8 @@ public class Lampe extends Geraet {
     public Map<String, String> getValues() {
         final Map<String, String> values = new HashMap<>();
         values.put(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung(), formatiereZahlenwerteInsDeutsche(Double.toString(getHelligkeit())));
-        values.put(Merkmalbezeichnung.FARBE.getBezeichnung(), farbe != null ? String.format("#%02x%02x%02x", farbe.getRed(), farbe.getGreen(), farbe.getBlue()) : "#000000");
-        values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(eingeschaltet));
+        values.put(Merkmalbezeichnung.FARBE.getBezeichnung(), getFarbe() != null ? String.format("#%02x%02x%02x", getFarbe().getRed(), getFarbe().getGreen(), getFarbe().getBlue()) : "#000000");
+        values.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), Boolean.toString(isEingeschaltet()));
         return values;
     }
 
