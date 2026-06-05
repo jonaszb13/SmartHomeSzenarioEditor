@@ -1,12 +1,12 @@
 package unit.services;
 
 import data.models.fachobjekte.*;
-import data.models.fachobjekte.geraete_arten.Sensor;
-import data.services.daten_services.*;
-import data.services.objekt_services.GeraetObjektService;
-import data.services.objekt_services.RaumObjektService;
-import data.services.objekt_services.SzenarioAusfuehrungsService;
-import data.services.objekt_services.SzenarioObjektService;
+import data.models.fachobjekte.geraetearten.Sensor;
+import data.services.datenservices.*;
+import data.services.objektservices.GeraetObjektService;
+import data.services.objektservices.RaumObjektService;
+import data.services.objektservices.SzenarioAusfuehrungsService;
+import data.services.objektservices.SzenarioObjektService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

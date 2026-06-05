@@ -1,4 +1,4 @@
-package data.models.fachobjekte.geraete_arten;
+package data.models.fachobjekte.geraetearten;
 
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Merkmalbezeichnung;

@@ -1,4 +1,4 @@
-package user_interface;
+package userinterface;
 
 import data.models.fachobjekte.Raum;
 import javafx.util.StringConverter;

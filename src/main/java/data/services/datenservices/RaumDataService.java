@@ -1,4 +1,4 @@
-package data.services.daten_services;
+package data.services.datenservices;
 
 import data.models.fachobjekte.Raum;
 import jakarta.inject.Singleton;

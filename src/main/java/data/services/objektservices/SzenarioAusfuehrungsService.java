@@ -1,4 +1,4 @@
-package data.services.objekt_services;
+package data.services.objektservices;
 
 import data.models.fachobjekte.Szenario;
 import util.statusmeldungen.StatusLog;

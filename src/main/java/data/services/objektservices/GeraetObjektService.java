@@ -1,9 +1,9 @@
-package data.services.objekt_services;
+package data.services.objektservices;
 
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
-import data.services.daten_services.GeraetDataService;
+import data.services.datenservices.GeraetDataService;
 import jakarta.inject.Singleton;
 import util.statusmeldungen.StatusLog;
 
