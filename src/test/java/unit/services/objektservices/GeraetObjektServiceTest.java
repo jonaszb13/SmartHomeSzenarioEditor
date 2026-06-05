@@ -1,4 +1,4 @@
-package unit.services;
+package unit.services.objektservices;
 
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Merkmalbezeichnung;
