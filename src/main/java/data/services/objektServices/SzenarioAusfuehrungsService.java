@@ -11,18 +11,15 @@ import java.util.Map;
 
 public final class SzenarioAusfuehrungsService {
     private static SzenarioAusfuehrungsService instance;
-    private final SzenarioObjektService szenarioObjektService;
     private final GeraetObjektService geraetObjektService;
 
-
-    private SzenarioAusfuehrungsService(final SzenarioObjektService szenarioObjektService, final GeraetObjektService geraetObjektService) {
-        this.szenarioObjektService = szenarioObjektService;
+    private SzenarioAusfuehrungsService(final GeraetObjektService geraetObjektService) {
         this.geraetObjektService = geraetObjektService;
     }
 
     public static SzenarioAusfuehrungsService getInstance() throws SQLException {
         if (instance == null) {
-            instance = new SzenarioAusfuehrungsService(SzenarioObjektService.getInstance(), GeraetObjektService.getInstance());
+            instance = new SzenarioAusfuehrungsService(GeraetObjektService.getInstance());
         }
         return instance;
     }

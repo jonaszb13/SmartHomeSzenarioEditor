@@ -5,7 +5,6 @@ import data.models.fachobjekte.geraeteArten.Sensor;
 import data.services.datenServices.*;
 import data.services.objektServices.GeraetObjektService;
 import data.services.objektServices.RaumObjektService;
-import data.services.objektServices.SzenarioAusfuehrungsService;
 import data.services.objektServices.SzenarioObjektService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class SzenarioAktivationServiceTest {
+public class SzenarioAusfuehrungServiceTest {
     static final UUID RAUM_ID = UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4");
     static final UUID SENSOR_1_ID = UUID.fromString("c216e129-1541-4455-804c-411b17dd015b");
     static final UUID SENSOR_2_ID = UUID.fromString("ffe1118c-440c-40d4-bfc4-dadbfa5db831");
@@ -37,7 +36,6 @@ public class SzenarioAktivationServiceTest {
     private static Szenario szenario1;
     private static Szenario.Aenderung aenderung1;
     private static Szenario.Aenderung aenderung2;
-    private static SzenarioAusfuehrungsService szenarioAktivationService;
 
 
     @BeforeAll
@@ -52,7 +50,6 @@ public class SzenarioAktivationServiceTest {
         geraetObjektService = GeraetObjektService.getInstance();
         szenarioDataService = SzenarioDataService.getInstance();
         szenarioObjektService = SzenarioObjektService.getInstance();
-        szenarioAktivationService = SzenarioAusfuehrungsService.getInstance();
 
         sensor1 = (Sensor) GeraetFactory.getInstance().createGeraet(SENSOR_1_ID, "Sensor 1", RAUM_1, "Sensor");
         sensor2 = (Sensor) GeraetFactory.getInstance().createGeraet(SENSOR_2_ID, "Sensor 2", RAUM_1, "Sensor");
@@ -86,14 +83,14 @@ public class SzenarioAktivationServiceTest {
     @AfterEach
     void cleanUp() throws SQLException {
         //language=SQL
-        dataAccess.executeTestUpdate("DELETE FROM SZENARIEN_INHALT");
+        dataAccess.executeUpdate("DELETE FROM SZENARIEN_INHALT");
         //language=SQL
-        dataAccess.executeTestUpdate("DELETE FROM SZENARIEN");
+        dataAccess.executeUpdate("DELETE FROM SZENARIEN");
         //language=SQL
-        dataAccess.executeTestUpdate("DELETE FROM GERAETE_WERTE");
+        dataAccess.executeUpdate("DELETE FROM GERAETE_WERTE");
         //language=SQL
-        dataAccess.executeTestUpdate("DELETE FROM GERAETE");
+        dataAccess.executeUpdate("DELETE FROM GERAETE");
         //language=SQL
-        dataAccess.executeTestUpdate("DELETE FROM RAEUME");
+        dataAccess.executeUpdate("DELETE FROM RAEUME");
     }
 }

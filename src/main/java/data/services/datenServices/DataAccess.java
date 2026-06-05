@@ -56,7 +56,7 @@ public class DataAccess {
         stmt.close();
     }
 
-    public void executeTestUpdate(final String sql) throws SQLException {
+    public void executeUpdate(final String sql) throws SQLException {
         final Statement stmt = conn.createStatement();
         stmt.executeUpdate(sql);
     }

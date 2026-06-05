@@ -160,4 +160,14 @@ public final class Model {
         return szenarioAktivationService.fuehreSzenarioAus(szenario);
     }
 
+    public void reload() {
+        try {
+            Map<UUID, Raum> raumMap = raumObjektService.getAllRaeume();
+            Map<UUID, Geraet> geraetMap = geraetObjektService.getAllGeraete(raumMap);
+            szenarioObjektService.ladeAlleSzenarien(geraetMap);
+        } catch (SQLException eSQL) {
+            StatusLog.addError("Das Model konnte nicht neu geladen werden: ", eSQL);
+        }
+    }
+
 }
