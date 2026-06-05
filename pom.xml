@@ -205,7 +205,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.example.ui/main.SmartHomeApplication</mainClass>
+                            <mainClass>src.main/main.SmartHomeApplication</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

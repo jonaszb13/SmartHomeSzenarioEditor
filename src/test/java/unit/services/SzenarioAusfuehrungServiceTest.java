@@ -1,11 +1,11 @@
 package unit.services;
 
 import data.models.fachobjekte.*;
-import data.models.fachobjekte.geraeteArten.Sensor;
-import data.services.datenServices.*;
-import data.services.objektServices.GeraetObjektService;
-import data.services.objektServices.RaumObjektService;
-import data.services.objektServices.SzenarioObjektService;
+import data.models.fachobjekte.geraetearten.Sensor;
+import data.services.datenservices.*;
+import data.services.objektservices.GeraetObjektService;
+import data.services.objektservices.RaumObjektService;
+import data.services.objektservices.SzenarioObjektService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,6 @@ public class SzenarioAusfuehrungServiceTest {
     static void setUp() throws Exception {
         DataAccess.setTest(true);
         DatabaseCreationService.createDatabase();
-        dataAccess = DataAccess.getInstance();
         dataAccess = DataAccess.getInstance();
         raumDataService = RaumDataService.getInstance();
         raumObjektService = RaumObjektService.getInstance();

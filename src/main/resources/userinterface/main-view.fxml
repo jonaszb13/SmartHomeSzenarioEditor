@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="userinterface.View">
+
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <Menu mnemonicParsing="false" text="Neu">
+                <MenuItem fx:id="menuItemNeu" mnemonicParsing="false" text="Alle Daten löschen" />
+            </Menu>
+            <Menu mnemonicParsing="false" text="Öffnen">
+                <MenuItem fx:id="menuItemImport" mnemonicParsing="false" text="Datenauszug importieren" />
+            </Menu>
+            <Menu mnemonicParsing="false" text="Speichern">
+                <MenuItem fx:id="menuItemExport" mnemonicParsing="false" text="Datenauszug exportieren" />
+            </Menu>
+            <Menu fx:id="szenarioOeffnenMenu" mnemonicParsing="false" text="Szenario ausführen" />
+        </MenuBar>
+    </top>
+
+    <center>
+        <SplitPane fx:id="hauptSplitPane"
+                   style="-fx-background-color: #fff;">
+
+            <VBox minWidth="120" maxWidth="300"
+                  style="-fx-background-color: #fff; -fx-border-width: 0 1 0 0; -fx-border-color: transparent #c4c6c9 transparent transparent">
+                <TreeView fx:id="uebersichtTree" VBox.vgrow="ALWAYS"/>
+            </VBox>
+
+            <AnchorPane fx:id="hauptPane" minWidth="500"/>
+
+            <ScrollPane fitToWidth="true" minWidth="150"
+                        style="-fx-background: #fff; -fx-background-color: #fff;">
+                <padding><Insets left="5" top="5" right="5" bottom="5"/></padding>
+                <VBox fx:id="statusLogVBox" spacing="1"/>
+            </ScrollPane>
+
+        </SplitPane>
+    </center>
+
+</BorderPane>

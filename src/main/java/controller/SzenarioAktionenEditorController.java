@@ -11,8 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
-import userInterface.WertControlFactory;
-import util.statusmeldungen.StatusLog;
+import userinterface.WertControlFactory;
+import util .statusmeldungen.StatusLog;
 
 import java.util.HashMap;
 import java.util.List;

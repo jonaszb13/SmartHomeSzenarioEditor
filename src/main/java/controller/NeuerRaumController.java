@@ -28,7 +28,7 @@ public class NeuerRaumController {
 
     @FXML
     private void handleAnlegen() {
-        String name = raumNameField.getText();
+        final String name = raumNameField.getText();
         if (name == null || name.isBlank()) {
             StatusLog.addError("Pflichtfeld 'Name' muss ausgefüllt sein.");
             if (onValidierungsfehler != null) onValidierungsfehler.run();

@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import userInterface.AktionListCell;
+import userinterface.AktionListCell;
 import util.statusmeldungen.StatusLog;
 
 import java.util.ArrayList;

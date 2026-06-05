@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Szenario extends DAO {
+public class Szenario extends DataAccessObject {
     private String beschreibung;
     private final Map<Integer, Aenderung> aenderungen;
 
@@ -25,7 +25,6 @@ public class Szenario extends DAO {
         this.beschreibung = beschreibung;
     }
 
-    //TODO Checken, ob das nur von den richtigen stellen aufgerufen wird
     public record Aenderung(UUID id, Geraet geraet, String beschreibung, String schluessel, String wert) {
     }
 }

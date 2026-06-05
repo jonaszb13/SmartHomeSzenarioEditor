@@ -35,7 +35,7 @@ public class BearbeitenRaumController {
 
     @FXML
     private void handleSpeichern() {
-        String neuerName = raumNameField.getText();
+        final String neuerName = raumNameField.getText();
         if (neuerName != null && !neuerName.isBlank() && onSpeichern != null) {
             onSpeichern.accept(neuerName.trim());
         }

@@ -1,6 +1,6 @@
 package controller;
 
-import data.models.fachobjekte.DAO;
+import data.models.fachobjekte.DataAccessObject;
 import data.models.fachobjekte.Raum;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -27,7 +27,7 @@ public class RaumController {
         raumNameField.setText(raum.getName());
         geraeteListView.setItems(FXCollections.observableArrayList(
                 raum.getGeraete().stream()
-                        .map(DAO::getName)
+                        .map(DataAccessObject::getName)
                         .collect(Collectors.toList())
         ));
     }

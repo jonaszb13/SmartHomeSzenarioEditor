@@ -2,7 +2,7 @@ package data.models.fachobjekte;
 
 import data.services.GeraetTypHandler;
 import jakarta.inject.Singleton;
-import util.customExceptions.NoGeraetProvidedException;
+import util.customexceptions.NoGeraetProvidedException;
 import util.statusmeldungen.StatusLog;
 
 import java.lang.reflect.InvocationTargetException;

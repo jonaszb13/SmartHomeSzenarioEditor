@@ -1,7 +1,7 @@
 package unit.services;
 
-import data.services.datenServices.DataAccess;
-import data.services.datenServices.DatabaseCreationService;
+import data.services.datenservices.DataAccess;
+import data.services.datenservices.DatabaseCreationService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ class DatabaseCreationServiceTest {
     @Test
     void testCreateDatabase() throws SQLException {
         DatabaseCreationService.createDatabase();
-        CachedRowSet crs = DataAccess.getInstance().getData("""
+        final CachedRowSet crs = DataAccess.getInstance().getData("""
                 SELECT COUNT(*)
                 FROM INFORMATION_SCHEMA.TABLES
                 WHERE TABLE_SCHEMA = 'PUBLIC'

@@ -13,7 +13,7 @@ public enum Merkmalbezeichnung {
 
     private final String bezeichnung;
 
-    private Merkmalbezeichnung(String bezeichnung) {
+    Merkmalbezeichnung(final String bezeichnung) {
         this.bezeichnung = bezeichnung;
     }
 

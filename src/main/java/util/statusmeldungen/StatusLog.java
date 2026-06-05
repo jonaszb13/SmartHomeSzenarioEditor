@@ -1,7 +1,7 @@
 package util.statusmeldungen;
 
 import jakarta.inject.Singleton;
-import util.customExceptions.MessageMissingException;
+import util.customexceptions.MessageMissingException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ public final class StatusLog {
         if (userDataLetzterNode == null) {
             return meldungen;
         }
-        int indexNeueMeldung = IntStream.range(0, meldungen.size())
+        final int indexNeueMeldung = IntStream.range(0, meldungen.size())
                 .filter(i -> meldungen.get(i).getMeldungsId().equals(userDataLetzterNode))
                 .findFirst()
                 .orElseThrow(() -> new MessageMissingException("Es liegt eine inkonsistente Datenbasis vor: Eine Meldung konnte nicht im Statuslog gefunden werden.")) + 1;

@@ -7,13 +7,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
-import userInterface.RaumListCell;
+import userinterface.RaumListCell;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class RaeumeController {
@@ -27,13 +23,13 @@ public class RaeumeController {
     private Consumer<Raum> onRaumOeffnen;
     private Runnable onNeuenRaumAnlegenRequested;
 
-    public void setRaeume(List<Raum> raeume) {
+    public void setRaeume(final List<Raum> raeume) {
         selektierteRaeume.clear();
         raeume.forEach(raum -> selektierteRaeume.put(raum.getId(), new SimpleBooleanProperty(false)));
         this.raeume.setAll(raeume);
     }
 
-    public void setOnAuswahlLoeschen(Consumer<List<UUID>> onAuswahlLoeschen) {
+    public void setOnAuswahlLoeschen(final Consumer<List<UUID>> onAuswahlLoeschen) {
         this.onAuswahlLoeschen = onAuswahlLoeschen;
     }
 
@@ -73,7 +69,7 @@ public class RaeumeController {
     }
 
     private boolean isSelektiert(final UUID id) {
-        BooleanProperty prop = selektierteRaeume.get(id);
+        final BooleanProperty prop = selektierteRaeume.get(id);
         return prop != null && prop.get();
     }
 
@@ -82,7 +78,7 @@ public class RaeumeController {
     }
 
     private List<UUID> getSelektierteIds() {
-        List<UUID> result = new ArrayList<>();
+        final List<UUID> result = new ArrayList<>();
         raeume.forEach(raum -> {
             if (isSelektiert(raum.getId())) result.add(raum.getId());
         });
