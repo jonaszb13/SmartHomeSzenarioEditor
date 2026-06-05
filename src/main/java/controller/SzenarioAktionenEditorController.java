@@ -141,7 +141,7 @@ public class SzenarioAktionenEditorController {
             return;
         }
         final UUID id = zuBearbeitendeAenderung != null ? zuBearbeitendeAenderung.id() : UUID.randomUUID();
-        onSpeichern.handle(new Szenario.Aenderung(id, geraet, aktionsname.trim(), schluessel, validierungsMap.get(schluessel)));
+        onSpeichern.handle(new Szenario.Aenderung(id, geraet, aktionsname.trim(), schluessel, geraet.formatiereZahlenwerteInsDeutsche(validierungsMap.get(schluessel))));
     }
 
     @FXML
