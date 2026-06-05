@@ -1,4 +1,4 @@
-package unit.services;
+package unit.services.objektservices;
 
 import data.models.fachobjekte.Raum;
 import data.services.datenservices.DataAccess;
