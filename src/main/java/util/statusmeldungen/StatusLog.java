@@ -1,15 +1,11 @@
 package util.statusmeldungen;
 
 import jakarta.inject.Singleton;
-import org.apache.commons.lang3.SystemUtils;
-import util.FileHandler;
 import util.customExceptions.MessageMissingException;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 @Singleton

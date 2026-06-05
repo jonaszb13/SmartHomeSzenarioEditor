@@ -151,8 +151,6 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         }
     }
 
-    //TODO: Controller vielleich aufteilen in eigenen Raum, Geräte und Szenario Controller und von diesem hier nur noch delegieren
-
     private void zeigeGeraetePanel() {
         zeigePanelHelper("geraete-view.fxml", loader -> {
             final GeraeteController geraeteController = loader.getController();
