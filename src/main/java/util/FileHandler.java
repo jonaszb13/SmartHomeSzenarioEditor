@@ -2,10 +2,11 @@ package util;
 
 import util.statusmeldungen.StatusLog;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -34,11 +35,11 @@ public final class FileHandler {
     }
 
     //Daten in Datei schreiben
-    public static boolean writeTextFile(File file, String data)  {
+    public static boolean writeTextFile(File file, String data) {
         try {
-            FileWriter fw = new FileWriter(file);
-            fw.write(data);
-            fw.close();
+            BufferedWriter wr = Files.newBufferedWriter(Paths.get(file.toURI()), StandardCharsets.UTF_8);
+            wr.write(data);
+            wr.close();
         } catch (IOException eIO) {
             StatusLog.addError(eIO);
             return false;
