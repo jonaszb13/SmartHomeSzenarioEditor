@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import userInterface.DynamischeFelderBuilder;
 import userInterface.RaumStringConverter;
+import util.statusmeldungen.StatusLog;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ public class NeuesGeraetController {
     private Function<String, Map<String, Class<?>>> attributTypenProvider;
     private AnlegenHandler onAnlegen;
     private Runnable onAbbrechen;
+    private Runnable onValidierungsfehler;
 
     public void setGeraetTypen(final List<String> typen) {
         typComboBox.setItems(FXCollections.observableArrayList(typen));
@@ -51,6 +53,10 @@ public class NeuesGeraetController {
         this.onAbbrechen = onAbbrechen;
     }
 
+    public void setOnValidierungsfehler(final Runnable onValidierungsfehler) {
+        this.onValidierungsfehler = onValidierungsfehler;
+    }
+
     @FXML
     private void onTypGeaendert() {
         final String typ = typComboBox.getValue();
@@ -65,7 +71,11 @@ public class NeuesGeraetController {
         final String name = nameField.getText();
         final String typ = typComboBox.getValue();
         final Raum raum = raumComboBox.getValue();
-        if (name == null || name.isBlank() || typ == null || raum == null || felderBuilder == null) return;
+        if (name == null || name.isBlank() || typ == null || raum == null || felderBuilder == null) {
+            StatusLog.addError("Alle Pflichtfelder (Name, Typ, Raum) müssen ausgefüllt sein.");
+            if (onValidierungsfehler != null) onValidierungsfehler.run();
+            return;
+        }
         if (onAnlegen != null) onAnlegen.handle(name.trim(), typ, raum, felderBuilder.getWerte());
     }
 

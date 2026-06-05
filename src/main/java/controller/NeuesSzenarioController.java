@@ -8,6 +8,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import userInterface.AktionListCell;
+import util.statusmeldungen.StatusLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class NeuesSzenarioController {
     private AktionEditorHandler onAktionEditor;
     private AnlegenHandler onAnlegen;
     private Runnable onAbbrechen;
+    private Runnable onValidierungsfehler;
 
     @FXML
     public void initialize() {
@@ -61,6 +63,10 @@ public class NeuesSzenarioController {
         this.onAbbrechen = handler;
     }
 
+    public void setOnValidierungsfehler(final Runnable handler) {
+        this.onValidierungsfehler = handler;
+    }
+
     @FXML
     private void handleAktionHinzufuegen() {
         if (onAktionEditor != null) {
@@ -84,8 +90,12 @@ public class NeuesSzenarioController {
     @FXML
     private void handleAnlegen() {
         final String name = nameField.getText();
-        if (name == null || name.isBlank() || onAnlegen == null) return;
-        onAnlegen.handle(name.trim(), beschreibungField.getText().trim(), new ArrayList<>(aktionen));
+        if (name == null || name.isBlank()) {
+            StatusLog.addError("Pflichtfeld 'Name' muss ausgefüllt sein.");
+            if (onValidierungsfehler != null) onValidierungsfehler.run();
+            return;
+        }
+        if (onAnlegen != null) onAnlegen.handle(name.trim(), beschreibungField.getText().trim(), new ArrayList<>(aktionen));
     }
 
     @FXML

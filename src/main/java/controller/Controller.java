@@ -72,6 +72,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
             StatusLog.addHinweis("Datenauszug importiert: " + file.getName());
             model.reload();
             aktualisierenDerGuiElemente();
+            zeigeStandardansicht();
         } else {
             updateStatusLog();
         }
@@ -89,6 +90,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                     StatusLog.addHinweis("Alle Daten wurden gelöscht.");
                     model.reload();
                     aktualisierenDerGuiElemente();
+                    zeigeStandardansicht();
                 } catch (SQLException e) {
                     StatusLog.addError("Daten konnten nicht gelöscht werden", e);
                     updateStatusLog();
@@ -184,6 +186,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                 zeigeGeraetePanel();
             });
             neuesGeraetController.setOnAbbrechen(this::zeigeGeraetePanel);
+            neuesGeraetController.setOnValidierungsfehler(this::updateStatusLog);
         });
     }
 
@@ -242,6 +245,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                 zeigeRaeumePanel();
             });
             neuerRaumController.setOnAbbrechen(this::zeigeRaeumePanel);
+            neuerRaumController.setOnValidierungsfehler(this::updateStatusLog);
         });
     }
 
@@ -318,6 +322,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                 formState.zuruecksetzen();
                 zeigeSzenarienPanel();
             });
+            ctrl.setOnValidierungsfehler(this::updateStatusLog);
         });
     }
 
