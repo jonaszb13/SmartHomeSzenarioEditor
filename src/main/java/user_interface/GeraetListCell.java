@@ -1,4 +1,4 @@
-package userinterface;
+package user_interface;
 
 import data.models.fachobjekte.Geraet;
 import javafx.beans.value.ChangeListener;

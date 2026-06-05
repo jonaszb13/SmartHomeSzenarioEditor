@@ -1,7 +1,7 @@
-package data.services.objektservices;
+package data.services.objekt_services;
 
 import data.models.fachobjekte.Raum;
-import data.services.datenservices.RaumDataService;
+import data.services.daten_services.RaumDataService;
 import jakarta.inject.Singleton;
 import util.statusmeldungen.StatusLog;
 

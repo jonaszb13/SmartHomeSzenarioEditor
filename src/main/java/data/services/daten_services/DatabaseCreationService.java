@@ -1,4 +1,4 @@
-package data.services.datenservices;
+package data.services.daten_services;
 
 import util.statusmeldungen.StatusLog;
 

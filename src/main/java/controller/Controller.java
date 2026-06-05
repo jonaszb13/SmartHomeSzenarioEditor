@@ -10,7 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
-import userinterface.View;
+import user_interface.View;
 import util.customexceptions.MessageMissingException;
 import util.statusmeldungen.StatusLog;
 

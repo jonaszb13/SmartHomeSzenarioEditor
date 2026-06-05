@@ -1,4 +1,4 @@
-package data.services.datenservices;
+package data.services.daten_services;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;

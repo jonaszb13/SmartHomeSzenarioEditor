@@ -1,4 +1,4 @@
-package userinterface;
+package user_interface;
 
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;

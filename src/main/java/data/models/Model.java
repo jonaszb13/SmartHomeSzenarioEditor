@@ -4,10 +4,10 @@ import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
-import data.services.objektservices.GeraetObjektService;
-import data.services.objektservices.RaumObjektService;
-import data.services.objektservices.SzenarioAusfuehrungsService;
-import data.services.objektservices.SzenarioObjektService;
+import data.services.objekt_services.GeraetObjektService;
+import data.services.objekt_services.RaumObjektService;
+import data.services.objekt_services.SzenarioAusfuehrungsService;
+import data.services.objekt_services.SzenarioObjektService;
 import util.customexceptions.NoGeraetProvidedException;
 import util.statusmeldungen.StatusLog;
 

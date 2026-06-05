@@ -11,14 +11,14 @@ module src.main {
     requires java.sql.rowset;
 
     opens main to javafx.fxml;
-    opens userinterface to javafx.fxml;
+    opens user_interface to javafx.fxml;
     opens controller to javafx.fxml;
-    exports userinterface;
+    exports user_interface;
     exports controller;
     exports main;
     exports data.models;
     exports data.models.fachobjekte;
     exports util.statusmeldungen;
-    exports data.models.fachobjekte.geraetearten;
+    exports data.models.fachobjekte.geraete_arten;
     exports util.customexceptions;
 }

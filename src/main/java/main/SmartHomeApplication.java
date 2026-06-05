@@ -2,13 +2,13 @@ package main;
 
 import controller.Controller;
 import data.models.Model;
-import data.services.datenservices.DatabaseCreationService;
+import data.services.daten_services.DatabaseCreationService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import userinterface.View;
+import user_interface.View;
 import util.statusmeldungen.StatusLog;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class SmartHomeApplication extends Application {
         }
 
 
-        final FXMLLoader loader = new FXMLLoader(SmartHomeApplication.class.getResource("/userinterface/main-view.fxml"));
+        final FXMLLoader loader = new FXMLLoader(SmartHomeApplication.class.getResource("/user_interface/main-view.fxml"));
         loader.load();
 
         final View view = loader.getController();

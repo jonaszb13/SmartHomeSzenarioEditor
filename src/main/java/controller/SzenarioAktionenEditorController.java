@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
-import userinterface.WertControlFactory;
+import user_interface.WertControlFactory;
 
 import java.util.List;
 import java.util.UUID;

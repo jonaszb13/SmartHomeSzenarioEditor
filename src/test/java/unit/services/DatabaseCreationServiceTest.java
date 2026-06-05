@@ -1,7 +1,7 @@
 package unit.services;
 
-import data.services.datenservices.DataAccess;
-import data.services.datenservices.DatabaseCreationService;
+import data.services.daten_services.DataAccess;
+import data.services.daten_services.DatabaseCreationService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

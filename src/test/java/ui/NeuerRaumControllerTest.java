@@ -33,7 +33,7 @@ class NeuerRaumControllerTest extends ApplicationTest {
     @Override
     public void start(final Stage stage) throws Exception {
         final FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/userinterface/neuer-raum-view.fxml"));
+                getClass().getResource("/user_interface/neuer-raum-view.fxml"));
         final Parent root = loader.load();
         final NeuerRaumController controller = loader.getController();
         controller.setOnAnlegen(CAPTURED_NAME::set);

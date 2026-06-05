@@ -1,4 +1,4 @@
-package userinterface;
+package user_interface;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;

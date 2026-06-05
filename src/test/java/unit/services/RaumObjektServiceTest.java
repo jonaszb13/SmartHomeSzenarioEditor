@@ -1,10 +1,10 @@
 package unit.services;
 
 import data.models.fachobjekte.Raum;
-import data.services.datenservices.DataAccess;
-import data.services.datenservices.DatabaseCreationService;
-import data.services.datenservices.RaumDataService;
-import data.services.objektservices.RaumObjektService;
+import data.services.daten_services.DataAccess;
+import data.services.daten_services.DatabaseCreationService;
+import data.services.daten_services.RaumDataService;
+import data.services.objekt_services.RaumObjektService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

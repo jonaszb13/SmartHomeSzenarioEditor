@@ -1,4 +1,4 @@
-package userinterface;
+package user_interface;
 
 import data.models.fachobjekte.Szenario;
 import javafx.beans.value.ChangeListener;

@@ -7,7 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
-import userinterface.SzenarioListCell;
+import user_interface.SzenarioListCell;
 
 import java.util.*;
 import java.util.function.Consumer;

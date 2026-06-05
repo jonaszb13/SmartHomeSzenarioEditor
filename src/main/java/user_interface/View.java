@@ -1,4 +1,4 @@
-package userinterface;
+package user_interface;
 
 import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.Raum;
