@@ -36,8 +36,8 @@ class SzenarioObjektServiceTest {
     private static SzenarioObjektService szenarioObjektService;
     private static Sensor sensor1;
     private static Sensor sensor2;
-    private static HashMap<String, String> sensorWerte1;
-    private static HashMap<String, String> sensorWerte2;
+    private static Map<String, String> sensorWerte1;
+    private static Map<String, String> sensorWerte2;
     private static Szenario szenario1;
     private static Szenario.Aenderung aenderung1;
 

@@ -67,7 +67,7 @@ class GeraetObjektServiceTest {
         raumDataService.addRaum(RAUM_1);
         raumDataService.addRaum(RAUM_3);
         geraetDataService.addGeraet(LAMPE_1, "Lampe", getLampenAttribute());
-        HashMap<String, String> sensorWerte = new HashMap<>();
+        Map<String, String> sensorWerte = new HashMap<>();
         sensorWerte.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "false");
         sensorWerte.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), "false");
         geraetDataService.addGeraet(SENSOR_2, "Sensor", sensorWerte);
