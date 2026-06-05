@@ -7,11 +7,11 @@ import java.util.List;
 
 class SzenarioFormState {
 
-    Szenario szenarioImBearbeitungsmodus = null;
+    Szenario szenarioImBearbeitungsmodus;
     String name = "";
     String beschreibung = "";
     final List<Szenario.Aenderung> aktionen = new ArrayList<>();
-    Integer editAktionIndex = null;
+    Integer editAktionIndex;
 
     void setze(final String name, final String beschreibung, final List<Szenario.Aenderung> aktionen) {
         this.name = name;

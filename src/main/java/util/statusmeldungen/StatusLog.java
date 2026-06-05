@@ -2,7 +2,7 @@ package util.statusmeldungen;
 
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.SystemUtils;
-import util.customExceptions.MessageMissingException;
+import util.customexceptions.MessageMissingException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -108,16 +108,16 @@ public final class StatusLog {
     }
 
     public List<Meldung> getNewMessages(final UUID userDataLetzterNode) throws MessageMissingException {
-        final List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        final List<Meldung> meldungen = getStatusLogEintraege();
         if (userDataLetzterNode == null) {
             return meldungen;
         }
-        int indexNeueMeldung = IntStream.range(0, meldungen.size())
+        final int indexNeueMeldung = IntStream.range(0, meldungen.size())
                 .filter(i -> meldungen.get(i).getMeldungsId().equals(userDataLetzterNode))
                 .findFirst()
                 .orElseThrow(() -> new MessageMissingException("Es liegt eine inkonsistente Datenbasis vor: Eine Meldung konnte nicht im Statuslog gefunden werden.")) + 1;
         if (indexNeueMeldung == 0) {
-            StatusLog.addError("Gespeicherte Meldung kann nicht mehr im StatusLog abgerufen werden.");
+            addError("Gespeicherte Meldung kann nicht mehr im StatusLog abgerufen werden.");
             return new ArrayList<>();
         }
         return meldungen.subList(indexNeueMeldung, meldungen.size());

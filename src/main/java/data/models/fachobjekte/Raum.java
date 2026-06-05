@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Raum extends DAO {
+public class Raum extends DataAccessObject {
     private final List<Geraet> geraete;
 
     public Raum(final UUID id, final String name) {

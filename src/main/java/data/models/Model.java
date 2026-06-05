@@ -4,11 +4,11 @@ import data.models.fachobjekte.Geraet;
 import data.models.fachobjekte.GeraetFactory;
 import data.models.fachobjekte.Raum;
 import data.models.fachobjekte.Szenario;
-import data.services.objektServices.GeraetObjektService;
-import data.services.objektServices.RaumObjektService;
-import data.services.objektServices.SzenarioAusfuehrungsService;
-import data.services.objektServices.SzenarioObjektService;
-import util.customExceptions.NoGeraetProvidedException;
+import data.services.objektservices.GeraetObjektService;
+import data.services.objektservices.RaumObjektService;
+import data.services.objektservices.SzenarioAusfuehrungsService;
+import data.services.objektservices.SzenarioObjektService;
+import util.customexceptions.NoGeraetProvidedException;
 import util.statusmeldungen.StatusLog;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,10 +20,10 @@ import java.util.UUID;
 public final class Model {
     private static Model instance;
     private final StatusLog statusbereich;
-    private RaumObjektService raumObjektService = null;
-    private GeraetObjektService geraetObjektService = null;
-    private SzenarioObjektService szenarioObjektService = null;
-    private SzenarioAusfuehrungsService szenarioAktivationService = null;
+    private RaumObjektService raumObjektService;
+    private GeraetObjektService geraetObjektService;
+    private SzenarioObjektService szenarioObjektService;
+    private SzenarioAusfuehrungsService szenarioAktivationService;
 
     public static Model getInstance() {
         if (instance == null) {
@@ -38,8 +38,8 @@ public final class Model {
             geraetObjektService = GeraetObjektService.getInstance();
             szenarioObjektService = SzenarioObjektService.getInstance();
             szenarioAktivationService = SzenarioAusfuehrungsService.getInstance();
-            Map<UUID, Raum> raumMap = raumObjektService.getAllRaeume();
-            Map<UUID, Geraet> geraetMap = geraetObjektService.getAllGeraete(raumMap);
+            final Map<UUID, Raum> raumMap = raumObjektService.getAllRaeume();
+            final Map<UUID, Geraet> geraetMap = geraetObjektService.getAllGeraete(raumMap);
             szenarioObjektService.ladeAlleSzenarien(geraetMap);
         } catch (SQLException eSQL) {
             StatusLog.addError("Das Model konnte nicht geladen werden: ", eSQL);

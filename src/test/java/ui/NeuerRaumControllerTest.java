@@ -32,10 +32,10 @@ class NeuerRaumControllerTest extends ApplicationTest {
 
     @Override
     public void start(final Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/userInterface/neuer-raum-view.fxml"));
-        Parent root = loader.load();
-        NeuerRaumController controller = loader.getController();
+        final FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/userinterface/neuer-raum-view.fxml"));
+        final Parent root = loader.load();
+        final NeuerRaumController controller = loader.getController();
         controller.setOnAnlegen(CAPTURED_NAME::set);
         controller.setOnAbbrechen(() -> ABBRECHEN_CALLBACK.set(true));
         stage.setScene(new Scene(root, 800, 600));

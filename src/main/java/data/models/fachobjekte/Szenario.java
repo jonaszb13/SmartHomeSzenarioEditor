@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Szenario extends DAO {
+public class Szenario extends DataAccessObject {
     private String beschreibung;
     private final Map<Integer, Aenderung> aenderungen;
 

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.SzenarioAktionenEditorController"
+            AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+            AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+    <top>
+        <VBox spacing="5" style="-fx-border-color: transparent transparent #c4c6c9 transparent; -fx-border-width: 0 0 1 0">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Label text="Szenario Aktionen Editor" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+            <Label fx:id="szenarioNameLabel" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <HBox spacing="20" style="-fx-background-color: #fff">
+            <padding><Insets top="16" right="10" bottom="10" left="10"/></padding>
+
+            <VBox spacing="12" minWidth="280">
+                <VBox spacing="4">
+                    <Label text="Aktionsname"/>
+                    <TextField fx:id="aktionsnameField" promptText="Name der Aktion" prefWidth="260"/>
+                </VBox>
+                <VBox spacing="4">
+                    <Label text="Zielgerät"/>
+                    <ComboBox fx:id="geraetComboBox" prefWidth="260" promptText="Gerät auswählen"/>
+                </VBox>
+            </VBox>
+
+            <Separator orientation="VERTICAL"/>
+
+            <VBox spacing="12" HBox.hgrow="ALWAYS">
+                <Label text="Gerätespezifische ausführende Aktion" style="-fx-font-weight: bold;"/>
+                <VBox spacing="4">
+                    <Label text="Attribut auswählen"/>
+                    <ComboBox fx:id="schluesselComboBox" prefWidth="260" promptText="Attribut auswählen"/>
+                </VBox>
+                <VBox spacing="4">
+                    <Label text="Wert"/>
+                    <VBox fx:id="wertContainer" spacing="4"/>
+                </VBox>
+            </VBox>
+        </HBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" style="-fx-background-color: #fff">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Button text="Abbrechen" prefWidth="200" prefHeight="50" onAction="#handleAbbrechen"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="speichernButton" prefWidth="200" prefHeight="50" onAction="#handleSpeichern"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

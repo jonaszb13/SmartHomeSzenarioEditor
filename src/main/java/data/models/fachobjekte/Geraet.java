@@ -7,7 +7,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 
-public abstract class Geraet extends DAO {
+public abstract class Geraet extends DataAccessObject {
     private static final String DIGITS = "(\\p{Digit}+)";
     private static final String HEX_DIGITS = "(\\p{XDigit}+)";
     private static final String EXP = "[eE][+-]?"+ DIGITS;
@@ -54,15 +54,17 @@ public abstract class Geraet extends DAO {
 
     public abstract Map<String, Class<?>> getAttributTypen();
 
-    public boolean isDouble(String myString) {
+    public boolean isDouble(final String myString) {
         return Pattern.matches(FP_REGEX, myString);
     }
-    public String formatiereZahlenwerteInsEnglische(String unformatierterWert) {
-        String formatierterWert = unformatierterWert.replace(".", "").replace(",", ".");
+
+    public String formatiereZahlenwerteInsEnglische(final String unformatierterWert) {
+        final String formatierterWert = unformatierterWert.replace(".", "").replace(",", ".");
         if (formatierterWert.equals(unformatierterWert)) StatusLog.addHinweis("Der Dezimalpunkt ist das Komma");
         return formatierterWert;
     }
-    public String formatiereZahlenwerteInsDeutsche(String unformatierterWert) {
+
+    public String formatiereZahlenwerteInsDeutsche(final String unformatierterWert) {
         return unformatierterWert.replace(".",",");
     }
 }

@@ -22,7 +22,7 @@ public class NeuerRaumController {
 
     @FXML
     private void handleAnlegen() {
-        String name = raumNameField.getText();
+        final String name = raumNameField.getText();
         if (name != null && !name.isBlank() && onAnlegen != null) {
             onAnlegen.accept(name.trim());
         }

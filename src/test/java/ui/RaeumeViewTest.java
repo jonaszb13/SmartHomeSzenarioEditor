@@ -14,8 +14,8 @@ class RaeumeViewTest extends ApplicationTest {
 
     @Override
     public void start(final Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(
-                getClass().getResource("/userInterface/raeume-view.fxml")
+        final Parent root = FXMLLoader.load(
+                getClass().getResource("/userinterface/raeume-view.fxml")
         );
         stage.setScene(new Scene(root, 800, 600));
         stage.show();
