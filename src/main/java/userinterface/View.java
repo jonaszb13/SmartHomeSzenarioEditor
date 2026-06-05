@@ -106,9 +106,9 @@ public class View {
 
     public ViewClass getTreeItemType(final TreeItem<String> item) {
         ViewClass returnValue = ViewClass.DEFAULT;
-        if (item == raeume) returnValue = ViewClass.RAEUME;
-        else if (item == geraete) returnValue = ViewClass.GERAETE;
-        else if (item == szenarien) returnValue = ViewClass.SZENARIEN;
+        if (item.equals(raeume)) returnValue = ViewClass.RAEUME;
+        else if (item.equals(geraete)) returnValue = ViewClass.GERAETE;
+        else if (item.equals(szenarien)) returnValue = ViewClass.SZENARIEN;
         else if (raumTreeMap.getA(item) != null) returnValue = ViewClass.RAUM;
         else if (geraetTreeMap.getA(item) != null) returnValue = ViewClass.GERAET;
         else if (szenarioTreeMap.getA(item) != null) returnValue = ViewClass.SZENARIO;

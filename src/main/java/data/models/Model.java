@@ -117,7 +117,7 @@ public final class Model {
     }
 
     public boolean updateGeraetRaum(final Geraet geraet, final Raum raum) {
-        if (geraet.getRaum() == raum) return false;
+        if (geraet.getRaum().equals(raum)) return false;
         return geraetObjektService.updateGeraetRaum(geraet, raum);
     }
 
