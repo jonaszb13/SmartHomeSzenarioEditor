@@ -9,9 +9,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import util.statusmeldungen.Meldung;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -49,6 +51,7 @@ class RaumObjektServiceTest {
         assertNotNull(map);
         assertEquals(1, map.size());
         assertFalse(StatusLog.hasError());
+        assertEquals("RäumeMap erfolgreich geladen", StatusLog.getInstance().getStatusLogEintraege().getLast().getMeldungstext());
     }
 
     @Test
@@ -59,6 +62,7 @@ class RaumObjektServiceTest {
         assertFalse(StatusLog.hasError());
         assertEquals(2, raumObjektService.getRaumMap().size());
         assertTrue(raumObjektService.getRaumMap().values().stream().anyMatch(o -> o.getName().equals("Wohnzimmer")));
+        assertTrue(StatusLog.getInstance().getStatusLogEintraege().getLast().getMeldungstext().startsWith("Raum angelegt: Wohnzimmer ID: "));
     }
 
     @Test
@@ -69,6 +73,9 @@ class RaumObjektServiceTest {
         assertTrue(raumObjektService.updateRaum(raum, "Schlafzimmer"));
         assertFalse(StatusLog.hasError());
         assertEquals("Schlafzimmer", raumObjektService.getRaumMap().get(raum.getId()).getName());
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Name des Raums " + raum.getId() + " wurde auf Schlafzimmer geändert.", meldungen.getFirst().getMeldungstext());
     }
 
     @Test
@@ -82,6 +89,9 @@ class RaumObjektServiceTest {
         assertFalse(StatusLog.hasError());
         assertFalse(raumObjektService.getRaumMap().containsKey(id));
         assertEquals(0, raumObjektService.getRaumMap().size());
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Raum " + id + " wurde gelöscht.", meldungen.getFirst().getMeldungstext());
     }
 
     @AfterEach

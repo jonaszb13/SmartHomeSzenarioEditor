@@ -5,7 +5,7 @@ import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
@@ -42,7 +42,7 @@ public final class SzenarioAusfuehrungsService {
                 attributeMap.replace(aenderung.schluessel(), aenderung.wert());
                 geraetObjektService.updateGeraetWerte(aenderung.geraet(), attributeMap);
             }
-            StatusLog.addHinweis("Szenario " + szenario.getName() + " erfolgreich am " + sdf.format(Instant.now()) + " ausgeführt");
+            StatusLog.addHinweis("Szenario " + szenario.getName() + " erfolgreich am " + sdf.format(new Date()) + " ausgeführt");
         } else {
             StatusLog.addError("Szenario " + szenario.getName() + " konnte nicht vollständig ausgeführt werden");
         }

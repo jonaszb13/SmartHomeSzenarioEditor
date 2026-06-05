@@ -2,7 +2,7 @@ package unit.models.fachobjekte.geraetearten;
 
 import data.models.fachobjekte.Merkmalbezeichnung;
 import data.models.fachobjekte.Raum;
-import data.models.fachobjekte.geraeteArten.Heizung;
+import data.models.fachobjekte.geraetearten.Heizung;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

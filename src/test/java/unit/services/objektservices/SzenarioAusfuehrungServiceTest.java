@@ -2,18 +2,23 @@ package unit.services.objektservices;
 
 import data.models.fachobjekte.*;
 import data.models.fachobjekte.geraetearten.Sensor;
+import data.models.fachobjekte.geraetearten.Steckdose;
 import data.services.datenservices.*;
 import data.services.objektservices.GeraetObjektService;
 import data.services.objektservices.RaumObjektService;
+import data.services.objektservices.SzenarioAusfuehrungsService;
 import data.services.objektservices.SzenarioObjektService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SzenarioAusfuehrungServiceTest {
     static final UUID RAUM_ID = UUID.fromString("9bf21849-af67-4c50-ba0d-6e991850ceb4");
@@ -29,6 +34,7 @@ public class SzenarioAusfuehrungServiceTest {
     private static GeraetObjektService geraetObjektService;
     private static SzenarioDataService szenarioDataService;
     private static SzenarioObjektService szenarioObjektService;
+    private static SzenarioAusfuehrungsService szenarioAusfuehrungsService;
     private static Sensor sensor1;
     private static Sensor sensor2;
     private static HashMap<String, String> sensorWerte1;
@@ -49,6 +55,7 @@ public class SzenarioAusfuehrungServiceTest {
         geraetObjektService = GeraetObjektService.getInstance();
         szenarioDataService = SzenarioDataService.getInstance();
         szenarioObjektService = SzenarioObjektService.getInstance();
+        szenarioAusfuehrungsService = SzenarioAusfuehrungsService.getInstance();
 
         sensor1 = (Sensor) GeraetFactory.getInstance().createGeraet(SENSOR_1_ID, "Sensor 1", RAUM_1, "Sensor");
         sensor2 = (Sensor) GeraetFactory.getInstance().createGeraet(SENSOR_2_ID, "Sensor 2", RAUM_1, "Sensor");
@@ -91,5 +98,37 @@ public class SzenarioAusfuehrungServiceTest {
         dataAccess.executeUpdate("DELETE FROM GERAETE");
         //language=SQL
         dataAccess.executeUpdate("DELETE FROM RAEUME");
+    }
+
+    @Test
+    void fuehreSzenarioAus_mitGueltigerAenderung_gibtTrueZurueck() {
+        Szenario geladenesSzenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
+        assertTrue(szenarioAusfuehrungsService.fuehreSzenarioAus(geladenesSzenario));
+    }
+
+    @Test
+    void fuehreSzenarioAus_wertWirdNachAusfuehrungAktualisiert() {
+        Szenario geladenesSzenario = szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID);
+        Geraet sensor1Geladen = geladenesSzenario.getAenderungen().get(1).geraet();
+        szenarioAusfuehrungsService.fuehreSzenarioAus(geladenesSzenario);
+        assertEquals("false", sensor1Geladen.getValues().get(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung()));
+    }
+
+    @Test
+    void fuehreSzenarioAus_leeresSzenario_gibtTrueZurueck() {
+        Szenario leeresSzenario = new Szenario(UUID.randomUUID(), "Leeres Szenario");
+        assertTrue(szenarioAusfuehrungsService.fuehreSzenarioAus(leeresSzenario));
+    }
+
+    @Test
+    void fuehreSzenarioAus_mitUngueltigemAttributwert_gibtFalseZurueck() {
+        Steckdose steckdose = new Steckdose(UUID.randomUUID(), "Teststeckdose", RAUM_1);
+        Szenario.Aenderung ungueltigeAenderung = szenarioObjektService.getAenderung(
+                steckdose, "Zu hohe Leistung",
+                Merkmalbezeichnung.AKTUELLE_LEISTUNG.getBezeichnung(), "9999"
+        );
+        Szenario testSzenario = new Szenario(UUID.randomUUID(), "Szenario mit ungültigem Wert");
+        testSzenario.getAenderungen().put(1, ungueltigeAenderung);
+        assertFalse(szenarioAusfuehrungsService.fuehreSzenarioAus(testSzenario));
     }
 }

@@ -15,11 +15,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import util.statusmeldungen.Meldung;
 import util.statusmeldungen.StatusLog;
 
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -87,6 +89,9 @@ class GeraetObjektServiceTest {
         assertFalse(StatusLog.hasError());
         assertEquals(1, geraetObjektService.getGeraetMap().size());
         assertFalse(geraetObjektService.getGeraetMap().containsKey(LAMPE_ID));
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Gerät mit id " + LAMPE_ID + " erfolgreich gelöscht", meldungen.getFirst().getMeldungstext());
     }
 
     @Test
@@ -98,6 +103,9 @@ class GeraetObjektServiceTest {
         assertTrue(erfolgreich);
         assertFalse(StatusLog.hasError());
         assertEquals("Neue Lampe", geraetObjektService.getGeraetMap().get(LAMPE_ID).getName());
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Name des Geräts " + LAMPE_ID + " erfolgreich zu Neue Lampe geändert", meldungen.getFirst().getMeldungstext());
     }
 
     @Test
@@ -109,10 +117,14 @@ class GeraetObjektServiceTest {
         assertTrue(result);
         assertFalse(StatusLog.hasError());
         assertEquals(RAUM_1, geraetObjektService.getGeraetMap().get(LAMPE_ID).getRaum());
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Raum des Geräts " + LAMPE_1.getName() + " erfolgreich zu " + RAUM_1.getName() + " geändert", meldungen.getFirst().getMeldungstext());
     }
 
     @Test
     void testAddGeraet() {
+        StatusLog.clear();
         Map<String, String> attributemap = new HashMap<>();
         attributemap.put(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), "true");
         attributemap.put(Merkmalbezeichnung.AUSSCHLAG.getBezeichnung(), "true");
@@ -124,6 +136,9 @@ class GeraetObjektServiceTest {
         assertEquals(3, geraetObjektService.getGeraetMap().size());
         Geraet geraet = geraetObjektService.getGeraetMap().values().stream().filter(o -> o.getName().equals("Sensor 1")).findFirst().get();
         assertEquals(RAUM_1, geraet.getRaum());
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertTrue(meldungen.getFirst().getMeldungstext().startsWith("Neues Gerät hinzugefügt. ID: "));
     }
 
     @Test
@@ -141,6 +156,13 @@ class GeraetObjektServiceTest {
         assertFalse(LAMPE_1.isEingeschaltet());
         assertEquals(10, LAMPE_1.getHelligkeit());
         assertEquals(Color.decode("#000000"), LAMPE_1.getFarbe());
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertFalse(meldungen.isEmpty());
+        assertTrue(meldungen.stream().noneMatch(Meldung::isError));
+        assertTrue(meldungen.stream().anyMatch(m ->
+                m.getMeldungstext().contains(LAMPE_1.getName()) &&
+                m.getMeldungstext().contains(Merkmalbezeichnung.HELLIGKEIT.getBezeichnung())
+        ));
     }
 
     @AfterEach

@@ -10,10 +10,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import util.statusmeldungen.Meldung;
 import util.statusmeldungen.StatusLog;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -101,6 +103,7 @@ class SzenarioObjektServiceTest {
         assertEquals(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), szenario.getAenderungen().get(1).schluessel());
         assertEquals("false", szenario.getAenderungen().get(1).wert());
         assertEquals("Sensor aus", szenario.getAenderungen().get(1).beschreibung());
+        assertEquals("Szenario 2 wurde erfolgreich erstellt.", StatusLog.getInstance().getStatusLogEintraege().getLast().getMeldungstext());
     }
 
     @Test
@@ -112,7 +115,9 @@ class SzenarioObjektServiceTest {
         assertTrue(result);
         assertFalse(StatusLog.hasError());
         assertEquals("Neu", szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).getName());
-
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Neu wurde erfolgreich aktualisiert.", meldungen.getFirst().getMeldungstext());
     }
 
     @Test
@@ -124,6 +129,9 @@ class SzenarioObjektServiceTest {
         assertTrue(result);
         assertFalse(StatusLog.hasError());
         assertEquals("Neue Beschreibung", szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).getBeschreibung());
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Szenario 1 wurde erfolgreich aktualisiert.", meldungen.getFirst().getMeldungstext());
     }
 
     @Test
@@ -136,6 +144,9 @@ class SzenarioObjektServiceTest {
         assertFalse(StatusLog.hasError());
         assertEquals("Neu", szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).getName());
         assertEquals("Neue Beschreibung", szenarioObjektService.getSzenarioMap().get(SZENARIO_1_ID).getBeschreibung());
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Neu wurde erfolgreich aktualisiert.", meldungen.getFirst().getMeldungstext());
     }
 
     @Test
@@ -148,6 +159,9 @@ class SzenarioObjektServiceTest {
         assertTrue(result);
         assertFalse(StatusLog.hasError());
         assertFalse(szenarioObjektService.getSzenarioMap().containsKey(szenario.getId()));
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Szenario 1 wurde erfolgreich gelöscht.", meldungen.getFirst().getMeldungstext());
     }
 
     @Test
@@ -162,6 +176,9 @@ class SzenarioObjektServiceTest {
         assertFalse(StatusLog.hasError());
         assertEquals(2, szenario.getAenderungen().size());
         assertEquals(aenderung, szenario.getAenderungen().get(1));
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Dem Szenario: Szenario 1 wurde eine Aktion erfolgreich hinzugefügt.", meldungen.getFirst().getMeldungstext());
     }
 
     @Test
@@ -177,6 +194,9 @@ class SzenarioObjektServiceTest {
         assertEquals(Merkmalbezeichnung.EINGESCHALTET.getBezeichnung(), szenario.getAenderungen().get(2).schluessel());
         assertEquals("false", szenario.getAenderungen().get(2).wert());
         assertEquals("Sensor aus", szenario.getAenderungen().get(2).beschreibung());
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Änderung im Szenario: Szenario 1 wurde erfolgreich aktualisiert.", meldungen.getFirst().getMeldungstext());
     }
 
     @Test
@@ -189,6 +209,9 @@ class SzenarioObjektServiceTest {
         assertTrue(result);
         assertFalse(StatusLog.hasError());
         assertFalse(szenario.getAenderungen().containsKey(1));
+        List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
+        assertEquals(1, meldungen.size());
+        assertEquals("Änderung aus Szenario: Szenario 1 erfolgreich gelöscht", meldungen.getFirst().getMeldungstext());
     }
 
     @AfterEach
