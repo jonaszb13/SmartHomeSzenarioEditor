@@ -15,7 +15,6 @@ public class Meldung {
         this.meldungstext = meldungstext;
     }
 
-    //TODO Frage: Warum Throwable und nicht exception?
     public Meldung(final Meldungstyp meldungstyp, final String meldungstext, final Throwable exception) {
         meldungsId = UUID.randomUUID();
         this.meldungstyp = meldungstyp;
