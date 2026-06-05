@@ -74,7 +74,6 @@ public class View {
 
     public void updateTreeModel(final Map<UUID, Raum> raeumeMap, final Map<UUID, Geraet> geraeteMap,
                                 final Map<UUID, Szenario> szenarienMap) {
-        //TODO Gucke, ob man das mit weniger redundanz hinbekommt
 
         raumTreeMap.clear();
         geraetTreeMap.clear();
@@ -114,14 +113,6 @@ public class View {
         else if (geraetTreeMap.getA(item) != null) returnValue = ViewClass.GERAET;
         else if (szenarioTreeMap.getA(item) != null) returnValue = ViewClass.SZENARIO;
         return returnValue;
-    }
-
-    public boolean hasStatusLogChildren () {
-        return !getStatusLogVBox().getChildren().isEmpty();
-    }
-
-    public UUID getMessageUUID () {
-        return UUID.fromString(getStatusLogVBox().getChildren().getFirst().getUserData().toString());
     }
 
     public UUID getRaumUuidForItem(final TreeItem<String> item) {

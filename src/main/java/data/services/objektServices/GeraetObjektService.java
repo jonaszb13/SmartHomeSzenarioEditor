@@ -38,7 +38,6 @@ public final class GeraetObjektService {
     public Map<UUID, Geraet> getAllGeraete(final Map<UUID, Raum> raumMap) throws SQLException {
         StatusLog.addHinweis("Beginne GeräteMap zu laden");
         Map<UUID, Geraet> localGeraetMap = new HashMap<>();
-        //TODO QUESTION: Sollen geräte ohne Attribute geladen werden?
         CachedRowSet crs = geraetDataService.getAllGeraete();
         Map<String, String> attributeHashMap = new HashMap<>();
         UUID lastId = null;

@@ -33,8 +33,6 @@ public final class GeraetTypHandler {
         StatusLog.addHinweis("Beginne Geräteklassen zu laden");
         InputStream stream = GeraetTypHandler.class.getClassLoader().getResourceAsStream(GERAETE_LISTE);
         // Fallback: wenn die Anwendung aus einer Standalone Version gestartet wird
-        //TODO @Jonas wollen wir die jetzt noch tauschen,
-        // damit in der IDE dynamisch geladen werden kann?
         if (stream == null) {
             stream = ClassLoader.getSystemClassLoader().getResourceAsStream(GERAETE_PAKET.replaceAll("[.]", "/"));
         }
