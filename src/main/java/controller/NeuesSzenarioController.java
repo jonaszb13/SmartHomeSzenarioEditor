@@ -15,13 +15,8 @@ import java.util.List;
 public class NeuesSzenarioController {
 
     @FunctionalInterface
-    public interface AktionHinzufuegenHandler {
-        void handle(String name, String beschreibung, List<Szenario.Aenderung> aktionen);
-    }
-
-    @FunctionalInterface
-    public interface AktionBearbeitenHandler {
-        void handle(String name, String beschreibung, List<Szenario.Aenderung> aktionen, int index);
+    public interface AktionEditorHandler {
+        void handle(String name, String beschreibung, List<Szenario.Aenderung> aktionen, Integer index);
     }
 
     @FunctionalInterface
@@ -38,8 +33,7 @@ public class NeuesSzenarioController {
 
     private final ObservableList<Szenario.Aenderung> aktionen = FXCollections.observableArrayList();
 
-    private AktionHinzufuegenHandler onAktionHinzufuegen;
-    private AktionBearbeitenHandler onAktionBearbeiten;
+    private AktionEditorHandler onAktionEditor;
     private AnlegenHandler onAnlegen;
     private Runnable onAbbrechen;
 
@@ -55,12 +49,8 @@ public class NeuesSzenarioController {
         this.aktionen.setAll(aktionen);
     }
 
-    public void setOnAktionHinzufuegen(final AktionHinzufuegenHandler handler) {
-        this.onAktionHinzufuegen = handler;
-    }
-
-    public void setOnAktionBearbeiten(final AktionBearbeitenHandler handler) {
-        this.onAktionBearbeiten = handler;
+    public void setOnAktionEditor(final AktionEditorHandler handler) {
+        this.onAktionEditor = handler;
     }
 
     public void setOnAnlegen(final AnlegenHandler handler) {
@@ -73,16 +63,16 @@ public class NeuesSzenarioController {
 
     @FXML
     private void handleAktionHinzufuegen() {
-        if (onAktionHinzufuegen != null) {
-            onAktionHinzufuegen.handle(nameField.getText(), beschreibungField.getText(), new ArrayList<>(aktionen));
+        if (onAktionEditor != null) {
+            onAktionEditor.handle(nameField.getText(), beschreibungField.getText(), new ArrayList<>(aktionen), null);
         }
     }
 
     @FXML
     private void handleAktionBearbeiten() {
         final int idx = aktionenListView.getSelectionModel().getSelectedIndex();
-        if (idx < 0 || onAktionBearbeiten == null) return;
-        onAktionBearbeiten.handle(nameField.getText(), beschreibungField.getText(), new ArrayList<>(aktionen), idx);
+        if (idx < 0 || onAktionEditor == null) return;
+        onAktionEditor.handle(nameField.getText(), beschreibungField.getText(), new ArrayList<>(aktionen), idx);
     }
 
     @FXML

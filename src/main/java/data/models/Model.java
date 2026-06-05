@@ -164,7 +164,7 @@ public final class Model {
         try {
             Map<UUID, Raum> raumMap = raumObjektService.getAllRaeume();
             Map<UUID, Geraet> geraetMap = geraetObjektService.getAllGeraete(raumMap);
-            szenarioObjektService.getAllSzenarien(geraetMap);
+            szenarioObjektService.ladeAlleSzenarien(geraetMap);
         } catch (SQLException eSQL) {
             StatusLog.addError("Das Model konnte nicht neu geladen werden: ", eSQL);
         }

@@ -71,7 +71,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         if (dataTransportService.importData(file)) {
             StatusLog.addHinweis("Datenauszug importiert: " + file.getName());
             model.reload();
-            nachModelAenderung();
+            aktualisierenDerGuiElemente();
         } else {
             updateStatusLog();
         }
@@ -88,7 +88,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                     dataTransportService.clearAllData();
                     StatusLog.addHinweis("Alle Daten wurden gelöscht.");
                     model.reload();
-                    nachModelAenderung();
+                    aktualisierenDerGuiElemente();
                 } catch (SQLException e) {
                     StatusLog.addError("Daten konnten nicht gelöscht werden", e);
                     updateStatusLog();
@@ -130,8 +130,8 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         model.getSzenarioMap().forEach((id, szenario) -> {
             final MenuItem item = new MenuItem(szenario.getName());
             item.setOnAction(e -> {
-                model.aktiviereSzenario(szenario);
-                nachModelAenderung();
+                model.fuehreSzenarioAus(szenario);
+                aktualisierenDerGuiElemente();
             });
             view.getSzenarioOeffnenMenu().getItems().add(item);
         });
@@ -303,15 +303,10 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         zeigePanelHelper("neues-szenario-view.fxml", loader -> {
             final NeuesSzenarioController ctrl = loader.getController();
             ctrl.setInitialState(formState.name, formState.beschreibung, new ArrayList<>(formState.aktionen));
-            ctrl.setOnAktionHinzufuegen((name, beschr, aktionen) -> {
-                formState.setze(name, beschr, aktionen);
-                formState.editAktionIndex = null;
-                zeigeAktionenEditorPanel(null);
-            });
-            ctrl.setOnAktionBearbeiten((name, beschr, aktionen, idx) -> {
+            ctrl.setOnAktionEditor((name, beschr, aktionen, idx) -> {
                 formState.setze(name, beschr, aktionen);
                 formState.editAktionIndex = idx;
-                zeigeAktionenEditorPanel(aktionen.get(idx));
+                zeigeAktionenEditorPanel(idx != null ? aktionen.get(idx) : null);
             });
             ctrl.setOnAnlegen((name, beschr, aktionen) -> {
                 model.addSzenario(name, beschr, aktionenListZuMap(aktionen));
@@ -342,15 +337,10 @@ public class Controller implements ChangeListener<TreeItem<String>> {
         zeigePanelHelper("edit-szenario-view.fxml", loader -> {
             final BearbeitenSzenarioController ctrl = loader.getController();
             ctrl.setInitialState(formState.name, formState.beschreibung, new ArrayList<>(formState.aktionen));
-            ctrl.setOnAktionHinzufuegen((name, beschr, aktionen) -> {
-                formState.setze(name, beschr, aktionen);
-                formState.editAktionIndex = null;
-                zeigeAktionenEditorPanel(null);
-            });
-            ctrl.setOnAktionBearbeiten((name, beschr, aktionen, idx) -> {
+            ctrl.setOnAktionEditor((name, beschr, aktionen, idx) -> {
                 formState.setze(name, beschr, aktionen);
                 formState.editAktionIndex = idx;
-                zeigeAktionenEditorPanel(aktionen.get(idx));
+                zeigeAktionenEditorPanel(idx != null ? aktionen.get(idx) : null);
             });
             ctrl.setOnSpeichern((name, beschr, aktionen) -> {
                 model.updateSzenario(formState.szenarioImBearbeitungsmodus, name, beschr);
@@ -403,6 +393,7 @@ public class Controller implements ChangeListener<TreeItem<String>> {
                     zeigeNeuesSzenarioPanelMitState();
                 }
             });
+            ctrl.setOnValidierungsfehler(this::updateStatusLog);
         });
     }
 

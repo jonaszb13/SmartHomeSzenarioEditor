@@ -64,8 +64,8 @@ public class DataTransportService {
                     "INSERT INTO GERAETE_WERTE (ID, GERAET, SCHLUESSEL, WERT) VALUES ('%s', '%s', '%s', '%s')",
                     esc(col[0]), esc(col[1]), esc(col[2]), esc(col[3]));
             case 3 -> String.format(
-                    "INSERT INTO SZENARIEN (ID, NAME, STATUS, BESCHREIBUNG) VALUES ('%s', '%s', '%s', '%s')",
-                    esc(col[0]), esc(col[1]), esc(col[2]), esc(col[3]));
+                    "INSERT INTO SZENARIEN (ID, NAME, BESCHREIBUNG) VALUES ('%s', '%s', '%s')",
+                    esc(col[0]), esc(col[1]), esc(col[2]));
             case 4 -> String.format(
                     "INSERT INTO SZENARIEN_INHALT (ID, AKTION, SZENARIO, GERAET, SCHLUESSEL, WERT, POSITION) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', %s)",
                     esc(col[0]), esc(col[1]), esc(col[2]), esc(col[3]), esc(col[4]), esc(col[5]), col[6]);
@@ -108,10 +108,10 @@ public class DataTransportService {
 
     private String generateSzenarioAuszug() throws SQLException {
         StringBuilder builder = new StringBuilder();
-        CachedRowSet crs = DataAccess.getInstance().getData("SELECT ID, NAME, STATUS, BESCHREIBUNG FROM SZENARIEN");
+        CachedRowSet crs = DataAccess.getInstance().getData("SELECT ID, NAME, BESCHREIBUNG FROM SZENARIEN");
         while (crs.next()) {
             builder.append(crs.getObject(1)).append(SEMICOLON).append(crs.getString(2))
-                    .append(SEMICOLON).append(crs.getString(3)).append(SEMICOLON).append(crs.getString(4)).append("\n");
+                    .append(SEMICOLON).append(crs.getString(3)).append("\n");
         }
         builder.append(";\n");
         crs = DataAccess.getInstance().getData("SELECT ID, AKTION, SZENARIO, GERAET, SCHLUESSEL, WERT, POSITION FROM SZENARIEN_INHALT");

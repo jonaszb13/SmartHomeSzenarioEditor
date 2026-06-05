@@ -8,17 +8,23 @@
     <description>
         PMD Regeln
     </description>
-
-    <rule ref="category/java/errorprone.xml/EmptyCatchBlock" />
-    <rule ref="category/java/bestpractices.xml/AbstractClassWithoutAbstractMethod" />
-    <rule ref="category/java/bestpractices.xml/AccessorClassGeneration" />
-    <rule ref="category/java/bestpractices.xml/AccessorMethodGeneration" />
-    <rule ref="category/java/bestpractices.xml/ArrayIsStoredDirectly" />
-    <rule ref="category/java/bestpractices.xml/AvoidMessageDigestField" />
-    <rule ref="category/java/bestpractices.xml/AvoidReassigningCatchVariables" />
-<!--    <rule ref="category/java/bestpractices.xml/AvoidPrintStackTrace" />-->
-    <rule ref="category/java/bestpractices.xml/AvoidReassigningLoopVariables" />
-<!--    <rule ref="category/java/bestpractices.xml/AvoidReassigningParameters" />-->
-    <rule ref="category/java/bestpractices.xml/AvoidStringBufferField" />
+<!--    <rule ref="category/java/bestpractices.xml" /> -->
+<!--    <rule ref="category/java/codestyle.xml" /> -->
+<!--    <rule ref="category/java/design.xml" /> -->
+<!--    <rule ref="category/java/documentation.xml" /> -->
+<!--    <rule ref="category/java/errorprone.xml" /> -->
+<!--    <rule ref="category/java/multithreading.xml" /> -->
+<!--    <rule ref="category/java/performance.xml" /> -->
+<!-- 10 explizit ausgewählte Regeln welche auch erfüllt sind -->
+    <rule ref="category/java/bestpractices.xml/UseCollectionIsEmpty" />
+    <rule ref="category/java/errorprone.xml/SimpleDateFormatNeedsLocale" />
+    <rule ref="category/java/errorprone.xml/UseLocaleWithCaseConversions" />
+    <rule ref="category/java/errorprone.xml/ReturnEmptyCollectionRatherThanNull" />
+    <rule ref="category/java/errorprone.xml/DoNotTerminateVM" />
+    <rule ref="category/java/errorprone.xml/UseEqualsToCompareStrings" />
+    <rule ref="category/java/bestpractices.xml/ForLoopCanBeForeach" />
+    <rule ref="category/java/bestpractices.xml/AvoidUsingHardCodedIP" />
+    <rule ref="category/java/bestpractices.xml/ConstantsInInterface" />
+    <rule ref="category/java/design.xml/UselessOverridingMethod" />
 
 </ruleset>
