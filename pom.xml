@@ -235,6 +235,42 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <id>print-coverage</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>python3</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>
+import csv
+PAKETE = ['objektservices', 'datenservices', 'fachobjekte', 'models']
+with open('target/site/jacoco/jacoco.csv') as f:
+    rows = list(csv.DictReader(f))
+relevant = [r for r in rows if any(p in r['PACKAGE'] for p in PAKETE)]
+print('\n{:45} {:7} {:10}'.format('Klasse', 'Lines', 'Branches'))
+print('-' * 65)
+for r in sorted(relevant, key=lambda x: (x['PACKAGE'], x['CLASS'])):
+    lc, lm = int(r['LINE_COVERED']), int(r['LINE_MISSED'])
+    bc, bm = int(r['BRANCH_COVERED']), int(r['BRANCH_MISSED'])
+    lp = lc / (lc + lm) * 100 if lc + lm else 100
+    bp = bc / (bc + bm) * 100 if bc + bm else 100
+    print('{:45} {:6.1f}%  {:8.1f}%'.format(r['CLASS'], lp, bp))
+print()
+                                </argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
