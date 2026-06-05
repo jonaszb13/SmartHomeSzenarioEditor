@@ -60,54 +60,6 @@ public final class StatusLog {
         return getInstance().getStatusLogEintraege().stream().anyMatch(Meldung::isError);
     }
 
-    //TODO wann soll immer ein Fehlerbericht erstellt werden
-
-    public static void createErrorFile() {
-        if (hasError()) {
-            boolean fehler = false;
-            final String os = System.getProperty("os.name");
-            String filePath = "";
-            if (os.toLowerCase(Locale.GERMAN).contains("windows")) {
-                filePath = System.getenv("LocalAppData") + "\\SmartHomeEditor\\debuglogs";
-            } else if (SystemUtils.IS_OS_UNIX) {
-                filePath = System.getProperty("user.home") + "/library/SmartHomeEditor/errorlogs";
-            } else {
-                addError("Betriebssystem konnte nicht ermittlet werden!");
-                fehler = true;
-            }
-            final String filePathWithName = FileHandler.generateFile(filePath, "DebugLog", "txt");
-            if (filePathWithName == null) {
-                fehler = true;
-            } else if (outputErrors(filePathWithName)) {
-                fehler = true;
-            }
-            if (fehler) {
-                addError("Es konnte kein Fehlerbericht erstellt werden");
-            } else {
-                addMetadaten("Es wurde ein Fehlerbericht unter " + filePath + " abgelegt");
-            }
-        }
-        addMetadaten("Das Programm wurde kontrolliert beendet");
-    }
-
-    private static boolean outputErrors(final String filePathWithName) {
-        boolean fehler = false;
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePathWithName))) {
-            final List<Meldung> meldungen = getInstance().getStatusLogEintraege();
-            for (final Meldung meldung : meldungen) {
-                System.err.println(meldung.getMeldungstext());
-                writer.write(meldung.getMeldungsTyp() + ": " + meldung.getMeldungstext() + "\n");
-                if (meldung.getStackTrace() != null) {
-                    System.err.println(Arrays.toString(meldung.getStackTrace()));
-                    writer.write(Arrays.toString(meldung.getStackTrace()));
-                }
-            }
-        } catch (IOException eIO) {
-            fehler = true;
-        }
-        return fehler;
-    }
-
     public List<Meldung> getNewMessages(final UUID userDataLetzterNode) throws MessageMissingException {
         final List<Meldung> meldungen = StatusLog.getInstance().getStatusLogEintraege();
         if (userDataLetzterNode == null) {
