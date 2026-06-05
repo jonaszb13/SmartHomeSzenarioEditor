@@ -1,4 +1,4 @@
-package unit.services;
+package unit.services.objektservices;
 
 import data.models.fachobjekte.*;
 import data.models.fachobjekte.geraeteArten.Sensor;
